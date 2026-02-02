@@ -17,7 +17,7 @@ Hooks.once("init", function() {
   console.log("Splimo Creaturesheet | Initializing module");
 
   // Register creature actor sheet
-  Actors.registerSheet("splimo-creaturesheet", CreatureSheet, {
+  Actors.registerSheet("splimo_creaturesheet", CreatureSheet, {
     types: ["creature"],
     makeDefault: true,
     label: "Creature Sheet"

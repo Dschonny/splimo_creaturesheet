@@ -9,7 +9,7 @@ export class CreatureSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["splittermond", "sheet", "actor", "creature"],
-      template: "modules/splimo-creaturesheet/templates/sheets/creature-sheet.hbs",
+      template: "modules/splimo_creaturesheet/templates/sheets/creature-sheet.hbs",
       width: 750,
       height: 800,
       tabs: [{

@@ -17,7 +17,7 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 ### Manuell
 
 1. Lade das Modul herunter
-2. Entpacke es in `Data/modules/splimo-creaturesheet/` in deinem FoundryVTT-Datenverzeichnis
+2. Entpacke es in `Data/modules/splimo_creaturesheet/` in deinem FoundryVTT-Datenverzeichnis
 3. Starte FoundryVTT neu
 4. Aktiviere das Modul in deiner Welt unter "Module verwalten"
 
@@ -171,7 +171,7 @@ Das Modul erwartet .cre-Dateien im JSON-Format mit folgender Struktur:
 ### Dateistruktur
 
 ```
-splimo-creaturesheet/
+splimo_creaturesheet/
 ├── module.json              # Modul-Manifest
 ├── module.js                # Haupteinstiegspunkt
 ├── lang/                    # Lokalisierung
