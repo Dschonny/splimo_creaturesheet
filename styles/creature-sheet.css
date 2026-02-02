@@ -1,0 +1,493 @@
+/* Creature Sheet Styling */
+
+.creature.sheet {
+  font-family: "Signika", sans-serif;
+}
+
+.creature.sheet .sheet-header {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-bottom: 2px solid #000;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.creature.sheet .profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+.creature.sheet .header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.creature.sheet .charname input {
+  font-size: 1.8rem;
+  font-weight: bold;
+  border: none;
+  background: transparent;
+  width: 100%;
+}
+
+.creature.sheet .creature-basics {
+  display: flex;
+  gap: 1rem;
+}
+
+.creature.sheet .creature-basics .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.creature.sheet .creature-basics label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .creature-basics input,
+.creature.sheet .creature-basics select {
+  padding: 0.25rem;
+  border: 1px solid #999;
+}
+
+.creature.sheet .import-section {
+  margin-top: 0.5rem;
+}
+
+.creature.sheet .import-creature {
+  padding: 0.5rem 1rem;
+  background: #4a7ba7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .import-creature:hover {
+  background: #3a6b97;
+}
+
+/* Resources (Health/Focus) */
+.creature.sheet .resources {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.creature.sheet .resource {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.creature.sheet .resource label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .resource-bar {
+  position: relative;
+  height: 24px;
+  background: #ddd;
+  border: 1px solid #999;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.creature.sheet .resource-bar .bar-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(to right, #8b0000, #dc143c);
+  transition: width 0.3s ease;
+}
+
+.creature.sheet .resource.focus .bar-fill {
+  background: linear-gradient(to right, #00008b, #4169e1);
+}
+
+.creature.sheet .resource-bar .bar-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  z-index: 1;
+}
+
+.creature.sheet .resource-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.creature.sheet .resource-controls button {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid #999;
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+.creature.sheet .resource-controls button:hover {
+  background: #e0e0e0;
+}
+
+/* Sheet Tabs */
+.creature.sheet .sheet-tabs {
+  display: flex;
+  border-bottom: 2px solid #000;
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.creature.sheet .sheet-tabs .item {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+  border-right: 1px solid #999;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.creature.sheet .sheet-tabs .item:last-child {
+  border-right: none;
+}
+
+.creature.sheet .sheet-tabs .item.active {
+  background: #fff;
+  border-bottom: 2px solid #fff;
+  margin-bottom: -2px;
+}
+
+/* Sheet Body */
+.creature.sheet .sheet-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.creature.sheet .tab {
+  display: none;
+}
+
+.creature.sheet .tab.active {
+  display: block;
+}
+
+/* Attributes Section */
+.creature.sheet .attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.creature.sheet .attribute {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.creature.sheet .attribute label {
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.creature.sheet .attribute input {
+  width: 100%;
+  padding: 0.25rem;
+  border: 1px solid #999;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Skills Section */
+.creature.sheet .skills-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.creature.sheet .skill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.creature.sheet .skill label {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .skill input {
+  width: 50px;
+  padding: 0.25rem;
+  border: 1px solid #999;
+  text-align: center;
+}
+
+.creature.sheet .skill-roll {
+  padding: 0.25rem 0.5rem;
+  background: #4a7ba7;
+  color: white;
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.creature.sheet .skill-roll:hover {
+  background: #3a6b97;
+}
+
+/* Derived Attributes Section */
+.creature.sheet .derived-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.creature.sheet .derived-attribute {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.creature.sheet .derived-attribute label {
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.creature.sheet .derived-attribute input {
+  width: 100%;
+  padding: 0.25rem;
+  border: 1px solid #999;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.creature.sheet .damage-reduction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.02);
+  margin-top: 0.5rem;
+}
+
+.creature.sheet .damage-reduction label {
+  font-weight: bold;
+}
+
+.creature.sheet .damage-reduction input {
+  width: 80px;
+  padding: 0.25rem;
+  border: 1px solid #999;
+  text-align: center;
+}
+
+/* Items Lists */
+.creature.sheet .items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.creature.sheet .item {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.creature.sheet .item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.creature.sheet .item-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.creature.sheet .item-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.creature.sheet .item-control {
+  cursor: pointer;
+  color: #4a7ba7;
+  text-decoration: none;
+}
+
+.creature.sheet .item-control:hover {
+  color: #3a6b97;
+}
+
+.creature.sheet .item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .cost {
+  font-weight: bold;
+  color: #666;
+}
+
+.creature.sheet .selected-option,
+.creature.sheet .prerequisites,
+.creature.sheet .great-tricks {
+  padding: 0.25rem;
+  background: rgba(74, 123, 167, 0.1);
+  border-left: 3px solid #4a7ba7;
+}
+
+.creature.sheet .selected-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.creature.sheet .attribute-tag {
+  padding: 0.1rem 0.5rem;
+  background: #4a7ba7;
+  color: white;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.creature.sheet .custom-masteries ul {
+  margin: 0.25rem 0 0 1rem;
+  padding: 0;
+}
+
+.creature.sheet .item-description,
+.creature.sheet .additional-info {
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 3px;
+}
+
+/* Category Headers */
+.creature.sheet .refinement-category,
+.creature.sheet .training-category {
+  margin-bottom: 1.5rem;
+}
+
+.creature.sheet .refinement-category h4,
+.creature.sheet .training-category h4 {
+  margin: 0 0 0.5rem 0;
+  padding: 0.5rem;
+  background: #4a7ba7;
+  color: white;
+  border-radius: 4px;
+}
+
+/* Container Headers */
+.creature.sheet .refinements-header,
+.creature.sheet .training-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #000;
+}
+
+.creature.sheet .item-create {
+  padding: 0.5rem 1rem;
+  background: #4a7ba7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.creature.sheet .item-create:hover {
+  background: #3a6b97;
+}
+
+.creature.sheet .total-cost {
+  padding: 0.5rem 1rem;
+  background: rgba(74, 123, 167, 0.1);
+  border-radius: 4px;
+}
+
+/* Combat Tab */
+.creature.sheet .attacks-list .attack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.creature.sheet .attack-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.creature.sheet .attack-roll {
+  padding: 0.5rem 1rem;
+  background: #8b0000;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.creature.sheet .attack-roll:hover {
+  background: #a00000;
+}
+
+/* Biography Tab */
+.creature.sheet .editor {
+  height: 100%;
+}
+
+.creature.sheet .editor .editor-content {
+  min-height: 400px;
+}
+
+/* Notes */
+.creature.sheet .notes {
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}

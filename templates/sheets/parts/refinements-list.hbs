@@ -1,0 +1,59 @@
+<div class="refinements-container">
+  <div class="refinements-header">
+    <h3>{{localize "CREATURE.TabRefinements"}}</h3>
+    <button type="button" class="item-create" data-type="refinement">
+      <i class="fas fa-plus"></i> {{localize "CREATURE.TypeRefinement"}}
+    </button>
+    <div class="total-cost">
+      <strong>{{localize "CREATURE.TotalCost"}}: {{totalRefinementCost}}</strong>
+    </div>
+  </div>
+
+  {{#if refinementsByCategory}}
+    {{#each refinementsByCategory as |category categoryKey|}}
+      <div class="refinement-category">
+        <h4>{{category.label}}</h4>
+        <ol class="items-list">
+          {{#each category.items as |item|}}
+            <li class="item refinement" data-item-id="{{item._id}}">
+              <div class="item-header">
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </div>
+
+              <div class="item-details">
+                <span class="cost">{{localize "CREATURE.TotalCost"}}: {{item.system.kosten}}</span>
+
+                {{#if item.system.ausgewaehlteWahl}}
+                  <div class="selected-option">
+                    <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.system.ausgewaehlteWahl}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.ausgewaehlteAttribute}}
+                  <div class="selected-attributes">
+                    <strong>{{localize "CREATURE.SelectedAttributes"}}:</strong>
+                    {{#each item.system.ausgewaehlteAttribute as |attr|}}
+                      <span class="attribute-tag">{{attr}}</span>
+                    {{/each}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.description}}
+                  <div class="item-description">
+                    {{{item.system.description}}}
+                  </div>
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="notes">{{localize "CREATURE.NoRefinements"}}</p>
+  {{/if}}
+</div>

@@ -1,0 +1,94 @@
+{
+  "CREATURE": {
+    "TypeCreature": "Creature",
+    "TypeRefinement": "Refinement",
+    "TypeTraining": "Training",
+
+    "ImportCreature": "Import Creature (.cre)",
+    "ImportDialogTitle": "Import Creature File",
+    "ImportDialogContent": "Select a .cre or .json file to import:",
+    "ImportConfirmTitle": "Confirm Import",
+    "ImportConfirmContent": "Importing {name}:\n{refinements} Refinements\n{trainings} Trainings\n{weapons} Weapons from Refinements",
+    "ImportSuccess": "Creature imported successfully!",
+    "ImportError": "Error importing creature: {error}",
+
+    "TabGeneral": "General",
+    "TabRefinements": "Refinements",
+    "TabTraining": "Training",
+    "TabCombat": "Combat",
+    "TabBiography": "Biography",
+
+    "Attributes": "Attributes",
+    "Skills": "Skills",
+    "DerivedAttributes": "Derived Attributes",
+
+    "Size": "Size",
+    "Speed": "Speed",
+    "Initiative": "Initiative",
+    "HealthPoints": "Health Points",
+    "FocusPoints": "Focus",
+    "Defense": "Defense",
+    "BodyResist": "Body Resistance",
+    "MindResist": "Mind Resistance",
+    "DamageReduction": "Damage Reduction",
+
+    "CreatureData": "Creature Data",
+    "Basis": "Basis",
+    "BasisAgil": "Agile",
+    "BasisRobust": "Robust",
+    "BasisAusgewogen": "Balanced",
+    "Rolle": "Role",
+    "Typus": "Type",
+
+    "PotentialModifiers": "Potential Modifiers",
+    "Tiervertrauter": "Animal Companion",
+    "Tierspezialist": "Animal Specialist",
+    "MeisterDerBestien": "Master of Beasts",
+    "Meisterbaendiger": "Master Tamer",
+
+    "RefinementCategories": {
+      "groesse": "Size",
+      "koerperliche_besonderheiten": "Physical Features",
+      "fortbewegung": "Movement",
+      "sinne": "Senses",
+      "natuerliche_waffen": "Natural Weapons",
+      "besondere_faehigkeiten": "Special Abilities"
+    },
+
+    "TrainingCategories": {
+      "grundausbildung": "Basic Training",
+      "kampf": "Combat",
+      "reittier": "Mount",
+      "sonstiges": "Miscellaneous"
+    },
+
+    "TotalCost": "Total Cost",
+    "PotentialCost": "Potential Cost",
+    "SelectedOption": "Selected Option",
+    "SelectedAttributes": "Selected Attributes",
+    "LinkedWeapon": "Linked Weapon",
+    "Prerequisites": "Prerequisites",
+    "CustomMasteries": "Custom Masteries",
+    "MasteryThreshold": "Threshold",
+    "MasterySkill": "Skill",
+    "GreatTricksChoice": "Great Tricks Choice",
+
+    "RollSkillCheck": "Roll Skill Check",
+    "RollAttack": "Roll Attack",
+
+    "Health": "Health Points",
+    "HealthConsumed": "Consumed",
+    "HealthExhausted": "Exhausted",
+    "HealthChanneled": "Channeled",
+    "Focus": "Focus",
+    "FocusConsumed": "Consumed",
+    "FocusExhausted": "Exhausted",
+    "FocusChanneled": "Channeled",
+
+    "Biography": "Biography",
+
+    "NoRefinements": "No refinements available",
+    "NoTraining": "No training available",
+    "NoAttacks": "No attacks available"
+  }
+}

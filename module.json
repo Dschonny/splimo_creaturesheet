@@ -1,0 +1,62 @@
+{
+  "id": "splimo-creaturesheet",
+  "title": "Splittermond Creature Sheet",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "12"
+  },
+  "description": "Adds creature/animal character sheets to the Splittermond system with support for Verfeinerungen, Abrichtungen, and .cre file import.",
+  "authors": [
+    {
+      "name": "Splimo Creaturesheet Team"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "splittermond",
+        "type": "requires",
+        "compatibility": {
+          "minimum": "2.0.0"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "module.js"
+  ],
+  "styles": [
+    "styles/creature-sheet.css"
+  ],
+  "languages": [
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "creature": {
+        "htmlFields": ["biography"]
+      }
+    },
+    "Item": {
+      "refinement": {
+        "htmlFields": ["description"]
+      },
+      "training": {
+        "htmlFields": ["description", "zusatzInfo"]
+      }
+    }
+  },
+  "url": "https://github.com/yourusername/splimo-creaturesheet",
+  "manifest": "https://github.com/yourusername/splimo-creaturesheet/releases/latest/download/module.json",
+  "download": "https://github.com/yourusername/splimo-creaturesheet/releases/latest/download/splimo-creaturesheet.zip"
+}

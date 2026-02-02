@@ -1,0 +1,94 @@
+{
+  "CREATURE": {
+    "TypeCreature": "Kreatur",
+    "TypeRefinement": "Verfeinerung",
+    "TypeTraining": "Abrichtung",
+
+    "ImportCreature": "Kreatur importieren (.cre)",
+    "ImportDialogTitle": "Kreatur-Datei importieren",
+    "ImportDialogContent": "Wähle eine .cre oder .json Datei zum Importieren:",
+    "ImportConfirmTitle": "Import bestätigen",
+    "ImportConfirmContent": "Import von {name}:\n{refinements} Verfeinerungen\n{trainings} Abrichtungen\n{weapons} Waffen aus Verfeinerungen",
+    "ImportSuccess": "Kreatur erfolgreich importiert!",
+    "ImportError": "Fehler beim Importieren der Kreatur: {error}",
+
+    "TabGeneral": "Allgemein",
+    "TabRefinements": "Verfeinerungen",
+    "TabTraining": "Abrichtungen",
+    "TabCombat": "Kampf",
+    "TabBiography": "Biografie",
+
+    "Attributes": "Attribute",
+    "Skills": "Fertigkeiten",
+    "DerivedAttributes": "Abgeleitete Werte",
+
+    "Size": "Größe",
+    "Speed": "Geschwindigkeit",
+    "Initiative": "Initiative",
+    "HealthPoints": "Lebenspunkte",
+    "FocusPoints": "Fokus",
+    "Defense": "Verteidigung",
+    "BodyResist": "Körperresistenz",
+    "MindResist": "Geistesresistenz",
+    "DamageReduction": "Schadensreduktion",
+
+    "CreatureData": "Kreaturdaten",
+    "Basis": "Basis",
+    "BasisAgil": "Agil",
+    "BasisRobust": "Robust",
+    "BasisAusgewogen": "Ausgewogen",
+    "Rolle": "Rolle",
+    "Typus": "Typus",
+
+    "PotentialModifiers": "Potential-Modifikatoren",
+    "Tiervertrauter": "Tiervertrauter",
+    "Tierspezialist": "Tierspezialist",
+    "MeisterDerBestien": "Meister der Bestien",
+    "Meisterbaendiger": "Meisterbändiger",
+
+    "RefinementCategories": {
+      "groesse": "Größe",
+      "koerperliche_besonderheiten": "Körperliche Besonderheiten",
+      "fortbewegung": "Fortbewegung",
+      "sinne": "Sinne",
+      "natuerliche_waffen": "Natürliche Waffen",
+      "besondere_faehigkeiten": "Besondere Fähigkeiten"
+    },
+
+    "TrainingCategories": {
+      "grundausbildung": "Grundausbildung",
+      "kampf": "Kampf",
+      "reittier": "Reittier",
+      "sonstiges": "Sonstiges"
+    },
+
+    "TotalCost": "Gesamtkosten",
+    "PotentialCost": "Potentialkosten",
+    "SelectedOption": "Gewählte Option",
+    "SelectedAttributes": "Gewählte Attribute",
+    "LinkedWeapon": "Verknüpfte Waffe",
+    "Prerequisites": "Voraussetzungen",
+    "CustomMasteries": "Spezielle Meisterschaften",
+    "MasteryThreshold": "Schwelle",
+    "MasterySkill": "Fertigkeit",
+    "GreatTricksChoice": "Große Tricks Wahl",
+
+    "RollSkillCheck": "Fertigkeitsprobe würfeln",
+    "RollAttack": "Angriff würfeln",
+
+    "Health": "Lebenspunkte",
+    "HealthConsumed": "Verbraucht",
+    "HealthExhausted": "Erschöpft",
+    "HealthChanneled": "Kanalisiert",
+    "Focus": "Fokus",
+    "FocusConsumed": "Verbraucht",
+    "FocusExhausted": "Erschöpft",
+    "FocusChanneled": "Kanalisiert",
+
+    "Biography": "Biografie",
+
+    "NoRefinements": "Keine Verfeinerungen vorhanden",
+    "NoTraining": "Keine Abrichtungen vorhanden",
+    "NoAttacks": "Keine Angriffe vorhanden"
+  }
+}

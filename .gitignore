@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# FoundryVTT files
+splittermond/
+
+# Test files
+*.cre
+fvtt-*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Claude
+.claude/

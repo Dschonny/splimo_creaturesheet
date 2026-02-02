@@ -1,0 +1,133 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+  {{!-- Sheet Header --}}
+  <header class="sheet-header">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+
+    <div class="header-fields">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
+      </h1>
+
+      <div class="creature-basics">
+        <div class="form-group">
+          <label>{{localize "CREATURE.Basis"}}</label>
+          <select name="system.creatureData.basis">
+            <option value="agil" {{#if (eq creatureData.basis "agil")}}selected{{/if}}>
+              {{localize "CREATURE.BasisAgil"}}
+            </option>
+            <option value="robust" {{#if (eq creatureData.basis "robust")}}selected{{/if}}>
+              {{localize "CREATURE.BasisRobust"}}
+            </option>
+            <option value="ausgewogen" {{#if (eq creatureData.basis "ausgewogen")}}selected{{/if}}>
+              {{localize "CREATURE.BasisAusgewogen"}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>{{localize "CREATURE.Rolle"}}</label>
+          <input type="text" name="system.creatureData.rolle" value="{{creatureData.rolle}}" placeholder="Rolle"/>
+        </div>
+      </div>
+
+      <div class="import-section">
+        <button type="button" class="import-creature">
+          <i class="fas fa-file-import"></i> {{localize "CREATURE.ImportCreature"}}
+        </button>
+      </div>
+    </div>
+
+    {{!-- Health and Focus Bars --}}
+    <div class="resources">
+      <div class="resource health">
+        <label>{{localize "CREATURE.Health"}}</label>
+        <div class="resource-bar">
+          <div class="bar-fill" style="width: {{health.percentage}}%"></div>
+          <span class="bar-label">{{health.value}} / {{health.max}}</span>
+        </div>
+        <div class="resource-controls">
+          <button type="button" class="health-control" data-action="decrease" data-type="consumed">-</button>
+          <span>{{localize "CREATURE.HealthConsumed"}}: {{health.consumed}}</span>
+          <button type="button" class="health-control" data-action="increase" data-type="consumed">+</button>
+        </div>
+      </div>
+
+      <div class="resource focus">
+        <label>{{localize "CREATURE.Focus"}}</label>
+        <div class="resource-bar">
+          <div class="bar-fill" style="width: {{focus.percentage}}%"></div>
+          <span class="bar-label">{{focus.value}} / {{focus.max}}</span>
+        </div>
+        <div class="resource-controls">
+          <button type="button" class="focus-control" data-action="decrease" data-type="consumed">-</button>
+          <span>{{localize "CREATURE.FocusConsumed"}}: {{focus.consumed}}</span>
+          <button type="button" class="focus-control" data-action="increase" data-type="consumed">+</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- Sheet Tabs --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="general">{{localize "CREATURE.TabGeneral"}}</a>
+    <a class="item" data-tab="refinements">{{localize "CREATURE.TabRefinements"}}</a>
+    <a class="item" data-tab="training">{{localize "CREATURE.TabTraining"}}</a>
+    <a class="item" data-tab="combat">{{localize "CREATURE.TabCombat"}}</a>
+    <a class="item" data-tab="biography">{{localize "CREATURE.TabBiography"}}</a>
+  </nav>
+
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">
+
+    {{!-- General Tab --}}
+    <div class="tab general" data-group="primary" data-tab="general">
+      {{> "modules/splimo-creaturesheet/templates/sheets/parts/creature-attributes.hbs"}}
+    </div>
+
+    {{!-- Refinements Tab --}}
+    <div class="tab refinements" data-group="primary" data-tab="refinements">
+      {{> "modules/splimo-creaturesheet/templates/sheets/parts/refinements-list.hbs"}}
+    </div>
+
+    {{!-- Training Tab --}}
+    <div class="tab training" data-group="primary" data-tab="training">
+      {{> "modules/splimo-creaturesheet/templates/sheets/parts/training-list.hbs"}}
+    </div>
+
+    {{!-- Combat Tab --}}
+    <div class="tab combat" data-group="primary" data-tab="combat">
+      <h3>{{localize "CREATURE.TabCombat"}}</h3>
+
+      {{#if attacks}}
+        <ol class="items-list attacks-list">
+          {{#each attacks as |attack|}}
+            <li class="item attack" data-item-id="{{attack.id}}">
+              <h4>{{attack.name}}</h4>
+              <div class="attack-details">
+                <span>{{localize "splittermond.skillValue"}}: {{attack.skillValue}}</span>
+                <span>{{localize "splittermond.damage"}}: {{attack.damage}}</span>
+                <span>WGS: {{attack.weaponSpeed}}</span>
+              </div>
+              <div class="item-controls">
+                <a class="attack-roll" data-attack-id="{{attack.id}}">
+                  <i class="fas fa-dice-d20"></i> {{localize "CREATURE.RollAttack"}}
+                </a>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <p class="notes">{{localize "CREATURE.NoAttacks"}}</p>
+      {{/if}}
+    </div>
+
+    {{!-- Biography Tab --}}
+    <div class="tab biography" data-group="primary" data-tab="biography">
+      <div class="editor">
+        {{editor system.biography target="system.biography" button=true owner=owner editable=editable}}
+      </div>
+    </div>
+
+  </section>
+</form>

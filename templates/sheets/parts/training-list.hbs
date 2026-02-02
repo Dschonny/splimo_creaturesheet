@@ -1,0 +1,85 @@
+<div class="training-container">
+  <div class="training-header">
+    <h3>{{localize "CREATURE.TabTraining"}}</h3>
+    <button type="button" class="item-create" data-type="training">
+      <i class="fas fa-plus"></i> {{localize "CREATURE.TypeTraining"}}
+    </button>
+    <div class="total-cost">
+      <strong>{{localize "CREATURE.PotentialCost"}}: {{totalTrainingCost}}</strong>
+    </div>
+  </div>
+
+  {{#if trainingByCategory}}
+    {{#each trainingByCategory as |category categoryKey|}}
+      <div class="training-category">
+        <h4>{{category.label}}</h4>
+        <ol class="items-list">
+          {{#each category.items as |item|}}
+            <li class="item training" data-item-id="{{item._id}}">
+              <div class="item-header">
+                <h4 class="item-name">{{item.name}}</h4>
+                <div class="item-controls">
+                  <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                  <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </div>
+
+              <div class="item-details">
+                <span class="cost">{{localize "CREATURE.PotentialCost"}}: {{item.system.potenzialKosten}}</span>
+
+                {{#if item.system.voraussetzung}}
+                  <div class="prerequisites">
+                    <strong>{{localize "CREATURE.Prerequisites"}}:</strong> {{item.system.voraussetzung}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.ausgewaehlteWahl}}
+                  <div class="selected-option">
+                    <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.system.ausgewaehlteWahl}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.grosseTricksWahl}}
+                  <div class="great-tricks">
+                    <strong>{{localize "CREATURE.GreatTricksChoice"}}:</strong> {{item.system.grosseTricksWahl}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.customMeisterschaften}}
+                  {{#if item.system.customMeisterschaften.length}}
+                    <div class="custom-masteries">
+                      <strong>{{localize "CREATURE.CustomMasteries"}}:</strong>
+                      <ul>
+                        {{#each item.system.customMeisterschaften as |mastery|}}
+                          <li>
+                            {{localize "CREATURE.MasteryThreshold"}} {{mastery.schwelle}} -
+                            {{mastery.fertigkeit}}
+                            {{#if mastery.name}}: {{mastery.name}}{{/if}}
+                          </li>
+                        {{/each}}
+                      </ul>
+                    </div>
+                  {{/if}}
+                {{/if}}
+
+                {{#if item.system.description}}
+                  <div class="item-description">
+                    {{{item.system.description}}}
+                  </div>
+                {{/if}}
+
+                {{#if item.system.zusatzInfo}}
+                  <div class="additional-info">
+                    {{{item.system.zusatzInfo}}}
+                  </div>
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="notes">{{localize "CREATURE.NoTraining"}}</p>
+  {{/if}}
+</div>

@@ -1,0 +1,46 @@
+{{!-- Attributes Section --}}
+<div class="attributes-section">
+  <h3>{{localize "CREATURE.Attributes"}}</h3>
+  <div class="attributes-grid">
+    {{#each attributes as |attr|}}
+      <div class="attribute">
+        <label>{{attr.label}}</label>
+        <input type="number" class="attribute-value" data-attribute="{{attr.id}}" value="{{attr.value}}" />
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+{{!-- Skills Section --}}
+<div class="skills-section">
+  <h3>{{localize "CREATURE.Skills"}}</h3>
+  <div class="skills-list">
+    {{#each skills as |skill|}}
+      <div class="skill">
+        <label>{{skill.label}}</label>
+        <input type="number" class="skill-value" data-skill="{{skill.id}}" value="{{skill.value}}" />
+        <a class="skill-roll" data-skill="{{skill.id}}">
+          <i class="fas fa-dice-d20"></i>
+        </a>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+{{!-- Derived Attributes Section --}}
+<div class="derived-section">
+  <h3>{{localize "CREATURE.DerivedAttributes"}}</h3>
+  <div class="derived-grid">
+    {{#each derivedValues as |derived|}}
+      <div class="derived-attribute">
+        <label>{{derived.label}}</label>
+        <input type="number" class="derived-value" data-derived="{{derived.id}}" value="{{derived.value}}" />
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="damage-reduction">
+    <label>{{localize "CREATURE.DamageReduction"}}</label>
+    <input type="number" name="system.damageReduction.value" value="{{system.damageReduction.value}}" />
+  </div>
+</div>
