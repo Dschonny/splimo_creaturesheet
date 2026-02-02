@@ -16,12 +16,6 @@
     "systems": [
       {
         "id": "splittermond",
-        "type": "system"
-      }
-    ],
-    "requires": [
-      {
-        "id": "splittermond",
         "type": "system",
         "compatibility": {
           "minimum": "2.0.0"
