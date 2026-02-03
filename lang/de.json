@@ -48,18 +48,24 @@
 
     "RefinementCategories": {
       "groesse": "Größe",
+      "größe": "Größe",
       "koerperliche_besonderheiten": "Körperliche Besonderheiten",
+      "körperliche_besonderheiten": "Körperliche Besonderheiten",
       "fortbewegung": "Fortbewegung",
       "sinne": "Sinne",
       "natuerliche_waffen": "Natürliche Waffen",
-      "besondere_faehigkeiten": "Besondere Fähigkeiten"
+      "besondere_faehigkeiten": "Besondere Fähigkeiten",
+      "späher_jäger": "Späher/Jäger",
+      "kampffähigkeiten": "Kampffähigkeiten"
     },
 
     "TrainingCategories": {
       "grundausbildung": "Grundausbildung",
       "kampf": "Kampf",
       "reittier": "Reittier",
-      "sonstiges": "Sonstiges"
+      "sonstiges": "Sonstiges",
+      "allgemein": "Allgemein",
+      "helfer": "Helfer"
     },
 
     "TotalCost": "Gesamtkosten",

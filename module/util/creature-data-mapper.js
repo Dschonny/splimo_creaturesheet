@@ -16,7 +16,7 @@ export class CreatureDataMapper {
     // Prepare actor data
     const actorData = {
       name: creData.name || "Unbenannte Kreatur",
-      type: "creature",
+      type: "npc",
       system: {
         attributes: this._initializeAttributes(),
         skills: this._initializeSkills(),
@@ -25,7 +25,7 @@ export class CreatureDataMapper {
           basis: creData.basis || "ausgewogen",
           rolle: creData.rolle || "",
           typus: creData.typus || [],
-          potentialModifiers: creData.potentialModifiers || {
+          potentialModifiers: creData.potentialModifiers || creData.potentialModifikatoren || {
             tiervertrauter: false,
             tierspezialist: 0,
             meisterDerBestien: false,

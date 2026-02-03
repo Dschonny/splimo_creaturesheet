@@ -42,11 +42,6 @@
     }
   ],
   "documentTypes": {
-    "Actor": {
-      "creature": {
-        "htmlFields": ["biography"]
-      }
-    },
     "Item": {
       "refinement": {
         "htmlFields": ["description"]
