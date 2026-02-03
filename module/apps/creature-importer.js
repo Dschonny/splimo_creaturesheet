@@ -59,6 +59,9 @@ export class CreatureImporter {
         targetActor = await Actor.create(actorData);
       }
 
+      // Set creature sheet as default for this actor
+      await targetActor.setFlag("core", "sheetClass", "splimo_creaturesheet.CreatureSheet");
+
       // Create weapon items only
       if (items.length > 0) {
         await targetActor.createEmbeddedDocuments("Item", items);
