@@ -55,17 +55,17 @@ export class CreatureSheet extends ActorSheet {
    */
   _groupRefinementsByCategory() {
     const grouped = {};
-    const items = this.actor.items.filter(i => i.type === "refinement");
+    const verfeinerungen = this.actor.system.verfeinerungen || [];
 
-    for (const item of items) {
-      const category = item.system.kategorie || "sonstiges";
+    for (const verf of verfeinerungen) {
+      const category = verf.kategorie || "sonstiges";
       if (!grouped[category]) {
         grouped[category] = {
           label: game.i18n.localize(`CREATURE.RefinementCategories.${category}`),
           items: []
         };
       }
-      grouped[category].items.push(item);
+      grouped[category].items.push(verf);
     }
 
     return grouped;
@@ -76,17 +76,17 @@ export class CreatureSheet extends ActorSheet {
    */
   _groupTrainingByCategory() {
     const grouped = {};
-    const items = this.actor.items.filter(i => i.type === "training");
+    const abrichtungen = this.actor.system.abrichtungen || [];
 
-    for (const item of items) {
-      const category = item.system.kategorie || "sonstiges";
+    for (const abr of abrichtungen) {
+      const category = abr.kategorie || "sonstiges";
       if (!grouped[category]) {
         grouped[category] = {
           label: game.i18n.localize(`CREATURE.TrainingCategories.${category}`),
           items: []
         };
       }
-      grouped[category].items.push(item);
+      grouped[category].items.push(abr);
     }
 
     return grouped;
@@ -213,53 +213,31 @@ export class CreatureSheet extends ActorSheet {
   }
 
   /**
-   * Handle item creation
+   * Handle item creation - not needed for Verfeinerungen/Abrichtungen
    */
   async _onItemCreate(event) {
     event.preventDefault();
-    const header = event.currentTarget;
-    const type = header.dataset.type;
-
-    const itemData = {
-      name: game.i18n.localize(`CREATURE.Type${type.charAt(0).toUpperCase() + type.slice(1)}`),
-      type: type,
-      system: {}
-    };
-
-    await Item.create(itemData, { parent: this.actor });
+    // Items (refinements/training) are managed directly in actor.system
+    // Only weapons can be created, but they come from import
+    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Import hinzugefügt werden.");
   }
 
   /**
-   * Handle item edit
+   * Handle item edit - not needed for Verfeinerungen/Abrichtungen
    */
   async _onItemEdit(event) {
     event.preventDefault();
-    const itemId = event.currentTarget.closest(".item").dataset.itemId;
-    const item = this.actor.items.get(itemId);
-
-    if (item) {
-      item.sheet.render(true);
-    }
+    // Items are stored in actor.system, not as separate documents
+    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Re-Import bearbeitet werden.");
   }
 
   /**
-   * Handle item deletion
+   * Handle item deletion - not needed for Verfeinerungen/Abrichtungen
    */
   async _onItemDelete(event) {
     event.preventDefault();
-    const itemId = event.currentTarget.closest(".item").dataset.itemId;
-    const item = this.actor.items.get(itemId);
-
-    if (item) {
-      const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("Delete Item"),
-        content: `<p>Delete ${item.name}?</p>`
-      });
-
-      if (confirmed) {
-        await item.delete();
-      }
-    }
+    // Items are stored in actor.system, not as separate documents
+    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Re-Import entfernt werden.");
   }
 
   /**

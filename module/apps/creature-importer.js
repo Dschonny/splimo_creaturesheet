@@ -27,14 +27,14 @@ export class CreatureImporter {
       }
 
       // Map to actor data
-      const { actorData, items, weaponLinks } = CreatureDataMapper.mapCreToActorData(creData);
+      const { actorData, items } = CreatureDataMapper.mapCreToActorData(creData);
 
       // Show confirmation dialog
       const confirmed = await this._showConfirmationDialog(
         actorData.name,
-        items.filter(i => i.type === "refinement").length,
-        items.filter(i => i.type === "training").length,
-        items.filter(i => i.type === "npcattack").length
+        actorData.system.verfeinerungen?.length || 0,
+        actorData.system.abrichtungen?.length || 0,
+        items.length
       );
 
       if (!confirmed) return;
@@ -45,36 +45,19 @@ export class CreatureImporter {
       if (targetActor) {
         // Update existing actor
         await targetActor.update(actorData);
-        // Delete existing items
-        const existingItemIds = targetActor.items.map(i => i.id);
-        await targetActor.deleteEmbeddedDocuments("Item", existingItemIds);
+        // Delete existing weapon items only
+        const existingWeapons = targetActor.items.filter(i => i.type === "npcattack");
+        if (existingWeapons.length > 0) {
+          await targetActor.deleteEmbeddedDocuments("Item", existingWeapons.map(i => i.id));
+        }
       } else {
         // Create new actor
         targetActor = await Actor.create(actorData);
       }
 
-      // Create items
-      const createdItems = await targetActor.createEmbeddedDocuments("Item", items);
-
-      // Link weapons to refinements
-      if (weaponLinks.size > 0) {
-        const updates = [];
-
-        for (const [refinementName, weaponName] of weaponLinks.entries()) {
-          const refinement = createdItems.find(i => i.name === refinementName);
-          const weapon = createdItems.find(i => i.name === weaponName);
-
-          if (refinement && weapon) {
-            updates.push({
-              _id: refinement.id,
-              "system.zusaetzlicheWaffeId": weapon.id
-            });
-          }
-        }
-
-        if (updates.length > 0) {
-          await targetActor.updateEmbeddedDocuments("Item", updates);
-        }
+      // Create weapon items only
+      if (items.length > 0) {
+        await targetActor.createEmbeddedDocuments("Item", items);
       }
 
       // Show success message

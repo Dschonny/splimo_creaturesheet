@@ -180,38 +180,36 @@ export class CreatureActor extends Actor {
   }
 
   /**
-   * Get refinement items grouped by category
+   * Get refinements grouped by category
    */
   getRefinementsByCategory() {
     const grouped = {};
+    const verfeinerungen = this.system.verfeinerungen || [];
 
-    for (const item of this.items) {
-      if (item.type === "refinement") {
-        const category = item.system.kategorie || "sonstiges";
-        if (!grouped[category]) {
-          grouped[category] = [];
-        }
-        grouped[category].push(item);
+    for (const verf of verfeinerungen) {
+      const category = verf.kategorie || "sonstiges";
+      if (!grouped[category]) {
+        grouped[category] = [];
       }
+      grouped[category].push(verf);
     }
 
     return grouped;
   }
 
   /**
-   * Get training items grouped by category
+   * Get training (Abrichtungen) grouped by category
    */
   getTrainingByCategory() {
     const grouped = {};
+    const abrichtungen = this.system.abrichtungen || [];
 
-    for (const item of this.items) {
-      if (item.type === "training") {
-        const category = item.system.kategorie || "sonstiges";
-        if (!grouped[category]) {
-          grouped[category] = [];
-        }
-        grouped[category].push(item);
+    for (const abr of abrichtungen) {
+      const category = abr.kategorie || "sonstiges";
+      if (!grouped[category]) {
+        grouped[category] = [];
       }
+      grouped[category].push(abr);
     }
 
     return grouped;
@@ -222,10 +220,9 @@ export class CreatureActor extends Actor {
    */
   getTotalRefinementCost() {
     let total = 0;
-    for (const item of this.items) {
-      if (item.type === "refinement") {
-        total += item.system.kosten || 0;
-      }
+    const verfeinerungen = this.system.verfeinerungen || [];
+    for (const verf of verfeinerungen) {
+      total += verf.kosten || 0;
     }
     return total;
   }
@@ -235,10 +232,9 @@ export class CreatureActor extends Actor {
    */
   getTotalTrainingCost() {
     let total = 0;
-    for (const item of this.items) {
-      if (item.type === "training") {
-        total += item.system.potenzialKosten || 0;
-      }
+    const abrichtungen = this.system.abrichtungen || [];
+    for (const abr of abrichtungen) {
+      total += abr.potenzialKosten || 0;
     }
     return total;
   }

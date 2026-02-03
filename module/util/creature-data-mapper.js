@@ -32,6 +32,9 @@ export class CreatureDataMapper {
             meisterbaendiger: false
           }
         },
+        // Store Verfeinerungen and Abrichtungen directly in actor
+        verfeinerungen: creData.verfeinerungen || [],
+        abrichtungen: creData.abrichtungen || [],
         health: { consumed: 0, exhausted: 0, channeled: [] },
         focus: { consumed: 0, exhausted: 0, channeled: [] },
         damageReduction: { value: 0 },
@@ -39,75 +42,22 @@ export class CreatureDataMapper {
       }
     };
 
-    // Prepare items array
+    // Prepare items array - only for weapons from Verfeinerungen
     const items = [];
-    const weaponLinks = new Map(); // Track weapons created from refinements
 
-    // Convert Verfeinerungen to refinement items
+    // Create weapons from Verfeinerungen with zusaetzlicheWaffe
     if (creData.verfeinerungen && Array.isArray(creData.verfeinerungen)) {
       for (const verf of creData.verfeinerungen) {
-        const refinementItem = this.mapVerfeinerungToItem(verf);
-        items.push(refinementItem);
-
-        // Check for zusaetzlicheWaffe
         if (verf.zusaetzlicheWaffe) {
           const weaponItem = this.createWeaponFromVerfeinerung(verf, verf.name);
           items.push(weaponItem);
-          // Store weapon name to link it to refinement later
-          weaponLinks.set(refinementItem.name, weaponItem.name);
         }
-      }
-    }
-
-    // Convert Abrichtungen to training items
-    if (creData.abrichtungen && Array.isArray(creData.abrichtungen)) {
-      for (const abr of creData.abrichtungen) {
-        items.push(this.mapAbrichtungToItem(abr));
       }
     }
 
     return {
       actorData,
-      items,
-      weaponLinks
-    };
-  }
-
-  /**
-   * Maps a Verfeinerung to a refinement item
-   */
-  static mapVerfeinerungToItem(verf) {
-    return {
-      name: verf.name || "Unbenannte Verfeinerung",
-      type: "refinement",
-      system: {
-        description: verf.beschreibung || "",
-        kategorie: verf.kategorie || "sonstiges",
-        kosten: verf.kosten || 0,
-        ausgewaehlteWahl: verf.ausgewaehlteWahl || "",
-        ausgewaehlteAttribute: verf.ausgewaehlteAttribute || [],
-        zusaetzlicheWaffeId: "" // Will be set after item creation
-      }
-    };
-  }
-
-  /**
-   * Maps an Abrichtung to a training item
-   */
-  static mapAbrichtungToItem(abr) {
-    return {
-      name: abr.name || "Unbenannte Abrichtung",
-      type: "training",
-      system: {
-        description: abr.beschreibung || "",
-        kategorie: abr.kategorie || "sonstiges",
-        potenzialKosten: abr.potenzialKosten || 0,
-        voraussetzung: abr.voraussetzung || "",
-        zusatzInfo: abr.zusatzInfo || "",
-        ausgewaehlteWahl: abr.ausgewaehlteWahl || "",
-        grosseTricksWahl: abr.grosseTricksWahl || "",
-        customMeisterschaften: abr.customMeisterschaften || []
-      }
+      items
     };
   }
 
