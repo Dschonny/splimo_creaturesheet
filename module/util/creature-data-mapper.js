@@ -140,8 +140,11 @@ export class CreatureDataMapper {
       return { valid: false, error: "Keine Daten vorhanden" };
     }
 
+    console.log("Validating .cre file:", data);
+    console.log("Editor field:", data.editor);
+
     if (data.editor !== "SPLITTERMOND_CREATURE_EDITOR") {
-      return { valid: false, error: "Ungültiges Editor-Format" };
+      return { valid: false, error: `Ungültiges Editor-Format: '${data.editor}' (erwartet: 'SPLITTERMOND_CREATURE_EDITOR')` };
     }
 
     if (!data.name) {

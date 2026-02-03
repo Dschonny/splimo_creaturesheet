@@ -17,11 +17,15 @@ export class CreatureImporter {
     try {
       // Read and parse file
       const content = await this._readFile(file);
+      console.log("File content read, length:", content?.length);
+
       const creData = JSON.parse(content);
+      console.log("Parsed .cre data:", creData);
 
       // Validate format
       const validation = CreatureDataMapper.validateCreFormat(creData);
       if (!validation.valid) {
+        console.error("Validation failed:", validation.error);
         ui.notifications.error(game.i18n.format("CREATURE.ImportError", { error: validation.error }));
         return;
       }
