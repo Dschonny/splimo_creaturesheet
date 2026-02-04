@@ -8,23 +8,7 @@
             <div class="column stretch">
                 <input class="character-name" name="name" type="text" value="{{actor.name}}"
                     placeholder="{{localize 'splittermond.name' }}" />
-                <div>
-                    <input class="autoexpand" name="system.type" type="text" value="{{actor.system.type}}"
-                        placeholder="{{localize 'splittermond.opponenttype'}}" />
-                    {{#unless this.limited}}
-                    &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="system.level" type="text" value="{{actor.system.level}}"
-                        placeholder="{{localize 'splittermond.opponentlevel'}}" />&nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="system.sex" type="text" value="{{actor.system.sex}}"
-                        placeholder="{{localize 'splittermond.sex'}}" />
-                    {{/unless}}
-                </div>
                 {{#unless limited}}
-                <div class="import-section">
-                    <button type="button" class="import-creature button-inline">
-                        <i class="fas fa-file-import"></i> {{localize "CREATURE.ImportCreature"}}
-                    </button>
-                </div>
                 <ul class="npcfeatures taglist" data-item-type="npcfeature">
                     {{#each itemsByType.npcfeature}}
                     <li class="taglist-item" data-item-id="{{this._id}}">
@@ -59,6 +43,7 @@
     <nav class="sheet-navigation" data-group="primary">
         <a class="sheet-navigation-item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
         <a class="sheet-navigation-item" data-tab="general">{{ localize "splittermond.general" }}</a>
+        <a class="sheet-navigation-item" data-tab="combat">{{ localize "CREATURE.TabCombat" }}</a>
         <a class="sheet-navigation-item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
         <a class="sheet-navigation-item" data-tab="status">{{ localize "splittermond.status" }}</a>
     </nav>
@@ -67,6 +52,10 @@
             {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="general">
+            {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
+            masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
+            magicSkills=magicSkills}}
+
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
             <div data-roll-type="skill">
                 <div class="list skills">
@@ -152,16 +141,26 @@
                 </div>
             </div>
 
-            <div>
-                <div>
-                    {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
-                    activeDefense=actor.activeDefense attacks=actor.attacks}}
+            {{!-- NPC Features / Powers --}}
+            {{#if itemsByType.npcfeature}}
+            <div class="list">
+                <div class="list-header">
+                    <h3>{{localize "CREATURE.Features"}}</h3>
                 </div>
-                {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
-                masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
-                magicSkills=magicSkills}}
+                <ol class="list-body">
+                    {{#each itemsByType.npcfeature}}
+                    <li class="list-item" data-item-id="{{this._id}}">
+                        <label title="{{this.system.description}}">{{this.name}}</label>
+                    </li>
+                    {{/each}}
+                </ol>
             </div>
+            {{/if}}
 
+        </section>
+        <section class="tab" data-group="primary" data-tab="combat">
+            {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
+            activeDefense=actor.activeDefense attacks=actor.attacks}}
         </section>
         <section class="tab" data-group="primary" data-tab="spells">
             <div>

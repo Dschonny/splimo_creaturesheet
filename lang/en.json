@@ -92,6 +92,8 @@
     "NoAttacks": "No attacks available",
 
     "DeleteItem": "Delete Item",
-    "DeleteItemConfirm": "Really delete {name}?"
+    "DeleteItemConfirm": "Really delete {name}?",
+
+    "Features": "Features"
   }
 }

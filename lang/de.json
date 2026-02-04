@@ -98,6 +98,8 @@
     "NoAttacks": "Keine Angriffe vorhanden",
 
     "DeleteItem": "Eintrag löschen",
-    "DeleteItemConfirm": "{name} wirklich löschen?"
+    "DeleteItemConfirm": "{name} wirklich löschen?",
+
+    "Features": "Merkmale"
   }
 }

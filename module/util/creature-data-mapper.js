@@ -33,12 +33,14 @@ export class CreatureDataMapper {
         skills: skills,
         derivedValues: derivedAttributes,
         health: {
+          max: derivedAttributes.healthpoints?.value || 0,
           value: derivedAttributes.healthpoints?.value || 0,
           consumed: 0,
           exhausted: 0,
           channeled: { entries: [] }
         },
         focus: {
+          max: derivedAttributes.focuspoints?.value || 0,
           value: derivedAttributes.focuspoints?.value || 0,
           consumed: 0,
           exhausted: 0,
@@ -139,8 +141,8 @@ export class CreatureDataMapper {
       "FOCUS": "focuspoints",
       "DEFENSE": "defense",
       "DAMAGE_REDUCTION": "damageReduction",
-      "MINDRESIST": "mindResist",
-      "BODYRESIST": "bodyResist"
+      "MINDRESIST": "mindresist",
+      "BODYRESIST": "bodyresist"
     };
 
     for (const attr of attributesArray) {
@@ -177,7 +179,8 @@ export class CreatureDataMapper {
         skills[skill.id] = {
           value: skill.value || 0,
           points: skill.points || 0,
-          modifier: skill.modifier || 0
+          modifier: skill.modifier || 0,
+          label: skill.name || skill.id // Store the German name
         };
       }
     }

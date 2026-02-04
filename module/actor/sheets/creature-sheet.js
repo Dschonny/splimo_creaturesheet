@@ -50,9 +50,19 @@ export class CreatureSheet extends ActorSheet {
     const magicSkillIds = ["spellcasting"];
 
     for (const [skillId, skillData] of Object.entries(skills)) {
+      // Use stored label if available, otherwise try config, then fallback to ID
+      let label = skillData.label;
+      if (typeof label === 'string') {
+        // If label is a string (from import), use it as both short and long
+        label = { short: label, long: label };
+      } else if (!label) {
+        // Otherwise try to get from config or use ID
+        label = game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId };
+      }
+
       const skill = {
         ...skillData,
-        label: game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId }
+        label: label
       };
 
       if (generalSkillIds.includes(skillId)) {

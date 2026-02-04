@@ -112,7 +112,7 @@ export class CreatureActor extends Actor {
 
     const derivedIds = [
       "size", "speed", "initiative", "healthpoints", "focuspoints",
-      "defense", "mindResist", "bodyResist"
+      "defense", "mindresist", "bodyresist"
     ];
 
     for (const derivedId of derivedIds) {
@@ -181,14 +181,14 @@ export class CreatureActor extends Actor {
         id: "mindresist",
         name: "splittermond.derivedAttribute.mindresist.long",
         skill: {
-          value: this.system.derivedValues?.mindResist?.value || 0
+          value: this.system.derivedValues?.mindresist?.value || 0
         }
       }],
       bodyresist: [{
         id: "bodyresist",
         name: "splittermond.derivedAttribute.bodyresist.long",
         skill: {
-          value: this.system.derivedValues?.bodyResist?.value || 0
+          value: this.system.derivedValues?.bodyresist?.value || 0
         }
       }]
     };
