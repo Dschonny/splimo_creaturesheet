@@ -92,14 +92,30 @@ export class CreatureSheet extends ActorSheet {
     for (const mastery of masteries) {
       const skillId = mastery.system.skill || "none";
       if (!context.masteriesBySkill[skillId]) {
-        // Match the structure expected by mastery-list.hbs partial
+        // The mastery-list partial expects label to be a localization key string,
+        // not an object with {short, long} properties
         const skillData = context.generalSkills[skillId] ||
                          context.fightingSkills[skillId] ||
-                         context.magicSkills[skillId] ||
-                         { label: { short: skillId, long: skillId } };
+                         context.magicSkills[skillId];
+
+        // Use system localization key format, or fall back to stored label text
+        let labelKey;
+        if (skillData && skillData.label) {
+          // If we have a label object with long property, use that text directly
+          // Otherwise try to use the system's localization key format
+          if (typeof skillData.label === 'object' && skillData.label.long) {
+            labelKey = skillData.label.long;
+          } else if (typeof skillData.label === 'string') {
+            labelKey = skillData.label;
+          } else {
+            labelKey = `splittermond.skillLabel.${skillId}`;
+          }
+        } else {
+          labelKey = `splittermond.skillLabel.${skillId}`;
+        }
 
         context.masteriesBySkill[skillId] = {
-          label: skillData.label,
+          label: labelKey,
           masteries: []
         };
       }
