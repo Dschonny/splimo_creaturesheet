@@ -56,30 +56,31 @@
         <section class="tab" data-group="primary" data-tab="general">
             <div class="row">
                 <div class="column">
-                    {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
-                </div>
-                <div class="column">
-                    {{!-- Creature Info: Basis & Rolle --}}
-                    {{#if creatureInfo.basis}}
+                    {{!-- Attributes vertical list --}}
                     <div class="list">
                         <div class="list-header">
-                            <h3>{{localize "CREATURE.Basis"}}</h3>
+                            <h3>{{localize "CREATURE.Attributes"}}</h3>
                         </div>
-                        <div class="list-body">
-                            <strong title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</strong>
-                        </div>
+                        <ol class="list-body">
+                            {{#each actor.attributes as |attribute attributeId|}}
+                            <li class="list-item">
+                                <label title="{{localize attribute.label.long}}">{{localize attribute.label.short}}</label>
+                                <div class="value">
+                                    <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
                     </div>
+                </div>
+                <div class="column">
+                    {{!-- Creature Info: Basis & Rolle as simple labels --}}
+                    {{#if creatureInfo.basis}}
+                    <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
                     {{/if}}
 
                     {{#if creatureInfo.rolle}}
-                    <div class="list">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Rolle"}}</h3>
-                        </div>
-                        <div class="list-body">
-                            <strong title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</strong>
-                        </div>
-                    </div>
+                    <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
                     {{/if}}
 
                     {{!-- Verfeinerungen --}}
@@ -91,7 +92,7 @@
                         <div class="list-body">
                             {{#each verfeinerungenByCategory}}
                             <div class="refinement-category">
-                                <h4>{{localize this.categoryKey}}</h4>
+                                <h4 style="font-weight: bold;">{{localize this.categoryKey}}</h4>
                                 <ul class="taglist">
                                     {{#each this.items}}
                                     <li class="taglist-item" title="{{this.description}}">
@@ -222,19 +223,18 @@
 
                     {{!-- Abrichtungen --}}
                     {{#if abrichtungenByCategory}}
-                    <div class="list">
+                    <div class="list abrichtungen">
                         <div class="list-header">
                             <h3>{{localize "CREATURE.Abrichtungen"}}</h3>
                         </div>
                         <ol class="list-body">
                             {{#each abrichtungenByCategory}}
                             <li class="list-item">
-                                <h4>{{localize this.categoryKey}}</h4>
-                                <ul class="taglist">
+                                <label>{{localize this.categoryKey}}</label>
+                                <ul class="taglist item-list">
                                     {{#each this.items}}
-                                    <li class="taglist-item" title="{{this.description}}">
+                                    <li class="taglist-item item" title="{{this.description}}">
                                         <div class="taglist-item-name">{{this.name}}</div>
-                                        <div class="taglist-item-cost">({{this.potentialCost}})</div>
                                     </li>
                                     {{/each}}
                                 </ul>
