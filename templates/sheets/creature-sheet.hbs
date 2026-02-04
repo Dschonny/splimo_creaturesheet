@@ -82,17 +82,192 @@
 
     {{!-- General Tab --}}
     <div class="tab general" data-group="primary" data-tab="general">
-      {{> "modules/splimo_creaturesheet/templates/sheets/parts/creature-attributes.hbs"}}
+      {{!-- Attributes Section --}}
+      <div class="attributes-section">
+        <h3>{{localize "CREATURE.Attributes"}}</h3>
+        <div class="attributes-grid">
+          {{#each attributes as |attr|}}
+            <div class="attribute">
+              <label>{{attr.label}}</label>
+              <input type="number" class="attribute-value" data-attribute="{{attr.id}}" value="{{attr.value}}" />
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Skills Section --}}
+      <div class="skills-section">
+        <h3>{{localize "CREATURE.Skills"}}</h3>
+        <div class="skills-list">
+          {{#each skills as |skill|}}
+            <div class="skill">
+              <label>{{skill.label}}</label>
+              <input type="number" class="skill-value" data-skill="{{skill.id}}" value="{{skill.value}}" />
+              <a class="skill-roll" data-skill="{{skill.id}}">
+                <i class="fas fa-dice-d20"></i>
+              </a>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Derived Attributes Section --}}
+      <div class="derived-section">
+        <h3>{{localize "CREATURE.DerivedAttributes"}}</h3>
+        <div class="derived-grid">
+          {{#each derivedValues as |derived|}}
+            <div class="derived-attribute">
+              <label>{{derived.label}}</label>
+              <input type="number" class="derived-value" data-derived="{{derived.id}}" value="{{derived.value}}" />
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="damage-reduction">
+          <label>{{localize "CREATURE.DamageReduction"}}</label>
+          <input type="number" name="system.damageReduction.value" value="{{system.damageReduction.value}}" />
+        </div>
+      </div>
     </div>
 
     {{!-- Refinements Tab --}}
     <div class="tab refinements" data-group="primary" data-tab="refinements">
-      {{> "modules/splimo_creaturesheet/templates/sheets/parts/refinements-list.hbs"}}
+      <div class="refinements-container">
+        <div class="refinements-header">
+          <h3>{{localize "CREATURE.TabRefinements"}}</h3>
+          <button type="button" class="item-create" data-type="refinement">
+            <i class="fas fa-plus"></i> {{localize "CREATURE.TypeRefinement"}}
+          </button>
+          <div class="total-cost">
+            <strong>{{localize "CREATURE.TotalCost"}}: {{totalRefinementCost}}</strong>
+          </div>
+        </div>
+
+        {{#if refinementsByCategory}}
+          {{#each refinementsByCategory as |category categoryKey|}}
+            <div class="refinement-category">
+              <h4>{{category.label}}</h4>
+              <ol class="items-list">
+                {{#each category.items as |item|}}
+                  <li class="item refinement" data-item-id="{{item._id}}">
+                    <div class="item-header">
+                      <h4 class="item-name">{{item.name}}</h4>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+
+                    <div class="item-details">
+                      <span class="cost">{{localize "CREATURE.TotalCost"}}: {{item.kosten}}</span>
+
+                      {{#if item.ausgewaehlteWahl}}
+                        <div class="selected-option">
+                          <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.ausgewaehlteWahl}}
+                        </div>
+                      {{/if}}
+
+                      {{#if item.ausgewaehlteAttribute}}
+                        <div class="selected-attributes">
+                          <strong>{{localize "CREATURE.SelectedAttributes"}}:</strong>
+                          {{#each item.ausgewaehlteAttribute as |attr|}}
+                            <span class="attribute-tag">{{attr}}</span>
+                          {{/each}}
+                        </div>
+                      {{/if}}
+                    </div>
+                  </li>
+                {{/each}}
+              </ol>
+            </div>
+          {{/each}}
+        {{else}}
+          <p class="notes">{{localize "CREATURE.NoRefinements"}}</p>
+        {{/if}}
+      </div>
     </div>
 
     {{!-- Training Tab --}}
     <div class="tab training" data-group="primary" data-tab="training">
-      {{> "modules/splimo_creaturesheet/templates/sheets/parts/training-list.hbs"}}
+      <div class="training-container">
+        <div class="training-header">
+          <h3>{{localize "CREATURE.TabTraining"}}</h3>
+          <button type="button" class="item-create" data-type="training">
+            <i class="fas fa-plus"></i> {{localize "CREATURE.TypeTraining"}}
+          </button>
+          <div class="total-cost">
+            <strong>{{localize "CREATURE.PotentialCost"}}: {{totalTrainingCost}}</strong>
+          </div>
+        </div>
+
+        {{#if trainingByCategory}}
+          {{#each trainingByCategory as |category categoryKey|}}
+            <div class="training-category">
+              <h4>{{category.label}}</h4>
+              <ol class="items-list">
+                {{#each category.items as |item|}}
+                  <li class="item training" data-item-id="{{item._id}}">
+                    <div class="item-header">
+                      <h4 class="item-name">{{item.name}}</h4>
+                      <div class="item-controls">
+                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </div>
+
+                    <div class="item-details">
+                      <span class="cost">{{localize "CREATURE.PotentialCost"}}: {{item.potenzialKosten}}</span>
+
+                      {{#if item.voraussetzung}}
+                        <div class="prerequisites">
+                          <strong>{{localize "CREATURE.Prerequisites"}}:</strong> {{item.voraussetzung}}
+                        </div>
+                      {{/if}}
+
+                      {{#if item.ausgewaehlteWahl}}
+                        <div class="selected-option">
+                          <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.ausgewaehlteWahl}}
+                        </div>
+                      {{/if}}
+
+                      {{#if item.grosseTricksWahl}}
+                        <div class="great-tricks">
+                          <strong>{{localize "CREATURE.GreatTricksChoice"}}:</strong> {{item.grosseTricksWahl}}
+                        </div>
+                      {{/if}}
+
+                      {{#if item.customMeisterschaften}}
+                        {{#if item.customMeisterschaften.length}}
+                          <div class="custom-masteries">
+                            <strong>{{localize "CREATURE.CustomMasteries"}}:</strong>
+                            <ul>
+                              {{#each item.customMeisterschaften as |mastery|}}
+                                <li>
+                                  {{localize "CREATURE.MasteryThreshold"}} {{mastery.schwelle}} -
+                                  {{mastery.fertigkeit}}
+                                  {{#if mastery.name}}: {{mastery.name}}{{/if}}
+                                </li>
+                              {{/each}}
+                            </ul>
+                          </div>
+                        {{/if}}
+                      {{/if}}
+
+                      {{#if item.zusatzInfo}}
+                        <div class="additional-info">
+                          {{{item.zusatzInfo}}}
+                        </div>
+                      {{/if}}
+                    </div>
+                  </li>
+                {{/each}}
+              </ol>
+            </div>
+          {{/each}}
+        {{else}}
+          <p class="notes">{{localize "CREATURE.NoTraining"}}</p>
+        {{/if}}
+      </div>
     </div>
 
     {{!-- Combat Tab --}}
