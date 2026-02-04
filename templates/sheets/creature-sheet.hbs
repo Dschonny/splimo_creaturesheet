@@ -142,6 +142,7 @@
                         </div>
                         <ol class="list-body skill-list">
                             {{#each generalSkills as |skill skillId|}}
+                            {{#unless (and ../hideSkills (eq skill.value 0))}}
                             <li class="list-item draggable" data-skill="{{skillId}}">
                                 <label>
                                     <a class="rollable">
@@ -153,6 +154,7 @@
                                         data-dtype="Number">
                                 </div>
                             </li>
+                            {{/unless}}
                             {{/each}}
                         </ol>
                     </div>
@@ -171,6 +173,7 @@
                         </div>
                         <ol class="list-body skill-list">
                             {{#each fightingSkills as |skill skillId|}}
+                            {{#unless (and ../hideSkills (eq skill.points 0))}}
                             <li class="list-item" data-skill="{{skillId}}">
                                 <label>
                                     {{localize skill.label.long}}
@@ -179,6 +182,7 @@
                                     <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                                 </div>
                             </li>
+                            {{/unless}}
                             {{/each}}
                         </ol>
                     </div>
@@ -197,6 +201,7 @@
                         </div>
                         <ol class="list-body skill-list">
                             {{#each magicSkills as |skill skillId|}}
+                            {{#unless (and ../hideSkills (eq skill.value 0))}}
                             <li class="list-item draggable" data-skill="{{skillId}}">
                                 <label>
                                     <a class="rollable">{{localize skill.label.long}}</a>
@@ -205,6 +210,7 @@
                                         value="{{skill.value}}" data-dtype="Number">
                                 </div>
                             </li>
+                            {{/unless}}
                             {{/each}}
                         </ol>
                     </div>
