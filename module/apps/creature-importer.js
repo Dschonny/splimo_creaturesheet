@@ -1,12 +1,12 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
 
 /**
- * Handles importing .ced files into creature actors
+ * Handles importing VTT Import JSON files into creature actors
  */
 export class CreatureImporter {
 
   /**
-   * Import a creature from a .ced file
+   * Import a creature from a VTT Import JSON file
    * @param {Actor} actor - Optional existing actor to update
    */
   static async import(actor = null) {
@@ -19,11 +19,11 @@ export class CreatureImporter {
       const content = await this._readFile(file);
       console.log("File content read, length:", content?.length);
 
-      const creData = JSON.parse(content);
-      console.log("Parsed .ced data:", creData);
+      const jsonData = JSON.parse(content);
+      console.log("Parsed VTT Import JSON:", jsonData);
 
       // Validate format
-      const validation = CreatureDataMapper.validateCreFormat(creData);
+      const validation = CreatureDataMapper.validateJsonFormat(jsonData);
       if (!validation.valid) {
         console.error("Validation failed:", validation.error);
         ui.notifications.error(game.i18n.format("CREATURE.ImportError", { error: validation.error }));
@@ -31,14 +31,14 @@ export class CreatureImporter {
       }
 
       // Map to actor data
-      const { actorData, items } = CreatureDataMapper.mapCreToActorData(creData);
+      const { actorData, items } = CreatureDataMapper.mapJsonToActorData(jsonData);
 
       // Show confirmation dialog
       const confirmed = await this._showConfirmationDialog(
         actorData.name,
-        actorData.system.verfeinerungen?.length || 0,
-        actorData.system.abrichtungen?.length || 0,
-        items.length
+        items.filter(i => i.type === "npcfeature").length,
+        items.filter(i => i.type === "npcattack").length,
+        items.filter(i => i.type === "mastery").length
       );
 
       if (!confirmed) return;
@@ -49,10 +49,12 @@ export class CreatureImporter {
       if (targetActor) {
         // Update existing actor
         await targetActor.update(actorData);
-        // Delete existing weapon items only
-        const existingWeapons = targetActor.items.filter(i => i.type === "npcattack");
-        if (existingWeapons.length > 0) {
-          await targetActor.deleteEmbeddedDocuments("Item", existingWeapons.map(i => i.id));
+        // Delete existing items that will be replaced
+        const existingItems = targetActor.items.filter(i =>
+          i.type === "npcattack" || i.type === "npcfeature" || i.type === "mastery" || i.type === "spell"
+        );
+        if (existingItems.length > 0) {
+          await targetActor.deleteEmbeddedDocuments("Item", existingItems.map(i => i.id));
         }
       } else {
         // Create new actor
@@ -62,7 +64,7 @@ export class CreatureImporter {
       // Set creature sheet as default for this actor
       await targetActor.setFlag("core", "sheetClass", "splimo_creaturesheet.CreatureSheet");
 
-      // Create weapon items only
+      // Create items
       if (items.length > 0) {
         await targetActor.createEmbeddedDocuments("Item", items);
       }
@@ -88,7 +90,7 @@ export class CreatureImporter {
     return new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".ced,.json";
+      input.accept = ".json";
 
       input.onchange = (e) => {
         const file = e.target.files[0];
@@ -125,14 +127,14 @@ export class CreatureImporter {
   /**
    * Show confirmation dialog
    */
-  static async _showConfirmationDialog(name, refinementCount, trainingCount, weaponCount) {
+  static async _showConfirmationDialog(name, featureCount, weaponCount, masteryCount) {
     return Dialog.confirm({
       title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
       content: `<p>${game.i18n.format("CREATURE.ImportConfirmContent", {
         name: name,
-        refinements: refinementCount,
-        trainings: trainingCount,
-        weapons: weaponCount
+        features: featureCount,
+        weapons: weaponCount,
+        masteries: masteryCount
       })}</p>`,
       yes: () => true,
       no: () => false,

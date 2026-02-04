@@ -1,99 +1,135 @@
 /**
- * Creature Actor class - NO automatic calculations
- * All values are manually editable and independent
+ * Creature Actor class - Extends standard NPC functionality
  */
 export class CreatureActor extends Actor {
 
   /**
-   * Prepare base data - create simple value containers
-   * CRITICAL: NO CALCULATIONS
+   * Prepare base data
    */
   prepareBaseData() {
     super.prepareBaseData();
 
-    // Initialize attributes as simple value containers
-    this.attributes = {};
-    const attrList = [
-      "charisma", "agility", "intuition", "constitution",
-      "mysticism", "strength", "mind", "dexterity"
-    ];
+    // Ensure all required data structures exist
+    if (!this.system.attributes) {
+      this.system.attributes = {};
+    }
 
-    for (const attrId of attrList) {
-      this.attributes[attrId] = {
-        id: attrId,
-        value: this.system.attributes?.[attrId]?.value || 0,
-        points: 0,
-        label: game.i18n.localize(`splittermond.attribute.${attrId}`)
+    if (!this.system.skills) {
+      this.system.skills = {};
+    }
+
+    if (!this.system.derivedValues) {
+      this.system.derivedValues = {};
+    }
+
+    if (!this.system.health) {
+      this.system.health = {
+        value: 0,
+        consumed: 0,
+        exhausted: 0,
+        channeled: { entries: [] }
       };
     }
 
-    // Initialize skills as simple value containers
-    this.skills = {};
-    const skillList = [
-      "athletics", "melee", "endurance", "craft", "dexterity",
-      "diplomacy", "stealth", "linguistics", "history", "hunt",
-      "perception", "performance", "ranged", "ride", "seafaring",
-      "spellcasting", "swimming", "survival", "medicine", "resistance"
-    ];
-
-    for (const skillId of skillList) {
-      this.skills[skillId] = {
-        id: skillId,
-        value: this.system.skills?.[skillId]?.value || 0,
-        points: 0,
-        label: game.i18n.localize(`splittermond.skill.${skillId}`)
+    if (!this.system.focus) {
+      this.system.focus = {
+        value: 0,
+        consumed: 0,
+        exhausted: 0,
+        channeled: { entries: [] }
       };
     }
 
-    // Initialize derived values as simple value containers
-    this.derivedValues = {};
-    const derivedList = [
-      "size", "speed", "initiative", "healthpoints", "focuspoints",
-      "defense", "bodyresist", "mindresist"
-    ];
-
-    for (const derivedId of derivedList) {
-      this.derivedValues[derivedId] = {
-        id: derivedId,
-        value: this.system.derivedAttributes?.[derivedId]?.value || 0,
-        label: game.i18n.localize(`CREATURE.${derivedId.charAt(0).toUpperCase() + derivedId.slice(1)}`)
-      };
+    if (!this.system.damageReduction) {
+      this.system.damageReduction = { value: 0 };
     }
-
-    // Health and Focus tracking
-    this.health = {
-      max: this.derivedValues.healthpoints.value,
-      consumed: this.system.health?.consumed || 0,
-      exhausted: this.system.health?.exhausted || 0,
-      channeled: this.system.health?.channeled || [],
-      value: 0 // Will be calculated in prepareDerivedData
-    };
-
-    this.focus = {
-      max: this.derivedValues.focuspoints.value,
-      consumed: this.system.focus?.consumed || 0,
-      exhausted: this.system.focus?.exhausted || 0,
-      channeled: this.system.focus?.channeled || [],
-      value: 0 // Will be calculated in prepareDerivedData
-    };
   }
 
   /**
    * Prepare derived data
-   * SKIP all automatic calculations - only prepare attacks
    */
   prepareDerivedData() {
     super.prepareDerivedData();
 
-    // Calculate current health and focus
-    this.health.value = Math.max(0, this.health.max - this.health.consumed - this.health.exhausted);
-    this.focus.value = Math.max(0, this.focus.max - this.focus.consumed - this.focus.exhausted);
+    // Update health and focus values
+    const maxHealth = this.system.derivedValues?.healthpoints?.value || 0;
+    const maxFocus = this.system.derivedValues?.focuspoints?.value || 0;
 
-    // Prepare attacks from npcattack items
+    this.system.health.value = Math.max(
+      0,
+      maxHealth - (this.system.health.consumed || 0) - (this.system.health.exhausted || 0)
+    );
+
+    this.system.focus.value = Math.max(
+      0,
+      maxFocus - (this.system.focus.consumed || 0) - (this.system.focus.exhausted || 0)
+    );
+
+    // Prepare attributes for display
+    this._prepareAttributes();
+
+    // Prepare derived values for display
+    this._prepareDerivedValues();
+
+    // Prepare attacks
     this._prepareAttacks();
 
     // Prepare active defense
     this._prepareActiveDefense();
+  }
+
+  /**
+   * Prepare attributes
+   */
+  _prepareAttributes() {
+    const attrs = this.system.attributes || {};
+
+    this.attributes = {};
+
+    const attrIds = [
+      "charisma", "agility", "intuition", "constitution",
+      "mysticism", "strength", "mind", "willpower"
+    ];
+
+    for (const attrId of attrIds) {
+      const attrData = attrs[attrId] || { value: 0, points: 0 };
+      const label = game.splittermond?.config?.attributes?.[attrId] || { short: attrId, long: attrId };
+
+      this.attributes[attrId] = {
+        value: attrData.value || 0,
+        points: attrData.points || 0,
+        label: label
+      };
+    }
+  }
+
+  /**
+   * Prepare derived values
+   */
+  _prepareDerivedValues() {
+    const derived = this.system.derivedValues || {};
+
+    this.derivedValues = {};
+
+    const derivedIds = [
+      "size", "speed", "initiative", "healthpoints", "focuspoints",
+      "defense", "mindResist", "bodyResist"
+    ];
+
+    for (const derivedId of derivedIds) {
+      const derivedData = derived[derivedId] || { value: 0 };
+      const label = game.splittermond?.config?.derivedAttributes?.[derivedId] || { short: derivedId, long: derivedId };
+
+      this.derivedValues[derivedId] = {
+        value: derivedData.value || 0,
+        label: label
+      };
+    }
+
+    // Damage reduction
+    this.damageReduction = {
+      value: this.system.damageReduction?.value || 0
+    };
   }
 
   /**
@@ -104,138 +140,59 @@ export class CreatureActor extends Actor {
 
     for (const item of this.items) {
       if (item.type === "npcattack") {
+        const skillValue = item.system.skillValue || 0;
+
         this.attacks.push({
           id: item.id,
           name: item.name,
-          skillValue: item.system.skillValue || 0,
+          img: item.img,
+          skill: {
+            value: skillValue,
+            editable: true
+          },
+          skillId: "melee",
           damage: item.system.damage || "1W6",
           weaponSpeed: item.system.weaponSpeed || 0,
           range: item.system.range || 0,
           features: item.system.features || "",
-          item: item
+          item: item,
+          editable: true,
+          deletable: true,
+          isDamaged: false
         });
       }
     }
   }
 
   /**
-   * Prepare active defense value
+   * Prepare active defense
    */
   _prepareActiveDefense() {
+    const defenseValue = this.system.derivedValues?.defense?.value || 0;
+
     this.activeDefense = {
-      value: this.derivedValues.defense.value,
-      label: game.i18n.localize("CREATURE.Defense")
+      defense: [{
+        id: "defense",
+        name: "splittermond.derivedAttribute.defense.long",
+        skill: {
+          value: defenseValue
+        },
+        features: ""
+      }],
+      mindresist: [{
+        id: "mindresist",
+        name: "splittermond.derivedAttribute.mindresist.long",
+        skill: {
+          value: this.system.derivedValues?.mindResist?.value || 0
+        }
+      }],
+      bodyresist: [{
+        id: "bodyresist",
+        name: "splittermond.derivedAttribute.bodyresist.long",
+        skill: {
+          value: this.system.derivedValues?.bodyResist?.value || 0
+        }
+      }]
     };
-  }
-
-  /**
-   * Roll a skill check using Splittermond's system
-   * @param {string} skillId - The skill identifier
-   * @param {object} options - Additional options for the roll
-   */
-  async rollSkillCheck(skillId, options = {}) {
-    const skill = this.skills[skillId];
-    if (!skill) {
-      ui.notifications.warn(`Skill ${skillId} not found`);
-      return;
-    }
-
-    // Use Splittermond's CheckDialog
-    const CheckDialog = game.splittermond.apps.CheckDialog;
-    if (!CheckDialog) {
-      ui.notifications.error("Splittermond CheckDialog not available");
-      return;
-    }
-
-    const dialog = new CheckDialog(this, skill, options);
-    return dialog.roll();
-  }
-
-  /**
-   * Roll an attack
-   * @param {string} attackId - The attack item ID
-   */
-  async rollAttack(attackId) {
-    const attack = this.attacks.find(a => a.id === attackId);
-    if (!attack) {
-      ui.notifications.warn("Attack not found");
-      return;
-    }
-
-    // Use the npcattack item's roll method
-    if (attack.item && typeof attack.item.roll === 'function') {
-      return attack.item.roll();
-    }
-
-    // Fallback to manual roll
-    const rollFormula = `1d20 + ${attack.skillValue}`;
-    const roll = await new Roll(rollFormula).evaluate();
-
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this }),
-      flavor: `${attack.name} - Attack Roll`
-    });
-
-    return roll;
-  }
-
-  /**
-   * Get refinements grouped by category
-   */
-  getRefinementsByCategory() {
-    const grouped = {};
-    const verfeinerungen = this.system.verfeinerungen || [];
-
-    for (const verf of verfeinerungen) {
-      const category = verf.kategorie || "sonstiges";
-      if (!grouped[category]) {
-        grouped[category] = [];
-      }
-      grouped[category].push(verf);
-    }
-
-    return grouped;
-  }
-
-  /**
-   * Get training (Abrichtungen) grouped by category
-   */
-  getTrainingByCategory() {
-    const grouped = {};
-    const abrichtungen = this.system.abrichtungen || [];
-
-    for (const abr of abrichtungen) {
-      const category = abr.kategorie || "sonstiges";
-      if (!grouped[category]) {
-        grouped[category] = [];
-      }
-      grouped[category].push(abr);
-    }
-
-    return grouped;
-  }
-
-  /**
-   * Calculate total refinement costs
-   */
-  getTotalRefinementCost() {
-    let total = 0;
-    const verfeinerungen = this.system.verfeinerungen || [];
-    for (const verf of verfeinerungen) {
-      total += verf.kosten || 0;
-    }
-    return total;
-  }
-
-  /**
-   * Calculate total training potential costs
-   */
-  getTotalTrainingCost() {
-    let total = 0;
-    const abrichtungen = this.system.abrichtungen || [];
-    for (const abr of abrichtungen) {
-      total += abr.potenzialKosten || 0;
-    }
-    return total;
   }
 }

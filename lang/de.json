@@ -4,11 +4,11 @@
     "TypeRefinement": "Verfeinerung",
     "TypeTraining": "Abrichtung",
 
-    "ImportCreature": "Kreatur importieren (.ced)",
+    "ImportCreature": "Kreatur importieren (.json)",
     "ImportDialogTitle": "Kreatur-Datei importieren",
-    "ImportDialogContent": "Wähle eine .ced oder .json Datei zum Importieren:",
+    "ImportDialogContent": "Wähle eine .json Datei zum Importieren:",
     "ImportConfirmTitle": "Import bestätigen",
-    "ImportConfirmContent": "Import von {name}:\n{refinements} Verfeinerungen\n{trainings} Abrichtungen\n{weapons} Waffen aus Verfeinerungen",
+    "ImportConfirmContent": "Import von {name}:\n{features} Merkmale\n{weapons} Waffen\n{masteries} Meisterschaften",
     "ImportSuccess": "Kreatur erfolgreich importiert!",
     "ImportError": "Fehler beim Importieren der Kreatur: {error}",
 
@@ -95,6 +95,9 @@
 
     "NoRefinements": "Keine Verfeinerungen vorhanden",
     "NoTraining": "Keine Abrichtungen vorhanden",
-    "NoAttacks": "Keine Angriffe vorhanden"
+    "NoAttacks": "Keine Angriffe vorhanden",
+
+    "DeleteItem": "Eintrag löschen",
+    "DeleteItemConfirm": "{name} wirklich löschen?"
   }
 }

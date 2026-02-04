@@ -1,20 +1,20 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
 
 /**
- * Creature Sheet Application
+ * Creature Sheet Application - Extends NPC functionality
  */
 export class CreatureSheet extends ActorSheet {
 
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["splittermond", "sheet", "actor", "creature"],
+      classes: ["splittermond", "sheet", "actor", "npc"],
       template: "modules/splimo_creaturesheet/templates/sheets/creature-sheet.hbs",
       width: 750,
       height: 800,
       tabs: [{
-        navSelector: ".sheet-tabs",
-        contentSelector: ".sheet-body",
+        navSelector: ".sheet-navigation",
+        contentSelector: "main",
         initial: "general"
       }]
     });
@@ -24,208 +24,93 @@ export class CreatureSheet extends ActorSheet {
   getData() {
     const context = super.getData();
 
-    // Add creature-specific data
-    context.attributes = this.actor.attributes;
-    context.skills = this.actor.skills;
-    context.derivedValues = this.actor.derivedValues;
-    context.health = this.actor.health;
-    context.focus = this.actor.focus;
-    context.attacks = this.actor.attacks;
-
-    // Group items by type and category
-    context.refinementsByCategory = this._groupRefinementsByCategory();
-    context.trainingByCategory = this._groupTrainingByCategory();
-
-    // Calculate total costs
-    context.totalRefinementCost = this._calculateTotalRefinementCost();
-    context.totalTrainingCost = this._calculateTotalTrainingCost();
-
-    // Creature data
-    context.creatureData = this.actor.system.creatureData || {};
-
-    // Localization
-    context.refinementCategories = this._getRefinementCategoryLabels();
-    context.trainingCategories = this._getTrainingCategoryLabels();
-
-    return context;
-  }
-
-  /**
-   * Group refinements by category
-   */
-  _groupRefinementsByCategory() {
-    const grouped = {};
-    const verfeinerungen = this.actor.system.verfeinerungen || [];
-
-    for (const verf of verfeinerungen) {
-      const category = verf.kategorie || "sonstiges";
-      if (!grouped[category]) {
-        grouped[category] = {
-          label: game.i18n.localize(`CREATURE.RefinementCategories.${category}`),
-          items: []
-        };
+    // Organize items by type
+    context.itemsByType = {};
+    for (const item of this.actor.items) {
+      const type = item.type;
+      if (!context.itemsByType[type]) {
+        context.itemsByType[type] = [];
       }
-      grouped[category].items.push(verf);
+      context.itemsByType[type].push(item);
     }
 
-    return grouped;
-  }
+    // Organize skills
+    const skills = this.actor.system.skills || {};
+    context.generalSkills = {};
+    context.fightingSkills = {};
+    context.magicSkills = {};
 
-  /**
-   * Group training by category
-   */
-  _groupTrainingByCategory() {
-    const grouped = {};
-    const abrichtungen = this.actor.system.abrichtungen || [];
-
-    for (const abr of abrichtungen) {
-      const category = abr.kategorie || "sonstiges";
-      if (!grouped[category]) {
-        grouped[category] = {
-          label: game.i18n.localize(`CREATURE.TrainingCategories.${category}`),
-          items: []
-        };
-      }
-      grouped[category].items.push(abr);
-    }
-
-    return grouped;
-  }
-
-  /**
-   * Get refinement category labels
-   */
-  _getRefinementCategoryLabels() {
-    const categories = [
-      "groesse", "koerperliche_besonderheiten", "fortbewegung",
-      "sinne", "natuerliche_waffen", "besondere_faehigkeiten"
+    const generalSkillIds = [
+      "acrobatics", "athletics", "determination", "stealth", "perception",
+      "endurance", "swim", "hunting", "empathy", "dexterity", "performance"
     ];
 
-    return categories.map(cat => ({
-      value: cat,
-      label: game.i18n.localize(`CREATURE.RefinementCategories.${cat}`)
-    }));
-  }
+    const fightingSkillIds = ["melee", "ranged"];
 
-  /**
-   * Get training category labels
-   */
-  _getTrainingCategoryLabels() {
-    const categories = ["grundausbildung", "kampf", "reittier", "sonstiges"];
+    const magicSkillIds = ["spellcasting"];
 
-    return categories.map(cat => ({
-      value: cat,
-      label: game.i18n.localize(`CREATURE.TrainingCategories.${cat}`)
-    }));
-  }
+    for (const [skillId, skillData] of Object.entries(skills)) {
+      const skillLabel = game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId };
+      const skill = {
+        ...skillData,
+        label: skillLabel
+      };
 
-  /**
-   * Calculate total refinement costs
-   */
-  _calculateTotalRefinementCost() {
-    let total = 0;
-    const verfeinerungen = this.actor.system.verfeinerungen || [];
-    for (const verf of verfeinerungen) {
-      total += verf.kosten || 0;
+      if (generalSkillIds.includes(skillId)) {
+        context.generalSkills[skillId] = skill;
+      } else if (fightingSkillIds.includes(skillId)) {
+        context.fightingSkills[skillId] = skill;
+      } else if (magicSkillIds.includes(skillId)) {
+        context.magicSkills[skillId] = skill;
+      }
     }
-    return total;
-  }
 
-  /**
-   * Calculate total training potential costs
-   */
-  _calculateTotalTrainingCost() {
-    let total = 0;
-    const abrichtungen = this.actor.system.abrichtungen || [];
-    for (const abr of abrichtungen) {
-      total += abr.potenzialKosten || 0;
+    // Organize masteries by skill
+    context.masteriesBySkill = {};
+    const masteries = context.itemsByType.mastery || [];
+    for (const mastery of masteries) {
+      const skillId = mastery.system.skill || "general";
+      if (!context.masteriesBySkill[skillId]) {
+        context.masteriesBySkill[skillId] = [];
+      }
+      context.masteriesBySkill[skillId].push(mastery);
     }
-    return total;
+
+    // Organize spells by skill
+    context.spellsBySkill = {};
+    const spells = context.itemsByType.spell || [];
+    for (const spell of spells) {
+      const skillId = spell.system.skill || "magic";
+      if (!context.spellsBySkill[skillId]) {
+        context.spellsBySkill[skillId] = [];
+      }
+      context.spellsBySkill[skillId].push(spell);
+    }
+
+    // Hide skills flag
+    context.hideSkills = this.actor.getFlag("splimo_creaturesheet", "hideSkills") || false;
+
+    return context;
   }
 
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Editable fields
-    html.find('.attribute-value').change(this._onChangeAttribute.bind(this));
-    html.find('.skill-value').change(this._onChangeSkill.bind(this));
-    html.find('.derived-value').change(this._onChangeDerived.bind(this));
-
-    // Rollable skills
-    html.find('.skill-roll').click(this._onRollSkill.bind(this));
-
-    // Rollable attacks
-    html.find('.attack-roll').click(this._onRollAttack.bind(this));
-
     // Import creature
     html.find('.import-creature').click(this._onImportCreature.bind(this));
 
-    // Item management
-    html.find('.item-create').click(this._onItemCreate.bind(this));
-    html.find('.item-edit').click(this._onItemEdit.bind(this));
-    html.find('.item-delete').click(this._onItemDelete.bind(this));
+    // Show/hide skills
+    html.find('[data-action="show-hide-skills"]').click(this._onToggleSkills.bind(this));
 
-    // Health and Focus management
-    html.find('.health-control').click(this._onHealthControl.bind(this));
-    html.find('.focus-control').click(this._onFocusControl.bind(this));
-  }
+    // Add item
+    html.find('[data-action="add-item"]').click(this._onAddItem.bind(this));
 
-  /**
-   * Handle attribute value change - direct update, no calculation
-   */
-  async _onChangeAttribute(event) {
-    event.preventDefault();
-    const value = parseInt(event.currentTarget.value) || 0;
-    const attrId = event.currentTarget.dataset.attribute;
+    // Edit item
+    html.find('[data-action="edit-item"]').click(this._onEditItem.bind(this));
 
-    await this.actor.update({
-      [`system.attributes.${attrId}.value`]: value
-    });
-  }
-
-  /**
-   * Handle skill value change - direct update, no calculation
-   */
-  async _onChangeSkill(event) {
-    event.preventDefault();
-    const value = parseInt(event.currentTarget.value) || 0;
-    const skillId = event.currentTarget.dataset.skill;
-
-    await this.actor.update({
-      [`system.skills.${skillId}.value`]: value
-    });
-  }
-
-  /**
-   * Handle derived value change - direct update, no calculation
-   */
-  async _onChangeDerived(event) {
-    event.preventDefault();
-    const value = parseInt(event.currentTarget.value) || 0;
-    const derivedId = event.currentTarget.dataset.derived;
-
-    await this.actor.update({
-      [`system.derivedAttributes.${derivedId}.value`]: value
-    });
-  }
-
-  /**
-   * Handle skill check roll
-   */
-  async _onRollSkill(event) {
-    event.preventDefault();
-    const skillId = event.currentTarget.dataset.skill;
-    await this.actor.rollSkillCheck(skillId);
-  }
-
-  /**
-   * Handle attack roll
-   */
-  async _onRollAttack(event) {
-    event.preventDefault();
-    const attackId = event.currentTarget.dataset.attackId;
-    await this.actor.rollAttack(attackId);
+    // Delete item
+    html.find('[data-action="delete-item"]').click(this._onDeleteItem.bind(this));
   }
 
   /**
@@ -237,72 +122,61 @@ export class CreatureSheet extends ActorSheet {
   }
 
   /**
-   * Handle item creation - not needed for Verfeinerungen/Abrichtungen
+   * Handle show/hide skills toggle
    */
-  async _onItemCreate(event) {
+  async _onToggleSkills(event) {
     event.preventDefault();
-    // Items (refinements/training) are managed directly in actor.system
-    // Only weapons can be created, but they come from import
-    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Import hinzugefügt werden.");
+    const current = this.actor.getFlag("splimo_creaturesheet", "hideSkills") || false;
+    await this.actor.setFlag("splimo_creaturesheet", "hideSkills", !current);
   }
 
   /**
-   * Handle item edit - not needed for Verfeinerungen/Abrichtungen
+   * Handle add item
    */
-  async _onItemEdit(event) {
+  async _onAddItem(event) {
     event.preventDefault();
-    // Items are stored in actor.system, not as separate documents
-    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Re-Import bearbeitet werden.");
+    const button = event.currentTarget;
+    const itemType = button.dataset.itemType || "npcfeature";
+
+    const itemData = {
+      name: game.i18n.localize(`TYPES.Item.${itemType}`),
+      type: itemType
+    };
+
+    await this.actor.createEmbeddedDocuments("Item", [itemData]);
   }
 
   /**
-   * Handle item deletion - not needed for Verfeinerungen/Abrichtungen
+   * Handle edit item
    */
-  async _onItemDelete(event) {
+  _onEditItem(event) {
     event.preventDefault();
-    // Items are stored in actor.system, not as separate documents
-    ui.notifications.warn("Verfeinerungen und Abrichtungen können nur über Re-Import entfernt werden.");
-  }
-
-  /**
-   * Handle health controls
-   */
-  async _onHealthControl(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const type = event.currentTarget.dataset.type; // consumed, exhausted
-
-    let newValue = this.actor.system.health[type] || 0;
-
-    if (action === "increase") {
-      newValue++;
-    } else if (action === "decrease") {
-      newValue = Math.max(0, newValue - 1);
+    const li = event.currentTarget.closest("[data-item-id]");
+    const itemId = li.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if (item) {
+      item.sheet.render(true);
     }
-
-    await this.actor.update({
-      [`system.health.${type}`]: newValue
-    });
   }
 
   /**
-   * Handle focus controls
+   * Handle delete item
    */
-  async _onFocusControl(event) {
+  async _onDeleteItem(event) {
     event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const type = event.currentTarget.dataset.type; // consumed, exhausted
+    const li = event.currentTarget.closest("[data-item-id]");
+    const itemId = li.dataset.itemId;
+    const item = this.actor.items.get(itemId);
 
-    let newValue = this.actor.system.focus[type] || 0;
+    if (item) {
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize("CREATURE.DeleteItem"),
+        content: `<p>${game.i18n.format("CREATURE.DeleteItemConfirm", { name: item.name })}</p>`
+      });
 
-    if (action === "increase") {
-      newValue++;
-    } else if (action === "decrease") {
-      newValue = Math.max(0, newValue - 1);
+      if (confirmed) {
+        await item.delete();
+      }
     }
-
-    await this.actor.update({
-      [`system.focus.${type}`]: newValue
-    });
   }
 }

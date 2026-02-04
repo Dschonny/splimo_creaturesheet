@@ -4,11 +4,11 @@
     "TypeRefinement": "Refinement",
     "TypeTraining": "Training",
 
-    "ImportCreature": "Import Creature (.ced)",
+    "ImportCreature": "Import Creature (.json)",
     "ImportDialogTitle": "Import Creature File",
-    "ImportDialogContent": "Select a .ced or .json file to import:",
+    "ImportDialogContent": "Select a .json file to import:",
     "ImportConfirmTitle": "Confirm Import",
-    "ImportConfirmContent": "Importing {name}:\n{refinements} Refinements\n{trainings} Trainings\n{weapons} Weapons from Refinements",
+    "ImportConfirmContent": "Importing {name}:\n{features} Features\n{weapons} Weapons\n{masteries} Masteries",
     "ImportSuccess": "Creature imported successfully!",
     "ImportError": "Error importing creature: {error}",
 
@@ -89,6 +89,9 @@
 
     "NoRefinements": "No refinements available",
     "NoTraining": "No training available",
-    "NoAttacks": "No attacks available"
+    "NoAttacks": "No attacks available",
+
+    "DeleteItem": "Delete Item",
+    "DeleteItemConfirm": "Really delete {name}?"
   }
 }

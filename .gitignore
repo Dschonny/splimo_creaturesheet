@@ -6,6 +6,7 @@ splittermond/
 
 # Test files
 *.ced
+*.json
 fvtt-*.json
 
 # IDE

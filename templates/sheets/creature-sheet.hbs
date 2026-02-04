@@ -1,308 +1,180 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
-
-  {{!-- Sheet Header --}}
-  <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
-
-    <div class="header-fields">
-      <h1 class="charname">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="Name"/>
-      </h1>
-
-      <div class="creature-basics">
-        <div class="form-group">
-          <label>{{localize "CREATURE.Basis"}}</label>
-          <select name="system.creatureData.basis">
-            <option value="agil" {{#if (eq creatureData.basis "agil")}}selected{{/if}}>
-              {{localize "CREATURE.BasisAgil"}}
-            </option>
-            <option value="robust" {{#if (eq creatureData.basis "robust")}}selected{{/if}}>
-              {{localize "CREATURE.BasisRobust"}}
-            </option>
-            <option value="ausgewogen" {{#if (eq creatureData.basis "ausgewogen")}}selected{{/if}}>
-              {{localize "CREATURE.BasisAusgewogen"}}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>{{localize "CREATURE.Rolle"}}</label>
-          <input type="text" name="system.creatureData.rolle" value="{{creatureData.rolle}}" placeholder="Rolle"/>
-        </div>
-      </div>
-
-      <div class="import-section">
-        <button type="button" class="import-creature">
-          <i class="fas fa-file-import"></i> {{localize "CREATURE.ImportCreature"}}
-        </button>
-      </div>
-    </div>
-
-    {{!-- Health and Focus Bars --}}
-    <div class="resources">
-      <div class="resource health">
-        <label>{{localize "CREATURE.Health"}}</label>
-        <div class="resource-bar">
-          <div class="bar-fill" style="width: {{health.percentage}}%"></div>
-          <span class="bar-label">{{health.value}} / {{health.max}}</span>
-        </div>
-        <div class="resource-controls">
-          <button type="button" class="health-control" data-action="decrease" data-type="consumed">-</button>
-          <span>{{localize "CREATURE.HealthConsumed"}}: {{health.consumed}}</span>
-          <button type="button" class="health-control" data-action="increase" data-type="consumed">+</button>
-        </div>
-      </div>
-
-      <div class="resource focus">
-        <label>{{localize "CREATURE.Focus"}}</label>
-        <div class="resource-bar">
-          <div class="bar-fill" style="width: {{focus.percentage}}%"></div>
-          <span class="bar-label">{{focus.value}} / {{focus.max}}</span>
-        </div>
-        <div class="resource-controls">
-          <button type="button" class="focus-control" data-action="decrease" data-type="consumed">-</button>
-          <span>{{localize "CREATURE.FocusConsumed"}}: {{focus.consumed}}</span>
-          <button type="button" class="focus-control" data-action="increase" data-type="consumed">+</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  {{!-- Sheet Tabs --}}
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="general">{{localize "CREATURE.TabGeneral"}}</a>
-    <a class="item" data-tab="refinements">{{localize "CREATURE.TabRefinements"}}</a>
-    <a class="item" data-tab="training">{{localize "CREATURE.TabTraining"}}</a>
-    <a class="item" data-tab="combat">{{localize "CREATURE.TabCombat"}}</a>
-    <a class="item" data-tab="biography">{{localize "CREATURE.TabBiography"}}</a>
-  </nav>
-
-  {{!-- Sheet Body --}}
-  <section class="sheet-body">
-
-    {{!-- General Tab --}}
-    <div class="tab general" data-group="primary" data-tab="general">
-      {{!-- Attributes Section --}}
-      <div class="attributes-section">
-        <h3>{{localize "CREATURE.Attributes"}}</h3>
-        <div class="attributes-grid">
-          {{#each attributes as |attr|}}
-            <div class="attribute">
-              <label>{{attr.label}}</label>
-              <input type="number" class="attribute-value" data-attribute="{{attr.id}}" value="{{attr.value}}" />
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="column flex-gap">
+        <section class="row flex-gap">
+            <div class="character-image">
+                <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="92" width="92"
+                    class="profile-img" />
             </div>
-          {{/each}}
-        </div>
-      </div>
-
-      {{!-- Skills Section --}}
-      <div class="skills-section">
-        <h3>{{localize "CREATURE.Skills"}}</h3>
-        <div class="skills-list">
-          {{#each skills as |skill|}}
-            <div class="skill">
-              <label>{{skill.label}}</label>
-              <input type="number" class="skill-value" data-skill="{{skill.id}}" value="{{skill.value}}" />
-              <a class="skill-roll" data-skill="{{skill.id}}">
-                <i class="fas fa-dice-d20"></i>
-              </a>
+            <div class="column stretch">
+                <input class="character-name" name="name" type="text" value="{{actor.name}}"
+                    placeholder="{{localize 'splittermond.name' }}" />
+                <div>
+                    <input class="autoexpand" name="system.type" type="text" value="{{actor.system.type}}"
+                        placeholder="{{localize 'splittermond.opponenttype'}}" />
+                    {{#unless this.limited}}
+                    &nbsp;&middot;&nbsp;
+                    <input class="autoexpand" name="system.level" type="text" value="{{actor.system.level}}"
+                        placeholder="{{localize 'splittermond.opponentlevel'}}" />&nbsp;&middot;&nbsp;
+                    <input class="autoexpand" name="system.sex" type="text" value="{{actor.system.sex}}"
+                        placeholder="{{localize 'splittermond.sex'}}" />
+                    {{/unless}}
+                </div>
+                {{#unless limited}}
+                <div class="import-section">
+                    <button type="button" class="import-creature button-inline">
+                        <i class="fas fa-file-import"></i> {{localize "CREATURE.ImportCreature"}}
+                    </button>
+                </div>
+                <ul class="npcfeatures taglist" data-item-type="npcfeature">
+                    {{#each itemsByType.npcfeature}}
+                    <li class="taglist-item" data-item-id="{{this._id}}">
+                        <div class="taglist-item-name">
+                            <a data-action="edit-item">{{this.name}}</a>
+                        </div>
+                        <div class="taglist-item-actions">
+                            <button class="button-inline" data-action="delete-item" type="button">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                    <li class="taglist-actions"><button class="button-inline" type="button" data-action="add-item"
+                            data-render-sheet="true" data-item-type="npcfeature">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        </button></li>
+                </ul>
             </div>
-          {{/each}}
-        </div>
-      </div>
-
-      {{!-- Derived Attributes Section --}}
-      <div class="derived-section">
-        <h3>{{localize "CREATURE.DerivedAttributes"}}</h3>
-        <div class="derived-grid">
-          {{#each derivedValues as |derived|}}
-            <div class="derived-attribute">
-              <label>{{derived.label}}</label>
-              <input type="number" class="derived-value" data-derived="{{derived.id}}" value="{{derived.value}}" />
-            </div>
-          {{/each}}
-        </div>
-
-        <div class="damage-reduction">
-          <label>{{localize "CREATURE.DamageReduction"}}</label>
-          <input type="number" name="system.damageReduction.value" value="{{system.damageReduction.value}}" />
-        </div>
-      </div>
-    </div>
-
-    {{!-- Refinements Tab --}}
-    <div class="tab refinements" data-group="primary" data-tab="refinements">
-      <div class="refinements-container">
-        <div class="refinements-header">
-          <h3>{{localize "CREATURE.TabRefinements"}}</h3>
-          <button type="button" class="item-create" data-type="refinement">
-            <i class="fas fa-plus"></i> {{localize "CREATURE.TypeRefinement"}}
-          </button>
-          <div class="total-cost">
-            <strong>{{localize "CREATURE.TotalCost"}}: {{totalRefinementCost}}</strong>
-          </div>
-        </div>
-
-        {{#if refinementsByCategory}}
-          {{#each refinementsByCategory as |category categoryKey|}}
-            <div class="refinement-category">
-              <h4>{{category.label}}</h4>
-              <ol class="items-list">
-                {{#each category.items as |item|}}
-                  <li class="item refinement" data-item-id="{{item._id}}">
-                    <div class="item-header">
-                      <h4 class="item-name">{{item.name}}</h4>
-                      <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
-                      </div>
+            {{/unless}}
+        </section>
+        {{#unless limited}}
+        <section class="column">
+            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.system.focus
+            health=data.system.health}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
+            derivedAttributes=actor.derivedValues damageReduction=actor.damageReduction editable=editable}}
+        </section>
+        {{/unless}}
+    </header>
+    {{#unless limited}}
+    <nav class="sheet-navigation" data-group="primary">
+        <a class="sheet-navigation-item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
+        <a class="sheet-navigation-item" data-tab="general">{{ localize "splittermond.general" }}</a>
+        <a class="sheet-navigation-item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
+        <a class="sheet-navigation-item" data-tab="status">{{ localize "splittermond.status" }}</a>
+    </nav>
+    <main>
+        <section class="tab" data-group="primary" data-tab="biography">
+            {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
+        </section>
+        <section class="tab" data-group="primary" data-tab="general">
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
+            <div data-roll-type="skill">
+                <div class="list skills">
+                    <div class="list-header">
+                        <h3>{{localize "splittermond.generalSkills"}}</h3>
+                        <div class="list-actions">
+                            <button class="button-inline" data-action="show-hide-skills" type="button">
+                                {{#if hideSkills}}
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{else}}
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                {{/if}}
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="item-details">
-                      <span class="cost">{{localize "CREATURE.TotalCost"}}: {{item.kosten}}</span>
-
-                      {{#if item.ausgewaehlteWahl}}
-                        <div class="selected-option">
-                          <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.ausgewaehlteWahl}}
+                    <ol class="list-body skill-list">
+                        {{#each generalSkills as |skill skillId|}}
+                        <li class="list-item draggable" data-skill="{{skillId}}">
+                            <label>
+                                <a class="rollable">
+                                    {{localize skill.label}}
+                                </a>
+                            </label>
+                            <div class="value">
+                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
+                                    data-dtype="Number">
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+                <div class="list skills">
+                    <div class="list-header">
+                        <h3>{{localize "splittermond.fightingSkills"}}</h3>
+                        <div class="list-actions">
+                            <button class="button-inline" data-action="show-hide-skills" type="button">
+                                {{#if hideSkills}}
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{else}}
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                {{/if}}
+                            </button>
                         </div>
-                      {{/if}}
-
-                      {{#if item.ausgewaehlteAttribute}}
-                        <div class="selected-attributes">
-                          <strong>{{localize "CREATURE.SelectedAttributes"}}:</strong>
-                          {{#each item.ausgewaehlteAttribute as |attr|}}
-                            <span class="attribute-tag">{{attr}}</span>
-                          {{/each}}
-                        </div>
-                      {{/if}}
                     </div>
-                  </li>
-                {{/each}}
-              </ol>
+                    <ol class="list-body skill-list">
+                        {{#each fightingSkills as |skill skillId|}}
+                        <li class="list-item" data-skill="{{skillId}}">
+                            <label>
+                                {{localize skill.label}}
+                            </label>
+                            <div class="points">
+                                <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+                <div class="list skills">
+                    <div class="list-header">
+                        <h3>{{localize "splittermond.magicSkills"}}</h3>
+                        <div class="list-actions">
+                            <button class="button-inline" data-action="show-hide-skills" type="button">
+                                {{#if hideSkills}}
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{else}}
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                {{/if}}
+                            </button>
+                        </div>
+                    </div>
+                    <ol class="list-body skill-list">
+                        {{#each magicSkills as |skill skillId|}}
+                        <li class="list-item draggable" data-skill="{{skillId}}">
+                            <label>
+                                <a class="rollable">{{localize skill.label}}</a>
+                            </label>
+                            <div class="value"><input name="system.skills.{{skillId}}.value" type="text"
+                                    value="{{skill.value}}" data-dtype="Number">
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
             </div>
-          {{/each}}
-        {{else}}
-          <p class="notes">{{localize "CREATURE.NoRefinements"}}</p>
-        {{/if}}
-      </div>
-    </div>
 
-    {{!-- Training Tab --}}
-    <div class="tab training" data-group="primary" data-tab="training">
-      <div class="training-container">
-        <div class="training-header">
-          <h3>{{localize "CREATURE.TabTraining"}}</h3>
-          <button type="button" class="item-create" data-type="training">
-            <i class="fas fa-plus"></i> {{localize "CREATURE.TypeTraining"}}
-          </button>
-          <div class="total-cost">
-            <strong>{{localize "CREATURE.PotentialCost"}}: {{totalTrainingCost}}</strong>
-          </div>
-        </div>
-
-        {{#if trainingByCategory}}
-          {{#each trainingByCategory as |category categoryKey|}}
-            <div class="training-category">
-              <h4>{{category.label}}</h4>
-              <ol class="items-list">
-                {{#each category.items as |item|}}
-                  <li class="item training" data-item-id="{{item._id}}">
-                    <div class="item-header">
-                      <h4 class="item-name">{{item.name}}</h4>
-                      <div class="item-controls">
-                        <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
-                        <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </div>
-
-                    <div class="item-details">
-                      <span class="cost">{{localize "CREATURE.PotentialCost"}}: {{item.potenzialKosten}}</span>
-
-                      {{#if item.voraussetzung}}
-                        <div class="prerequisites">
-                          <strong>{{localize "CREATURE.Prerequisites"}}:</strong> {{item.voraussetzung}}
-                        </div>
-                      {{/if}}
-
-                      {{#if item.ausgewaehlteWahl}}
-                        <div class="selected-option">
-                          <strong>{{localize "CREATURE.SelectedOption"}}:</strong> {{item.ausgewaehlteWahl}}
-                        </div>
-                      {{/if}}
-
-                      {{#if item.grosseTricksWahl}}
-                        <div class="great-tricks">
-                          <strong>{{localize "CREATURE.GreatTricksChoice"}}:</strong> {{item.grosseTricksWahl}}
-                        </div>
-                      {{/if}}
-
-                      {{#if item.customMeisterschaften}}
-                        {{#if item.customMeisterschaften.length}}
-                          <div class="custom-masteries">
-                            <strong>{{localize "CREATURE.CustomMasteries"}}:</strong>
-                            <ul>
-                              {{#each item.customMeisterschaften as |mastery|}}
-                                <li>
-                                  {{localize "CREATURE.MasteryThreshold"}} {{mastery.schwelle}} -
-                                  {{mastery.fertigkeit}}
-                                  {{#if mastery.name}}: {{mastery.name}}{{/if}}
-                                </li>
-                              {{/each}}
-                            </ul>
-                          </div>
-                        {{/if}}
-                      {{/if}}
-
-                      {{#if item.zusatzInfo}}
-                        <div class="additional-info">
-                          {{{item.zusatzInfo}}}
-                        </div>
-                      {{/if}}
-                    </div>
-                  </li>
-                {{/each}}
-              </ol>
+            <div>
+                <div>
+                    {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
+                    activeDefense=actor.activeDefense attacks=actor.attacks}}
+                </div>
+                {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
+                masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
+                magicSkills=magicSkills}}
             </div>
-          {{/each}}
-        {{else}}
-          <p class="notes">{{localize "CREATURE.NoTraining"}}</p>
-        {{/if}}
-      </div>
-    </div>
 
-    {{!-- Combat Tab --}}
-    <div class="tab combat" data-group="primary" data-tab="combat">
-      <h3>{{localize "CREATURE.TabCombat"}}</h3>
-
-      {{#if attacks}}
-        <ol class="items-list attacks-list">
-          {{#each attacks as |attack|}}
-            <li class="item attack" data-item-id="{{attack.id}}">
-              <h4>{{attack.name}}</h4>
-              <div class="attack-details">
-                <span>{{localize "splittermond.skillValue"}}: {{attack.skillValue}}</span>
-                <span>{{localize "splittermond.damage"}}: {{attack.damage}}</span>
-                <span>WGS: {{attack.weaponSpeed}}</span>
-              </div>
-              <div class="item-controls">
-                <a class="attack-roll" data-attack-id="{{attack.id}}">
-                  <i class="fas fa-dice-d20"></i> {{localize "CREATURE.RollAttack"}}
-                </a>
-              </div>
-            </li>
-          {{/each}}
-        </ol>
-      {{else}}
-        <p class="notes">{{localize "CREATURE.NoAttacks"}}</p>
-      {{/if}}
-    </div>
-
-    {{!-- Biography Tab --}}
-    <div class="tab biography" data-group="primary" data-tab="biography">
-      <div class="editor">
-        {{editor system.biography target="system.biography" button=true owner=owner editable=editable}}
-      </div>
-    </div>
-
-  </section>
+        </section>
+        <section class="tab" data-group="primary" data-tab="spells">
+            <div>
+                {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
+                channeledSpells=data.system.focus.channeled.entries}}
+            </div>
+        </section>
+        <section class="tab" data-group="primary" data-tab="status">
+            {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
+            channeledHealthEntries=data.system.health.channeled.entries statuseffects=itemsByType.statuseffect
+            spelleffects=itemsByType.spelleffect
+            hasRestActions=false}}
+        </section>
+    </main>
+    {{/unless}}
 </form>
