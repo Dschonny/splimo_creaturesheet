@@ -50,10 +50,9 @@ export class CreatureSheet extends ActorSheet {
     const magicSkillIds = ["spellcasting"];
 
     for (const [skillId, skillData] of Object.entries(skills)) {
-      const skillLabel = game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId };
       const skill = {
         ...skillData,
-        label: skillLabel
+        label: game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId }
       };
 
       if (generalSkillIds.includes(skillId)) {

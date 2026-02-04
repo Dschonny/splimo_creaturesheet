@@ -93,12 +93,11 @@ export class CreatureActor extends Actor {
 
     for (const attrId of attrIds) {
       const attrData = attrs[attrId] || { value: 0, points: 0 };
-      const label = game.splittermond?.config?.attributes?.[attrId] || { short: attrId, long: attrId };
 
       this.attributes[attrId] = {
         value: attrData.value || 0,
         points: attrData.points || 0,
-        label: label
+        label: game.splittermond?.config?.attributes?.[attrId] || { short: attrId, long: attrId }
       };
     }
   }
@@ -118,11 +117,10 @@ export class CreatureActor extends Actor {
 
     for (const derivedId of derivedIds) {
       const derivedData = derived[derivedId] || { value: 0 };
-      const label = game.splittermond?.config?.derivedAttributes?.[derivedId] || { short: derivedId, long: derivedId };
 
       this.derivedValues[derivedId] = {
         value: derivedData.value || 0,
-        label: label
+        label: game.splittermond?.config?.derivedAttributes?.[derivedId] || { short: derivedId, long: derivedId }
       };
     }
 
