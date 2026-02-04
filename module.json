@@ -29,6 +29,11 @@
   "styles": [
     "styles/creature-sheet.css"
   ],
+  "templates": [
+    "templates/sheets/parts/creature-attributes.hbs",
+    "templates/sheets/parts/refinements-list.hbs",
+    "templates/sheets/parts/training-list.hbs"
+  ],
   "languages": [
     {
       "lang": "de",
