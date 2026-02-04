@@ -91,8 +91,9 @@
                         <div class="list-body">
                             {{#each verfeinerungenByCategory}}
                             <div class="refinement-category">
+                                <h4>{{localize this.categoryKey}}</h4>
                                 <ul class="taglist">
-                                    {{#each this}}
+                                    {{#each this.items}}
                                     <li class="taglist-item" title="{{this.description}}">
                                         <div class="taglist-item-name">{{this.name}}</div>
                                         <div class="taglist-item-cost">({{this.cost}})</div>
@@ -222,9 +223,9 @@
                         <ol class="list-body">
                             {{#each abrichtungenByCategory}}
                             <li class="list-item">
-                                <h4>{{localize (concat "CREATURE.AbrichtungCategory." @key)}}</h4>
+                                <h4>{{localize this.categoryKey}}</h4>
                                 <ul class="taglist">
-                                    {{#each this}}
+                                    {{#each this.items}}
                                     <li class="taglist-item" title="{{this.description}}">
                                         <div class="taglist-item-name">{{this.name}}</div>
                                         <div class="taglist-item-cost">({{this.potentialCost}})</div>

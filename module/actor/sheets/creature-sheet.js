@@ -52,12 +52,24 @@ export class CreatureSheet extends ActorSheet {
     for (const [skillId, skillData] of Object.entries(skills)) {
       // Use stored label if available, otherwise try config, then fallback to ID
       let label = skillData.label;
+
+      // Ensure label is always in the correct {short, long} format
       if (typeof label === 'string') {
         // If label is a string (from import), use it as both short and long
         label = { short: label, long: label };
-      } else if (!label) {
-        // Otherwise try to get from config or use ID
-        label = game.splittermond?.config?.skills?.[skillId] || { short: skillId, long: skillId };
+      } else if (label && typeof label === 'object' && label.short && label.long) {
+        // Already in correct format, keep it
+        label = label;
+      } else {
+        // Otherwise try to get from config or use ID as fallback
+        const configLabel = game.splittermond?.config?.skills?.[skillId];
+        if (configLabel && typeof configLabel === 'object' && configLabel.short && configLabel.long) {
+          label = configLabel;
+        } else if (typeof configLabel === 'string') {
+          label = { short: configLabel, long: configLabel };
+        } else {
+          label = { short: skillId, long: skillId };
+        }
       }
 
       const skill = {
@@ -117,23 +129,65 @@ export class CreatureSheet extends ActorSheet {
     };
 
     // Group verfeinerungen by category
-    context.verfeinerungenByCategory = {};
+    const verfeinerungenGrouped = {};
     for (const verf of context.creatureInfo.verfeinerungen) {
       const cat = verf.category || "other";
-      if (!context.verfeinerungenByCategory[cat]) {
-        context.verfeinerungenByCategory[cat] = [];
+      if (!verfeinerungenGrouped[cat]) {
+        verfeinerungenGrouped[cat] = [];
       }
-      context.verfeinerungenByCategory[cat].push(verf);
+      verfeinerungenGrouped[cat].push(verf);
     }
 
+    // Convert to array with localization keys (or null if empty)
+    const verfeinerungenArray = Object.entries(verfeinerungenGrouped).map(([cat, items]) => ({
+      categoryKey: `CREATURE.RefinementCategories.${cat}`,
+      items: items
+    }));
+    context.verfeinerungenByCategory = verfeinerungenArray.length > 0 ? verfeinerungenArray : null;
+
     // Group abrichtungen by category
-    context.abrichtungenByCategory = {};
+    const abrichtungenGrouped = {};
     for (const abr of context.creatureInfo.abrichtungen) {
       const cat = abr.category || "allgemein";
-      if (!context.abrichtungenByCategory[cat]) {
-        context.abrichtungenByCategory[cat] = [];
+      if (!abrichtungenGrouped[cat]) {
+        abrichtungenGrouped[cat] = [];
       }
-      context.abrichtungenByCategory[cat].push(abr);
+      abrichtungenGrouped[cat].push(abr);
+    }
+
+    // Convert to array with localization keys (or null if empty)
+    const abrichtungenArray = Object.entries(abrichtungenGrouped).map(([cat, items]) => ({
+      categoryKey: `CREATURE.AbrichtungCategory.${cat}`,
+      items: items
+    }));
+    context.abrichtungenByCategory = abrichtungenArray.length > 0 ? abrichtungenArray : null;
+
+    // Debug logging
+    console.log("CreatureSheet context prepared:", {
+      hasVerfeinerungen: !!context.verfeinerungenByCategory,
+      verfeinerungenCount: context.verfeinerungenByCategory?.length || 0,
+      hasAbrichtungen: !!context.abrichtungenByCategory,
+      abrichtungenCount: context.abrichtungenByCategory?.length || 0,
+      generalSkillsCount: Object.keys(context.generalSkills).length,
+      fightingSkillsCount: Object.keys(context.fightingSkills).length,
+      magicSkillsCount: Object.keys(context.magicSkills).length
+    });
+
+    // Validate all skill labels
+    for (const [skillId, skill] of Object.entries(context.generalSkills)) {
+      if (!skill.label || typeof skill.label.long !== 'string') {
+        console.error(`Invalid label for general skill ${skillId}:`, skill.label);
+      }
+    }
+    for (const [skillId, skill] of Object.entries(context.fightingSkills)) {
+      if (!skill.label || typeof skill.label.long !== 'string') {
+        console.error(`Invalid label for fighting skill ${skillId}:`, skill.label);
+      }
+    }
+    for (const [skillId, skill] of Object.entries(context.magicSkills)) {
+      if (!skill.label || typeof skill.label.long !== 'string') {
+        console.error(`Invalid label for magic skill ${skillId}:`, skill.label);
+      }
     }
 
     return context;
