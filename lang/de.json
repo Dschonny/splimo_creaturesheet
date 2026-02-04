@@ -100,6 +100,8 @@
     "DeleteItem": "Eintrag löschen",
     "DeleteItemConfirm": "{name} wirklich löschen?",
 
-    "Features": "Merkmale"
+    "Features": "Merkmale",
+    "TabSkills": "Fertigkeiten",
+    "CreatureInfo": "Kreaturinformationen"
   }
 }

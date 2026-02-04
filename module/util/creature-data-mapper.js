@@ -50,7 +50,16 @@ export class CreatureDataMapper {
           value: derivedAttributes.damageReduction?.value || 0
         },
         biography: "",
-        biographyHTML: ""
+        biographyHTML: "",
+        creatureInfo: {
+          basis: jsonData.basis || "",
+          rolle: jsonData.rolle || ""
+        },
+        currency: {
+          lunar: 0,
+          solar: 0,
+          ternar: 0
+        }
       }
     };
 

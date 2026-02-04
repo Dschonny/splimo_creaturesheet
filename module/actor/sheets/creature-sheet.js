@@ -99,6 +99,12 @@ export class CreatureSheet extends ActorSheet {
     // Hide skills flag
     context.hideSkills = this.actor.getFlag("splimo_creaturesheet", "hideSkills") || false;
 
+    // Creature info from import
+    context.creatureInfo = {
+      basis: this.actor.system.creatureInfo?.basis || "",
+      rolle: this.actor.system.creatureInfo?.rolle || ""
+    };
+
     return context;
   }
 

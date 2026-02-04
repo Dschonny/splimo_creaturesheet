@@ -94,6 +94,8 @@
     "DeleteItem": "Delete Item",
     "DeleteItemConfirm": "Really delete {name}?",
 
-    "Features": "Features"
+    "Features": "Features",
+    "TabSkills": "Skills",
+    "CreatureInfo": "Creature Information"
   }
 }
