@@ -12,6 +12,10 @@ Der Splittermond Creature Editor exportiert Kreaturen im FoundryVTT-kompatiblen 
   "system": "SPLITTERMOND",
   "name": "Kreaturname",
   "type": "creature",
+  "basis": {...},
+  "rolle": {...},
+  "verfeinerungen": [...],
+  "abrichtungen": [...],
   "attributes": [...],
   "skills": [...],
   "powers": [...],
@@ -29,9 +33,148 @@ Der Splittermond Creature Editor exportiert Kreaturen im FoundryVTT-kompatiblen 
 - **system** (string): Immer "SPLITTERMOND"
 - **name** (string): Name der Kreatur
 - **type** (string): Immer "creature"
+- **basis** (object | null): Grundtyp der Kreatur (Schritt 2: Basis)
+- **rolle** (object | null): Funktion der Kreatur (Schritt 3: Rolle)
+- **verfeinerungen** (array): Zusätzliche Eigenschaften (Schritt 4: Verfeinern)
+- **abrichtungen** (array): Ausbildungen und Training
 - **regelverstöße** (string[], optional): Liste von Regelabweichungen falls vorhanden
 
-## 2. Attribute (attributes)
+## 2. Basis (basis)
+
+Die Basis definiert den Grundtyp der Kreatur und ihre grundlegenden Eigenschaften.
+
+### Struktur
+
+```json
+{
+  "id": "agil",
+  "name": "Agil",
+  "description": "Bewegliche, wendige Kreaturen mit guter Körperkontrolle."
+}
+```
+
+### Felder
+
+- **id** (string): Technische ID der Basis
+- **name** (string): Anzeigename der Basis
+- **description** (string): Beschreibung der Basis
+
+### Mögliche Basis-Typen
+
+| id | name | Beschreibung |
+|----|------|--------------|
+| agil | Agil | Bewegliche, wendige Kreaturen mit guter Körperkontrolle |
+| robust | Robust | Widerstandsfähige Kreaturen mit hoher Ausdauer |
+| schnell | Schnell | Flinke Kreaturen mit hoher Geschwindigkeit |
+| stark | Stark | Kräftige Kreaturen mit hoher Körperkraft |
+
+**Hinweis**: Kann `null` sein, wenn keine Basis gewählt wurde.
+
+## 3. Rolle (rolle)
+
+Die Rolle definiert die Funktion und den Einsatzbereich der Kreatur.
+
+### Struktur
+
+```json
+{
+  "id": "kampftier",
+  "name": "Kampftier",
+  "description": "Kampftiere werden darauf abgerichtet, sich mit anderen Wesen zu messen..."
+}
+```
+
+### Felder
+
+- **id** (string): Technische ID der Rolle
+- **name** (string): Anzeigename der Rolle
+- **description** (string): Beschreibung der Rolle
+
+### Mögliche Rollen
+
+| id | name | Beschreibung |
+|----|------|--------------|
+| familiar | Familiar | Zauberwesen und Vertraute begabter Zauberer |
+| kampftier | Kampftier | Für den Kampf abgerichtete Bestien |
+| lasttier | Lasttier | Für Transport und schwere Arbeit |
+| maskottchen | Maskottchen | Gesellschaftstiere und Glücksbringer |
+| sucher | Sucher | Spür- und Suchtiere |
+
+**Hinweis**: Kann `null` sein, wenn keine Rolle gewählt wurde.
+
+## 4. Verfeinerungen (verfeinerungen)
+
+Array von zusätzlichen Eigenschaften und Spezialisierungen der Kreatur.
+
+### Struktur
+
+```json
+{
+  "id": "fliegen",
+  "name": "Fliegen",
+  "category": "bewegungsarten",
+  "description": "Die Kreatur kann fliegen...",
+  "cost": 2
+}
+```
+
+### Felder
+
+- **id** (string): Technische ID der Verfeinerung
+- **name** (string): Anzeigename der Verfeinerung
+- **category** (string): Kategorie der Verfeinerung
+- **description** (string): Beschreibung der Verfeinerung
+- **cost** (number): Kreaturenpunkte-Kosten (kann negativ sein)
+
+### Kategorien
+
+- **größe**: Größenmodifikationen (Winzig, Klein, Groß, Riesig)
+- **spezieller_typ**: Besondere Kreaturentypen
+- **zusätzliche_fähigkeiten**: Allgemeine neue Fähigkeiten
+- **bewegungsarten**: Schwimmen, Fliegen, Graben
+- **späher_jäger**: Sinnesverbesserungen und Jagdfähigkeiten
+- **geistige_fähigkeiten**: Intelligenz und mentale Fähigkeiten
+- **kampffähigkeiten**: Kampfverbesserungen
+- **magische_fähigkeiten**: Magische Kräfte und Zauber
+- **unterhaltung**: Unterhaltungs- und Darbietungsfähigkeiten
+- **körperliche_besonderheiten**: Besondere körperliche Merkmale
+- **anfälligkeiten**: Schwächen und Anfälligkeiten
+
+## 5. Abrichtungen (abrichtungen)
+
+Array von Ausbildungen und erlernten Fähigkeiten der Kreatur.
+
+### Struktur
+
+```json
+{
+  "id": "loyal",
+  "name": "Loyal",
+  "category": "allgemein",
+  "description": "Das Tier kann nicht mehr von anderen Tierführen auf profane Weise...",
+  "potentialCost": 0
+}
+```
+
+### Felder
+
+- **id** (string): Technische ID der Abrichtung
+- **name** (string): Anzeigename der Abrichtung
+- **category** (string): Kategorie der Abrichtung
+- **description** (string): Beschreibung der Abrichtung
+- **potentialCost** (number): Potentialpunkte-Kosten
+
+### Kategorien
+
+- **allgemein**: Allgemeine Abrichtungen
+- **grundausbildung**: Grundlegende Ausbildung
+- **helfer**: Unterstützende Funktionen
+- **reittier**: Reittier-spezifische Abrichtungen
+- **kampf**: Kampf-orientierte Abrichtungen
+- **vertraute**: Vertrauten-spezifische Abrichtungen
+- **schwarm**: Schwarm-spezifische Abrichtungen
+
+## 6. Attribute (attributes)
 
 Array von Attribut-Objekten mit Grundattributen und abgeleiteten Werten.
 
@@ -84,7 +227,7 @@ Array von Attribut-Objekten mit Grundattributen und abgeleiteten Werten.
 
 **Besonderheit Initiative (INI)**: Der Wert ist ein String im Format "X-Y" (z.B. "3-4"), bei der Konvertierung wird nur der erste Teil (vor dem "-") als Integer verwendet.
 
-## 3. Fertigkeiten (skills)
+## 7. Fertigkeiten (skills)
 
 Array von Fertigkeits-Objekten mit Werten und zugehörigen Meisterschaften.
 
@@ -156,7 +299,7 @@ Fertigkeiten können zugeordnete Meisterschaften haben:
 
 **Besonderheit**: Meisterschaften mit Fertigkeit "Wählbar" werden allen passenden Fertigkeiten zugeordnet.
 
-## 4. Kräfte/Merkmale (powers)
+## 8. Kräfte/Merkmale (powers)
 
 Array von besonderen Fähigkeiten und Eigenschaften der Kreatur.
 
@@ -184,7 +327,7 @@ Array von besonderen Fähigkeiten und Eigenschaften der Kreatur.
 
 **Hinweis**: Merkmale können mehrfach vorkommen mit unterschiedlichen Stufen/Werten.
 
-## 5. Zauber (spells)
+## 9. Zauber (spells)
 
 Array von magischen Fähigkeiten der Kreatur.
 
@@ -230,7 +373,7 @@ Array von magischen Fähigkeiten der Kreatur.
 
 **Hinweis**: Bei Kreaturen sind die meisten Detail-Felder leer, da nur die Verfügbarkeit des Zaubers relevant ist.
 
-## 6. Nahkampfwaffen (meleeWeapons)
+## 10. Nahkampfwaffen (meleeWeapons)
 
 Array von Waffenangriffe der Kreatur.
 
@@ -314,6 +457,41 @@ Array von Waffenangriffe der Kreatur.
   "system": "SPLITTERMOND",
   "name": "Jaguar",
   "type": "creature",
+  "basis": {
+    "id": "agil",
+    "name": "Agil",
+    "description": "Bewegliche, wendige Kreaturen mit guter Körperkontrolle."
+  },
+  "rolle": {
+    "id": "kampftier",
+    "name": "Kampftier",
+    "description": "Kampftiere werden darauf abgerichtet, sich mit anderen Wesen zu messen..."
+  },
+  "verfeinerungen": [
+    {
+      "id": "sprung",
+      "name": "Sprung",
+      "category": "bewegungsarten",
+      "description": "Die Kreatur kann besonders weit springen",
+      "cost": 1
+    }
+  ],
+  "abrichtungen": [
+    {
+      "id": "loyal",
+      "name": "Loyal",
+      "category": "allgemein",
+      "description": "Das Tier kann nicht mehr von anderen Tierführen auf profane Weise gegen den Willen seines Besitzers kontrolliert werden.",
+      "potentialCost": 0
+    },
+    {
+      "id": "kaempfer_1",
+      "name": "Kämpfer I",
+      "category": "kampf",
+      "description": "Das Tier erhält +1 auf seinen Angriffswert und +1 Schaden.",
+      "potentialCost": 1
+    }
+  ],
   "attributes": [
     {"name": "Ausstrahlung", "id": "CHARISMA", "shortName": "AUS", "startValue": 0, "value": 3},
     {"name": "Beweglichkeit", "id": "AGILITY", "shortName": "BEW", "startValue": 0, "value": 6},
@@ -431,6 +609,10 @@ const iniValue = parseInt(iniString.split('-')[0], 10);
 
 ### 4. Optionale Felder
 Folgende Felder können fehlen oder leer sein:
+- `basis` (kann `null` sein)
+- `rolle` (kann `null` sein)
+- `verfeinerungen` (kann leeres Array sein)
+- `abrichtungen` (kann leeres Array sein)
 - `regelverstöße` (nur wenn Regelabweichungen vorhanden)
 - `spells` (kann leeres Array sein)
 - Viele Detail-Felder bei Waffen und Zaubern
@@ -443,9 +625,12 @@ Folgende Felder können fehlen oder leer sein:
 - **Zwei Attribute pro Fertigkeit**: Splittermond verwendet bei Proben beide Attribute
 
 ### 6. Empfohlene UI-Elemente für VTT-Bogen
+- Kreatur-Header mit Name, Basis und Rolle
 - Attribut-Übersicht mit Primär- und Sekundärwerten
 - Fertigkeitsliste mit Würfelbuttons für Proben
 - Meisterschaften als aufklappbare/hover-Details bei Fertigkeiten
+- Verfeinerungen als Badge-Liste oder Kategorien
+- Abrichtungen gruppiert nach Kategorie (Allgemein, Kampf, etc.)
 - Merkmale als separate Sektion oder Tags
 - Waffenliste mit Angriffs- und Schadensbuttons
 - Zauber-Sektion (falls vorhanden)
@@ -457,9 +642,11 @@ Beim Import sollten folgende Checks durchgeführt werden:
 
 1. **Version-Check**: `jsonExporterVersion` und `system` prüfen
 2. **Pflichtfelder**: name, type, attributes, skills müssen vorhanden sein
-3. **Attribut-Vollständigkeit**: Alle 8 Grundattribute + 9 abgeleitete Werte sollten vorhanden sein
-4. **Referenz-Integrität**: Attribut-Referenzen in skills/weapons müssen gültig sein
-5. **Datentypen**: Numerische Werte müssen Numbers sein (außer INI)
+3. **Optionale Strukturfelder**: basis, rolle, verfeinerungen, abrichtungen sollten vorhanden sein (können aber null/leer sein)
+4. **Attribut-Vollständigkeit**: Alle 8 Grundattribute + 9 abgeleitete Werte sollten vorhanden sein
+5. **Referenz-Integrität**: Attribut-Referenzen in skills/weapons müssen gültig sein
+6. **Datentypen**: Numerische Werte müssen Numbers sein (außer INI)
+7. **Array-Typen**: verfeinerungen, abrichtungen, skills, powers, spells, meleeWeapons müssen Arrays sein
 
 ## Support
 

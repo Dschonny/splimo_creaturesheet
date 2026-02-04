@@ -96,6 +96,18 @@
 
     "Features": "Features",
     "TabSkills": "Skills",
-    "CreatureInfo": "Creature Information"
+    "CreatureInfo": "Creature Information",
+    "Verfeinerungen": "Refinements",
+    "Abrichtungen": "Training",
+
+    "AbrichtungCategory": {
+      "allgemein": "General",
+      "grundausbildung": "Basic Training",
+      "helfer": "Helper",
+      "reittier": "Mount",
+      "kampf": "Combat",
+      "vertraute": "Familiar",
+      "schwarm": "Swarm"
+    }
   }
 }

@@ -59,22 +59,51 @@
                     {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
                 </div>
                 <div class="column">
-                    {{!-- Creature Info --}}
+                    {{!-- Creature Info: Basis & Rolle --}}
+                    {{#if creatureInfo.basis}}
                     <div class="list">
                         <div class="list-header">
-                            <h3>{{localize "CREATURE.CreatureInfo"}}</h3>
+                            <h3>{{localize "CREATURE.Basis"}}</h3>
                         </div>
                         <div class="list-body">
-                            <div class="form-group">
-                                <label>{{localize "CREATURE.Basis"}}</label>
-                                <span>{{creatureInfo.basis}}</span>
-                            </div>
-                            <div class="form-group">
-                                <label>{{localize "CREATURE.Rolle"}}</label>
-                                <span>{{creatureInfo.rolle}}</span>
-                            </div>
+                            <strong title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</strong>
                         </div>
                     </div>
+                    {{/if}}
+
+                    {{#if creatureInfo.rolle}}
+                    <div class="list">
+                        <div class="list-header">
+                            <h3>{{localize "CREATURE.Rolle"}}</h3>
+                        </div>
+                        <div class="list-body">
+                            <strong title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</strong>
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{!-- Verfeinerungen --}}
+                    {{#if verfeinerungenByCategory}}
+                    <div class="list">
+                        <div class="list-header">
+                            <h3>{{localize "CREATURE.Verfeinerungen"}}</h3>
+                        </div>
+                        <div class="list-body">
+                            {{#each verfeinerungenByCategory}}
+                            <div class="refinement-category">
+                                <ul class="taglist">
+                                    {{#each this}}
+                                    <li class="taglist-item" title="{{this.description}}">
+                                        <div class="taglist-item-name">{{this.name}}</div>
+                                        <div class="taglist-item-cost">({{this.cost}})</div>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/if}}
 
                     {{!-- NPC Features / Powers --}}
                     {{#if itemsByType.npcfeature}}
@@ -82,13 +111,13 @@
                         <div class="list-header">
                             <h3>{{localize "CREATURE.Features"}}</h3>
                         </div>
-                        <ol class="list-body">
+                        <ul class="taglist">
                             {{#each itemsByType.npcfeature}}
-                            <li class="list-item" data-item-id="{{this._id}}">
-                                <label title="{{this.system.description}}">{{this.name}}</label>
+                            <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
+                                <div class="taglist-item-name">{{this.name}}</div>
                             </li>
                             {{/each}}
-                        </ol>
+                        </ul>
                     </div>
                     {{/if}}
                 </div>
@@ -183,6 +212,30 @@
                     {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
                     masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
                     magicSkills=magicSkills}}
+
+                    {{!-- Abrichtungen --}}
+                    {{#if abrichtungenByCategory}}
+                    <div class="list">
+                        <div class="list-header">
+                            <h3>{{localize "CREATURE.Abrichtungen"}}</h3>
+                        </div>
+                        <ol class="list-body">
+                            {{#each abrichtungenByCategory}}
+                            <li class="list-item">
+                                <h4>{{localize (concat "CREATURE.AbrichtungCategory." @key)}}</h4>
+                                <ul class="taglist">
+                                    {{#each this}}
+                                    <li class="taglist-item" title="{{this.description}}">
+                                        <div class="taglist-item-name">{{this.name}}</div>
+                                        <div class="taglist-item-cost">({{this.potentialCost}})</div>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+                    {{/if}}
                 </div>
             </div>
         </section>

@@ -52,8 +52,10 @@ export class CreatureDataMapper {
         biography: "",
         biographyHTML: "",
         creatureInfo: {
-          basis: jsonData.basis || "",
-          rolle: jsonData.rolle || ""
+          basis: jsonData.basis || null,
+          rolle: jsonData.rolle || null,
+          verfeinerungen: jsonData.verfeinerungen || [],
+          abrichtungen: jsonData.abrichtungen || []
         },
         currency: {
           lunar: 0,

@@ -102,6 +102,18 @@
 
     "Features": "Merkmale",
     "TabSkills": "Fertigkeiten",
-    "CreatureInfo": "Kreaturinformationen"
+    "CreatureInfo": "Kreaturinformationen",
+    "Verfeinerungen": "Verfeinerungen",
+    "Abrichtungen": "Abrichtungen",
+
+    "AbrichtungCategory": {
+      "allgemein": "Allgemein",
+      "grundausbildung": "Grundausbildung",
+      "helfer": "Helfer",
+      "reittier": "Reittier",
+      "kampf": "Kampf",
+      "vertraute": "Vertraute",
+      "schwarm": "Schwarm"
+    }
   }
 }

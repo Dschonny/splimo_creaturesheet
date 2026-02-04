@@ -78,11 +78,20 @@ export class CreatureSheet extends ActorSheet {
     context.masteriesBySkill = {};
     const masteries = context.itemsByType.mastery || [];
     for (const mastery of masteries) {
-      const skillId = mastery.system.skill || "general";
+      const skillId = mastery.system.skill || "none";
       if (!context.masteriesBySkill[skillId]) {
-        context.masteriesBySkill[skillId] = [];
+        // Match the structure expected by mastery-list.hbs partial
+        const skillData = context.generalSkills[skillId] ||
+                         context.fightingSkills[skillId] ||
+                         context.magicSkills[skillId] ||
+                         { label: { short: skillId, long: skillId } };
+
+        context.masteriesBySkill[skillId] = {
+          label: skillData.label,
+          masteries: []
+        };
       }
-      context.masteriesBySkill[skillId].push(mastery);
+      context.masteriesBySkill[skillId].masteries.push(mastery);
     }
 
     // Organize spells by skill
@@ -101,9 +110,31 @@ export class CreatureSheet extends ActorSheet {
 
     // Creature info from import
     context.creatureInfo = {
-      basis: this.actor.system.creatureInfo?.basis || "",
-      rolle: this.actor.system.creatureInfo?.rolle || ""
+      basis: this.actor.system.creatureInfo?.basis || null,
+      rolle: this.actor.system.creatureInfo?.rolle || null,
+      verfeinerungen: this.actor.system.creatureInfo?.verfeinerungen || [],
+      abrichtungen: this.actor.system.creatureInfo?.abrichtungen || []
     };
+
+    // Group verfeinerungen by category
+    context.verfeinerungenByCategory = {};
+    for (const verf of context.creatureInfo.verfeinerungen) {
+      const cat = verf.category || "other";
+      if (!context.verfeinerungenByCategory[cat]) {
+        context.verfeinerungenByCategory[cat] = [];
+      }
+      context.verfeinerungenByCategory[cat].push(verf);
+    }
+
+    // Group abrichtungen by category
+    context.abrichtungenByCategory = {};
+    for (const abr of context.creatureInfo.abrichtungen) {
+      const cat = abr.category || "allgemein";
+      if (!context.abrichtungenByCategory[cat]) {
+        context.abrichtungenByCategory[cat] = [];
+      }
+      context.abrichtungenByCategory[cat].push(abr);
+    }
 
     return context;
   }
