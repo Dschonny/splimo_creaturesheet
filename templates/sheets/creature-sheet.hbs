@@ -27,8 +27,8 @@
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button></li>
                 </ul>
+                {{/unless}}
             </div>
-            {{/unless}}
         </section>
         {{#unless limited}}
         <section class="column">
@@ -56,25 +56,10 @@
         <section class="tab" data-group="primary" data-tab="general">
             <div class="row">
                 <div class="column">
-                    {{!-- Attributes vertical list --}}
-                    <div class="list">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Attributes"}}</h3>
-                        </div>
-                        <ol class="list-body">
-                            {{#each actor.attributes as |attribute attributeId|}}
-                            <li class="list-item">
-                                <label title="{{localize attribute.label.long}}">{{localize attribute.label.short}}</label>
-                                <div class="value">
-                                    <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
-                                </div>
-                            </li>
-                            {{/each}}
-                        </ol>
-                    </div>
+                    {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
                 </div>
                 <div class="column">
-                    {{!-- Creature Info: Basis & Rolle as simple labels --}}
+                    {{!-- Creature Info: Basis & Rolle --}}
                     {{#if creatureInfo.basis}}
                     <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
                     {{/if}}
@@ -147,7 +132,7 @@
                             <li class="list-item draggable" data-skill="{{skillId}}">
                                 <label>
                                     <a class="rollable">
-                                        {{localize skill.label.long}}
+                                        {{localize skill.label}}
                                     </a>
                                 </label>
                                 <div class="value">
@@ -177,7 +162,7 @@
                             {{#unless (and ../hideSkills (eq skill.points 0))}}
                             <li class="list-item" data-skill="{{skillId}}">
                                 <label>
-                                    {{localize skill.label.long}}
+                                    {{localize skill.label}}
                                 </label>
                                 <div class="points">
                                     <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
@@ -205,7 +190,7 @@
                             {{#unless (and ../hideSkills (eq skill.value 0))}}
                             <li class="list-item draggable" data-skill="{{skillId}}">
                                 <label>
-                                    <a class="rollable">{{localize skill.label.long}}</a>
+                                    <a class="rollable">{{localize skill.label}}</a>
                                 </label>
                                 <div class="value"><input name="system.skills.{{skillId}}.value" type="text"
                                         value="{{skill.value}}" data-dtype="Number">
