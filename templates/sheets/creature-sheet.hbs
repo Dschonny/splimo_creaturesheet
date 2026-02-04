@@ -87,7 +87,7 @@
                         <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
                                 <a class="rollable">
-                                    {{localize skill.label}}
+                                    {{localize skill.label.long}}
                                 </a>
                             </label>
                             <div class="value">
@@ -115,7 +115,7 @@
                         {{#each fightingSkills as |skill skillId|}}
                         <li class="list-item" data-skill="{{skillId}}">
                             <label>
-                                {{localize skill.label}}
+                                {{localize skill.label.long}}
                             </label>
                             <div class="points">
                                 <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
@@ -141,7 +141,7 @@
                         {{#each magicSkills as |skill skillId|}}
                         <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
-                                <a class="rollable">{{localize skill.label}}</a>
+                                <a class="rollable">{{localize skill.label.long}}</a>
                             </label>
                             <div class="value"><input name="system.skills.{{skillId}}.value" type="text"
                                     value="{{skill.value}}" data-dtype="Number">
