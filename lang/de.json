@@ -4,9 +4,9 @@
     "TypeRefinement": "Verfeinerung",
     "TypeTraining": "Abrichtung",
 
-    "ImportCreature": "Kreatur importieren (.cre)",
+    "ImportCreature": "Kreatur importieren (.ced)",
     "ImportDialogTitle": "Kreatur-Datei importieren",
-    "ImportDialogContent": "Wähle eine .cre oder .json Datei zum Importieren:",
+    "ImportDialogContent": "Wähle eine .ced oder .json Datei zum Importieren:",
     "ImportConfirmTitle": "Import bestätigen",
     "ImportConfirmContent": "Import von {name}:\n{refinements} Verfeinerungen\n{trainings} Abrichtungen\n{weapons} Waffen aus Verfeinerungen",
     "ImportSuccess": "Kreatur erfolgreich importiert!",

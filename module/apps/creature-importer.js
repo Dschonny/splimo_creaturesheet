@@ -1,12 +1,12 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
 
 /**
- * Handles importing .cre files into creature actors
+ * Handles importing .ced files into creature actors
  */
 export class CreatureImporter {
 
   /**
-   * Import a creature from a .cre file
+   * Import a creature from a .ced file
    * @param {Actor} actor - Optional existing actor to update
    */
   static async import(actor = null) {
@@ -20,7 +20,7 @@ export class CreatureImporter {
       console.log("File content read, length:", content?.length);
 
       const creData = JSON.parse(content);
-      console.log("Parsed .cre data:", creData);
+      console.log("Parsed .ced data:", creData);
 
       // Validate format
       const validation = CreatureDataMapper.validateCreFormat(creData);
@@ -88,7 +88,7 @@ export class CreatureImporter {
     return new Promise((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".cre,.json";
+      input.accept = ".ced,.json";
 
       input.onchange = (e) => {
         const file = e.target.files[0];

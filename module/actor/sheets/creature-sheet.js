@@ -37,8 +37,8 @@ export class CreatureSheet extends ActorSheet {
     context.trainingByCategory = this._groupTrainingByCategory();
 
     // Calculate total costs
-    context.totalRefinementCost = this.actor.getTotalRefinementCost();
-    context.totalTrainingCost = this.actor.getTotalTrainingCost();
+    context.totalRefinementCost = this._calculateTotalRefinementCost();
+    context.totalTrainingCost = this._calculateTotalTrainingCost();
 
     // Creature data
     context.creatureData = this.actor.system.creatureData || {};
@@ -117,6 +117,30 @@ export class CreatureSheet extends ActorSheet {
       value: cat,
       label: game.i18n.localize(`CREATURE.TrainingCategories.${cat}`)
     }));
+  }
+
+  /**
+   * Calculate total refinement costs
+   */
+  _calculateTotalRefinementCost() {
+    let total = 0;
+    const verfeinerungen = this.actor.system.verfeinerungen || [];
+    for (const verf of verfeinerungen) {
+      total += verf.kosten || 0;
+    }
+    return total;
+  }
+
+  /**
+   * Calculate total training potential costs
+   */
+  _calculateTotalTrainingCost() {
+    let total = 0;
+    const abrichtungen = this.actor.system.abrichtungen || [];
+    for (const abr of abrichtungen) {
+      total += abr.potenzialKosten || 0;
+    }
+    return total;
   }
 
   /** @override */

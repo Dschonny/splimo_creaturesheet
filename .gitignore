@@ -5,7 +5,7 @@ node_modules/
 splittermond/
 
 # Test files
-*.cre
+*.ced
 fvtt-*.json
 
 # IDE

@@ -1,16 +1,16 @@
 /**
- * Converts .cre file data to FoundryVTT actor and item data structures
+ * Converts .ced file data to FoundryVTT actor and item data structures
  */
 export class CreatureDataMapper {
 
   /**
-   * Maps a .cre file object to actor data
-   * @param {Object} creData - Parsed .cre file content
+   * Maps a .ced file object to actor data
+   * @param {Object} creData - Parsed .ced file content
    * @returns {Object} Actor data structure with embedded items
    */
   static mapCreToActorData(creData) {
     if (!creData || creData.editor !== "SPLITTERMOND_CREATURE_EDITOR") {
-      throw new Error("Invalid .cre file format");
+      throw new Error("Invalid .ced file format");
     }
 
     // Prepare actor data
@@ -133,14 +133,14 @@ export class CreatureDataMapper {
   }
 
   /**
-   * Validates a .cre file structure
+   * Validates a .ced file structure
    */
   static validateCreFormat(data) {
     if (!data) {
       return { valid: false, error: "Keine Daten vorhanden" };
     }
 
-    console.log("Validating .cre file:", data);
+    console.log("Validating .ced file:", data);
     console.log("Editor field:", data.editor);
 
     if (data.editor !== "SPLITTERMOND_CREATURE_EDITOR") {

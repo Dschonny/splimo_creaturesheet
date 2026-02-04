@@ -4,9 +4,9 @@
     "TypeRefinement": "Refinement",
     "TypeTraining": "Training",
 
-    "ImportCreature": "Import Creature (.cre)",
+    "ImportCreature": "Import Creature (.ced)",
     "ImportDialogTitle": "Import Creature File",
-    "ImportDialogContent": "Select a .cre or .json file to import:",
+    "ImportDialogContent": "Select a .ced or .json file to import:",
     "ImportConfirmTitle": "Confirm Import",
     "ImportConfirmContent": "Importing {name}:\n{refinements} Refinements\n{trainings} Trainings\n{weapons} Weapons from Refinements",
     "ImportSuccess": "Creature imported successfully!",

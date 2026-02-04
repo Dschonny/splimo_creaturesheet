@@ -6,7 +6,7 @@
     "minimum": "11",
     "verified": "12"
   },
-  "description": "Adds creature/animal character sheets to the Splittermond system with support for Verfeinerungen, Abrichtungen, and .cre file import.",
+  "description": "Adds creature/animal character sheets to the Splittermond system with support for Verfeinerungen, Abrichtungen, and .ced file import.",
   "authors": [
     {
       "name": "Splimo Creaturesheet Team"

@@ -1,12 +1,12 @@
 # Splittermond Creature Sheet
 
-Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kreaturen/Tiere mit Unterstützung für Verfeinerungen, Abrichtungen und .cre-Datei-Import hinzufügt.
+Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kreaturen/Tiere mit Unterstützung für Verfeinerungen, Abrichtungen und .ced-Datei-Import hinzufügt.
 
 ## Features
 
 - **Eigenständiges Modul**: Modifiziert das Splittermond-System nicht, funktioniert als separate Erweiterung
 - **Manuelle Werte**: Alle Attribute, Fertigkeiten und abgeleiteten Werte sind unabhängig und manuell editierbar - keine automatischen Berechnungen
-- **.cre-Import**: Importiere Kreaturen direkt aus dem Splittermond Creature Editor
+- **.ced-Import**: Importiere Kreaturen direkt aus dem Splittermond Creature Editor
 - **Verfeinerungen**: Vollständige Unterstützung mit Kategorisierung und Kostenverfolgung
 - **Abrichtungen**: Inklusive Custom Meisterschaften und Große Tricks
 - **Splittermond-Integration**: Nutzt das Würfelsystem und Chat-Templates des Hauptsystems
@@ -34,17 +34,17 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 2. Wähle als Typ "Creature"
 3. Fülle die Werte manuell aus
 
-### Kreatur aus .cre-Datei importieren
+### Kreatur aus .ced-Datei importieren
 
 #### Option 1: Über die Actor-Directory
-1. Klicke auf den "Kreatur importieren (.cre)" Button in der Actor-Sidebar
-2. Wähle deine .cre-Datei
+1. Klicke auf den "Kreatur importieren (.ced)" Button in der Actor-Sidebar
+2. Wähle deine .ced-Datei
 3. Bestätige den Import
 
 #### Option 2: Über das Actor-Sheet
 1. Öffne ein bestehendes Creature-Sheet
-2. Klicke auf "Kreatur importieren (.cre)" im Header
-3. Wähle deine .cre-Datei
+2. Klicke auf "Kreatur importieren (.ced)" im Header
+3. Wähle deine .ced-Datei
 4. Der vorhandene Actor wird mit den importierten Daten überschrieben
 
 ### Werte bearbeiten
@@ -74,7 +74,7 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 ### Angriffe
 
 Angriffe werden über normale npcattack-Items verwaltet:
-- Automatisch erstellt beim .cre-Import (aus Verfeinerungen mit zusätzlicher Waffe)
+- Automatisch erstellt beim .ced-Import (aus Verfeinerungen mit zusätzlicher Waffe)
 - Manuell erstellbar wie bei NPCs
 - Im "Kampf"-Tab sichtbar mit Würfel-Button
 
@@ -143,9 +143,9 @@ Angriffe werden über normale npcattack-Items verwaltet:
 }
 ```
 
-## .cre-Format
+## .ced-Format
 
-Das Modul erwartet .cre-Dateien im JSON-Format mit folgender Struktur:
+Das Modul erwartet .ced-Dateien im JSON-Format mit folgender Struktur:
 
 ```json
 {
@@ -164,7 +164,7 @@ Das Modul erwartet .cre-Dateien im JSON-Format mit folgender Struktur:
 
 - Keine automatische Berechnung von Werten (by design)
 - Voraussetzungen für Abrichtungen werden nicht validiert
-- Export zurück zu .cre-Format nicht unterstützt
+- Export zurück zu .ced-Format nicht unterstützt
 
 ## Entwicklung
 
