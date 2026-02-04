@@ -33,19 +33,19 @@
         {{#unless limited}}
         <section class="column">
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.system.focus
-            health=data.system.health}}
+            health=data.system.health hasRestActions=false}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
-            derivedAttributes=actor.derivedValues damageReduction=actor.damageReduction editable=editable}}
+            derivedAttributes=actor.derivedValues damageReduction=actor.damageReduction editable=false}}
         </section>
         {{/unless}}
     </header>
     {{#unless limited}}
     <nav class="sheet-navigation" data-group="primary">
         <a class="sheet-navigation-item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
-        <a class="sheet-navigation-item" data-tab="general">{{ localize "splittermond.general" }}</a>
-        <a class="sheet-navigation-item" data-tab="skills">{{ localize "CREATURE.TabSkills" }}</a>
+        <a class="sheet-navigation-item active" data-tab="general">{{ localize "splittermond.general" }}</a>
+        <a class="sheet-navigation-item" data-tab="skills">{{ localize "splittermond.skills" }}</a>
         <a class="sheet-navigation-item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
-        <a class="sheet-navigation-item" data-tab="combat">{{ localize "CREATURE.TabCombat" }}</a>
+        <a class="sheet-navigation-item" data-tab="fight">{{ localize "splittermond.fight" }}</a>
         <a class="sheet-navigation-item" data-tab="inventory">{{ localize "splittermond.inventory" }}</a>
         <a class="sheet-navigation-item" data-tab="status">{{ localize "splittermond.status" }}</a>
     </nav>
@@ -54,197 +54,180 @@
             {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="general">
-            <div class="row">
-                <div class="column">
-                    {{!-- Attributes as vertical list --}}
-                    <div class="list">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Attributes"}}</h3>
-                        </div>
-                        <ol class="list-body">
-                            {{#each actor.attributes as |attribute attributeId|}}
-                            <li class="list-item">
-                                <label title="{{localize attribute.label.long}}">{{localize attribute.label.short}}</label>
-                                <div class="value">
-                                    <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
-                                </div>
-                            </li>
-                            {{/each}}
-                        </ol>
-                    </div>
+            <div class="list list-attributes">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.attributes"}}</h3>
+                    <div class="value">{{localize "splittermond.value"}}</div>
                 </div>
-                <div class="column">
-                    {{!-- Creature Info: Basis & Rolle --}}
-                    {{#if creatureInfo.basis}}
-                    <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
-                    {{/if}}
-
-                    {{#if creatureInfo.rolle}}
-                    <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
-                    {{/if}}
-
-                    {{!-- Verfeinerungen --}}
-                    {{#if verfeinerungenByCategory}}
-                    <div class="list">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Verfeinerungen"}}</h3>
+                <ul class="list-body">
+                    {{#each actor.attributes as |attribute attributeId|}}
+                    <li class="list-item attribute">
+                        <label for="system.attributes.{{attributeId}}.value"
+                            title="{{localize attribute.label.long}}">{{localize
+                            attribute.label.long}}</label>
+                        <div class="value">
+                            <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                                data-dtype="Number">
                         </div>
-                        <div class="list-body">
-                            {{#each verfeinerungenByCategory}}
-                            <div class="refinement-category">
-                                <h4 style="font-weight: bold;">{{localize this.categoryKey}}</h4>
-                                <ul class="taglist">
-                                    {{#each this.items}}
-                                    <li class="taglist-item" title="{{this.description}}">
-                                        <div class="taglist-item-name">{{this.name}}</div>
-                                        <div class="taglist-item-cost">({{this.cost}})</div>
-                                    </li>
-                                    {{/each}}
-                                </ul>
-                            </div>
-                            {{/each}}
-                        </div>
-                    </div>
-                    {{/if}}
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
 
-                    {{!-- NPC Features / Powers --}}
-                    {{#if itemsByType.npcfeature}}
-                    <div class="list">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Features"}}</h3>
-                        </div>
+            {{!-- Creature Info: Basis & Rolle --}}
+            {{#if creatureInfo.basis}}
+            <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
+            {{/if}}
+            {{#if creatureInfo.rolle}}
+            <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
+            {{/if}}
+
+            {{!-- Verfeinerungen --}}
+            {{#if verfeinerungenByCategory}}
+            <div class="list">
+                <div class="list-header">
+                    <h3>{{localize "CREATURE.Verfeinerungen"}}</h3>
+                </div>
+                <div class="list-body">
+                    {{#each verfeinerungenByCategory}}
+                    <div class="refinement-category">
+                        <h4 style="font-weight: bold;">{{localize this.categoryKey}}</h4>
                         <ul class="taglist">
-                            {{#each itemsByType.npcfeature}}
-                            <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
+                            {{#each this.items}}
+                            <li class="taglist-item" title="{{this.description}}">
                                 <div class="taglist-item-name">{{this.name}}</div>
+                                <div class="taglist-item-cost">({{this.cost}})</div>
                             </li>
                             {{/each}}
                         </ul>
                     </div>
-                    {{/if}}
+                    {{/each}}
                 </div>
             </div>
+            {{/if}}
+
+            {{!-- NPC Features / Powers --}}
+            {{#if itemsByType.npcfeature}}
+            <div class="list">
+                <div class="list-header">
+                    <h3>{{localize "CREATURE.Features"}}</h3>
+                </div>
+                <ul class="list-body taglist">
+                    {{#each itemsByType.npcfeature}}
+                    <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
+                        <div class="taglist-item-name">{{this.name}}</div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
         </section>
         <section class="tab" data-group="primary" data-tab="skills">
-            <div class="row">
-                <div class="column" data-roll-type="skill">
-                    <div class="list skills">
-                        <div class="list-header">
-                            <h3>{{localize "splittermond.generalSkills"}}</h3>
-                            <div class="list-actions">
-                                <button class="button-inline" data-action="show-hide-skills" type="button">
-                                    {{#if hideSkills}}
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                    {{else}}
-                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                                    {{/if}}
-                                </button>
-                            </div>
-                        </div>
-                        <ol class="list-body skill-list">
-                            {{#each generalSkills as |skill skillId|}}
-                            {{#unless (and ../hideSkills (eq skill.value 0))}}
-                            <li class="list-item draggable" data-skill="{{skillId}}">
-                                <label>
-                                    <a class="rollable">
-                                        {{localize skill.label}}
-                                    </a>
-                                </label>
-                                <div class="value">
-                                    <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
-                                        data-dtype="Number">
-                                </div>
-                            </li>
-                            {{/unless}}
-                            {{/each}}
-                        </ol>
-                    </div>
-                    <div class="list skills">
-                        <div class="list-header">
-                            <h3>{{localize "splittermond.fightingSkills"}}</h3>
-                            <div class="list-actions">
-                                <button class="button-inline" data-action="show-hide-skills" type="button">
-                                    {{#if hideSkills}}
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                    {{else}}
-                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                                    {{/if}}
-                                </button>
-                            </div>
-                        </div>
-                        <ol class="list-body skill-list">
-                            {{#each fightingSkills as |skill skillId|}}
-                            {{#unless (and ../hideSkills (eq skill.points 0))}}
-                            <li class="list-item" data-skill="{{skillId}}">
-                                <label>
-                                    {{localize skill.label}}
-                                </label>
-                                <div class="points">
-                                    <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
-                                </div>
-                            </li>
-                            {{/unless}}
-                            {{/each}}
-                        </ol>
-                    </div>
-                    <div class="list skills">
-                        <div class="list-header">
-                            <h3>{{localize "splittermond.magicSkills"}}</h3>
-                            <div class="list-actions">
-                                <button class="button-inline" data-action="show-hide-skills" type="button">
-                                    {{#if hideSkills}}
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                    {{else}}
-                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
-                                    {{/if}}
-                                </button>
-                            </div>
-                        </div>
-                        <ol class="list-body skill-list">
-                            {{#each magicSkills as |skill skillId|}}
-                            {{#unless (and ../hideSkills (eq skill.value 0))}}
-                            <li class="list-item draggable" data-skill="{{skillId}}">
-                                <label>
-                                    <a class="rollable">{{localize skill.label}}</a>
-                                </label>
-                                <div class="value"><input name="system.skills.{{skillId}}.value" type="text"
-                                        value="{{skill.value}}" data-dtype="Number">
-                                </div>
-                            </li>
-                            {{/unless}}
-                            {{/each}}
-                        </ol>
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
+            <div class="list skills" data-roll-type="skill">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.generalSkills"}}</h3>
+                    <div class="list-actions">
+                        <button class="button-inline" data-action="show-hide-skills" type="button">
+                            {{#if hideSkills}}
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            {{else}}
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            {{/if}}
+                        </button>
                     </div>
                 </div>
-                <div class="column">
-                    {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
-                    masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
-                    magicSkills=magicSkills}}
-
-                    {{!-- Abrichtungen --}}
-                    {{#if abrichtungenByCategory}}
-                    <div class="list abrichtungen">
-                        <div class="list-header">
-                            <h3>{{localize "CREATURE.Abrichtungen"}}</h3>
+                <ol class="list-body skill-list">
+                    {{#each generalSkills as |skill skillId|}}
+                    <li class="list-item draggable" data-skill="{{skillId}}">
+                        <label>
+                            <a class="rollable">
+                                {{localize skill.label}}
+                            </a>
+                        </label>
+                        <div class="value">
+                            <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
+                                data-dtype="Number">
                         </div>
-                        <ol class="list-body">
-                            {{#each abrichtungenByCategory}}
-                            <li class="list-item">
-                                <label>{{localize this.categoryKey}}</label>
-                                <ul class="taglist item-list">
-                                    {{#each this.items}}
-                                    <li class="taglist-item item" title="{{this.description}}">
-                                        <div class="taglist-item-name">{{this.name}}</div>
-                                    </li>
-                                    {{/each}}
-                                </ul>
-                            </li>
-                            {{/each}}
-                        </ol>
+                    </li>
+                    {{/each}}
+                </ol>
+                <div class="list-header">
+                    <h3>{{localize "splittermond.fightingSkills"}}</h3>
+                    <div class="list-actions">
+                        <button class="button-inline" data-action="show-hide-skills" type="button">
+                            {{#if hideSkills}}
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            {{else}}
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            {{/if}}
+                        </button>
                     </div>
-                    {{/if}}
                 </div>
+                <ol class="list-body skill-list">
+                    {{#each fightingSkills as |skill skillId|}}
+                    <li class="list-item" data-skill="{{skillId}}">
+                        <label>
+                            {{localize skill.label}}
+                        </label>
+                        <div class="points">
+                            <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+                <div class="list-header">
+                    <h3>{{localize "splittermond.magicSkills"}}</h3>
+                    <div class="list-actions">
+                        <button class="button-inline" data-action="show-hide-skills" type="button">
+                            {{#if hideSkills}}
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            {{else}}
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            {{/if}}
+                        </button>
+                    </div>
+                </div>
+                <ol class="list-body skill-list">
+                    {{#each magicSkills as |skill skillId|}}
+                    <li class="list-item draggable" data-skill="{{skillId}}">
+                        <label>
+                            <a class="rollable">{{localize skill.label}}</a>
+                        </label>
+                        <div class="value">
+                            <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
+                                data-dtype="Number">
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
             </div>
+            {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
+            masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
+            magicSkills=magicSkills}}
+
+            {{!-- Abrichtungen --}}
+            {{#if abrichtungenByCategory}}
+            <div class="list abrichtungen">
+                <div class="list-header">
+                    <h3>{{localize "CREATURE.Abrichtungen"}}</h3>
+                </div>
+                <ol class="list-body">
+                    {{#each abrichtungenByCategory}}
+                    <li class="list-item">
+                        <label>{{localize this.categoryKey}}</label>
+                        <ul class="taglist item-list">
+                            {{#each this.items}}
+                            <li class="taglist-item item" title="{{this.description}}">
+                                <div class="taglist-item-name">{{this.name}}</div>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+            {{/if}}
         </section>
         <section class="tab" data-group="primary" data-tab="spells">
             <div>
@@ -252,7 +235,7 @@
                 channeledSpells=data.system.focus.channeled.entries}}
             </div>
         </section>
-        <section class="tab" data-group="primary" data-tab="combat">
+        <section class="tab" data-group="primary" data-tab="fight">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
                 activeDefense=actor.activeDefense attacks=actor.attacks}}
@@ -270,6 +253,7 @@
             spelleffects=itemsByType.spelleffect
             hasRestActions=false}}
         </section>
+
     </main>
     {{/unless}}
 </form>
