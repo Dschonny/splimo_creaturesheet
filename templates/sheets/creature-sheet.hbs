@@ -56,7 +56,22 @@
         <section class="tab" data-group="primary" data-tab="general">
             <div class="row">
                 <div class="column">
-                    {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
+                    {{!-- Attributes as vertical list --}}
+                    <div class="list">
+                        <div class="list-header">
+                            <h3>{{localize "CREATURE.Attributes"}}</h3>
+                        </div>
+                        <ol class="list-body">
+                            {{#each actor.attributes as |attribute attributeId|}}
+                            <li class="list-item">
+                                <label title="{{localize attribute.label.long}}">{{localize attribute.label.short}}</label>
+                                <div class="value">
+                                    <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
                 </div>
                 <div class="column">
                     {{!-- Creature Info: Basis & Rolle --}}
