@@ -14,3 +14,28 @@
 .splittermond.sheet.actor.npc .import-creature i {
   margin-right: 0.25rem;
 }
+
+/* Two-column layout for General tab */
+.creature-general-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.creature-general-left,
+.creature-general-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Refinement categories spacing */
+.refinement-category {
+  margin-bottom: 0.5rem;
+}
+
+.refinement-category h4 {
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}

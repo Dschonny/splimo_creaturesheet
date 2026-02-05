@@ -53,74 +53,79 @@
         <section class="tab" data-group="primary" data-tab="biography">
             {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
         </section>
-        <section class="tab" data-group="primary" data-tab="general">
-            <div class="list list-attributes">
-                <div class="list-header">
-                    <h3>{{localize "splittermond.attributes"}}</h3>
-                    <div class="value">{{localize "splittermond.value"}}</div>
-                </div>
-                <ul class="list-body">
-                    {{#each actor.attributes as |attribute attributeId|}}
-                    <li class="list-item attribute">
-                        <label for="system.attributes.{{attributeId}}.value"
-                            title="{{localize attribute.label.long}}">{{localize
-                            attribute.label.long}}</label>
-                        <div class="value">
-                            <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
-                                data-dtype="Number">
-                        </div>
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
-
-            {{!-- Creature Info: Basis & Rolle --}}
-            {{#if creatureInfo.basis}}
-            <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
-            {{/if}}
-            {{#if creatureInfo.rolle}}
-            <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
-            {{/if}}
-
-            {{!-- Verfeinerungen --}}
-            {{#if verfeinerungenByCategory}}
-            <div class="list">
-                <div class="list-header">
-                    <h3>{{localize "CREATURE.Verfeinerungen"}}</h3>
-                </div>
-                <div class="list-body">
-                    {{#each verfeinerungenByCategory}}
-                    <div class="refinement-category">
-                        <h4 style="font-weight: bold;">{{localize this.categoryKey}}</h4>
-                        <ul class="taglist">
-                            {{#each this.items}}
-                            <li class="taglist-item" title="{{this.description}}">
-                                <div class="taglist-item-name">{{this.name}}</div>
-                                <div class="taglist-item-cost">({{this.cost}})</div>
-                            </li>
-                            {{/each}}
-                        </ul>
+        <section class="tab creature-general-tab" data-group="primary" data-tab="general">
+            <div class="creature-general-left">
+                {{!-- Attributes --}}
+                <div class="list list-attributes">
+                    <div class="list-header">
+                        <h3>{{localize "splittermond.attributes"}}</h3>
+                        <div class="value">{{localize "splittermond.value"}}</div>
                     </div>
-                    {{/each}}
+                    <ul class="list-body">
+                        {{#each actor.attributes as |attribute attributeId|}}
+                        <li class="list-item attribute">
+                            <label for="system.attributes.{{attributeId}}.value"
+                                title="{{localize attribute.label.long}}">{{localize
+                                attribute.label.long}}</label>
+                            <div class="value">
+                                <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                                    data-dtype="Number">
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
                 </div>
-            </div>
-            {{/if}}
 
-            {{!-- NPC Features / Powers --}}
-            {{#if itemsByType.npcfeature}}
-            <div class="list">
-                <div class="list-header">
-                    <h3>{{localize "CREATURE.Features"}}</h3>
-                </div>
-                <ul class="list-body taglist">
-                    {{#each itemsByType.npcfeature}}
-                    <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
-                        <div class="taglist-item-name">{{this.name}}</div>
-                    </li>
-                    {{/each}}
-                </ul>
+                {{!-- Creature Info: Basis & Rolle --}}
+                {{#if creatureInfo.basis}}
+                <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
+                {{/if}}
+                {{#if creatureInfo.rolle}}
+                <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
+                {{/if}}
             </div>
-            {{/if}}
+
+            <div class="creature-general-right">
+                {{!-- NPC Features / Merkmale --}}
+                {{#if itemsByType.npcfeature}}
+                <div class="list">
+                    <div class="list-header">
+                        <h3>{{localize "CREATURE.Features"}}</h3>
+                    </div>
+                    <ul class="list-body taglist">
+                        {{#each itemsByType.npcfeature}}
+                        <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
+                            <div class="taglist-item-name">{{this.name}}</div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+
+                {{!-- Verfeinerungen --}}
+                {{#if verfeinerungenByCategory}}
+                <div class="list">
+                    <div class="list-header">
+                        <h3>{{localize "CREATURE.Verfeinerungen"}}</h3>
+                    </div>
+                    <div class="list-body">
+                        {{#each verfeinerungenByCategory}}
+                        <div class="refinement-category">
+                            <h4>{{localize this.categoryKey}}</h4>
+                            <ul class="taglist">
+                                {{#each this.items}}
+                                <li class="taglist-item" title="{{this.description}}">
+                                    <div class="taglist-item-name">{{this.name}}</div>
+                                    <div class="taglist-item-cost">({{this.cost}})</div>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
         </section>
         <section class="tab" data-group="primary" data-tab="skills">
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
