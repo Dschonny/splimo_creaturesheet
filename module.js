@@ -13,8 +13,14 @@ import { CreatureImporter } from "./module/apps/creature-importer.js";
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once("init", function() {
+Hooks.once("init", async function() {
   console.log("Splimo Creaturesheet | Initializing module");
+
+  // Preload template partials
+  await loadTemplates([
+    "modules/splimo_creaturesheet/templates/sheets/parts/mastery-list.hbs",
+    "modules/splimo_creaturesheet/templates/apps/spell-assignment-dialog.hbs"
+  ]);
 
   // Register creature actor sheet for npc type
   Actors.registerSheet("splimo_creaturesheet", CreatureSheet, {
