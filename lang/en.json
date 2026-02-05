@@ -125,6 +125,7 @@
     },
 
     "UnassignedSpells": "Unassigned Spells",
+    "UnassignedMasteries": "Unassigned",
 
     "SpellAssignment": {
       "Title": "Assign Spell",

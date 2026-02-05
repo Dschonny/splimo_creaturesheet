@@ -129,6 +129,7 @@
     },
 
     "UnassignedSpells": "Nicht zugeordnete Zauber",
+    "UnassignedMasteries": "Nicht zugeordnet",
 
     "SpellAssignment": {
       "Title": "Zauber zuordnen",

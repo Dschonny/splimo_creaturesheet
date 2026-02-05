@@ -34,21 +34,16 @@ export class CreatureImporter {
       const { actorData, items } = CreatureDataMapper.mapJsonToActorData(jsonData);
 
       // Show confirmation dialog with counts from JSON data
-      const masteryItems = items.filter(i => i.type === "mastery");
-      console.log("Mastery items:", masteryItems.map(m => m.name));
-      console.log("Abrichtungen from JSON:", jsonData.abrichtungen?.map(a => a.name));
-
       const counts = {
         features: items.filter(i => i.type === "npcfeature" && !i.system.isUnassignedSpell).length,
         weapons: items.filter(i => i.type === "npcattack").length,
-        masteries: masteryItems.length,
+        masteries: items.filter(i => i.type === "mastery").length,
         spells: items.filter(i => i.type === "npcfeature" && i.system.isUnassignedSpell).length,
         skills: jsonData.skills?.length || 0,
         magicSchools: jsonData.magicSchools?.length || 0,
         refinements: jsonData.verfeinerungen?.length || 0,
         training: jsonData.abrichtungen?.length || 0
       };
-      console.log("Import counts:", counts);
       const confirmed = await this._showConfirmationDialog(actorData.name, counts);
 
       if (!confirmed) return;
