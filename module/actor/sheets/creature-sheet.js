@@ -41,21 +41,21 @@ export class CreatureSheet extends SplittermondActorSheet {
     // Override skill filtering to show all skills with value >= 1 when hideSkills is true
     // Show all skills when hideSkills is false
     context.generalSkills = {};
-    game.splittermond.config.skillGroups.general.filter(s =>
+    CONFIG.splittermond.skillGroups.general.filter(s =>
       !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
     ).forEach(skill => {
       context.generalSkills[skill] = this.actor.skills[skill];
     });
 
     context.magicSkills = {};
-    game.splittermond.config.skillGroups.magic.filter(s =>
+    CONFIG.splittermond.skillGroups.magic.filter(s =>
       !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
     ).forEach(skill => {
       context.magicSkills[skill] = this.actor.skills[skill];
     });
 
     context.fightingSkills = {};
-    game.splittermond.config.skillGroups.fighting.filter(s =>
+    CONFIG.splittermond.skillGroups.fighting.filter(s =>
       !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
     ).forEach(skill => {
       context.fightingSkills[skill] = this.actor.skills[skill];
