@@ -8,9 +8,19 @@
     "ImportDialogTitle": "Import Creature File",
     "ImportDialogContent": "Select a .json file to import:",
     "ImportConfirmTitle": "Confirm Import",
-    "ImportConfirmContent": "Importing {name}:\n{features} Features\n{weapons} Weapons\n{masteries} Masteries",
     "ImportSuccess": "Creature imported successfully!",
     "ImportError": "Error importing creature: {error}",
+
+    "Import": {
+      "Features": "Features",
+      "Weapons": "Weapons",
+      "Masteries": "Masteries",
+      "Spells": "Spells",
+      "Skills": "Skills",
+      "MagicSchools": "Magic Schools",
+      "Refinements": "Refinements",
+      "Training": "Training"
+    },
 
     "TabGeneral": "General",
     "TabRefinements": "Refinements",

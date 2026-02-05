@@ -33,13 +33,18 @@ export class CreatureImporter {
       // Map to actor data
       const { actorData, items } = CreatureDataMapper.mapJsonToActorData(jsonData);
 
-      // Show confirmation dialog
-      const confirmed = await this._showConfirmationDialog(
-        actorData.name,
-        items.filter(i => i.type === "npcfeature").length,
-        items.filter(i => i.type === "npcattack").length,
-        items.filter(i => i.type === "mastery").length
-      );
+      // Show confirmation dialog with counts from JSON data
+      const counts = {
+        features: items.filter(i => i.type === "npcfeature" && !i.system.isUnassignedSpell).length,
+        weapons: items.filter(i => i.type === "npcattack").length,
+        masteries: items.filter(i => i.type === "mastery").length,
+        spells: items.filter(i => i.type === "npcfeature" && i.system.isUnassignedSpell).length,
+        skills: jsonData.skills?.length || 0,
+        magicSchools: jsonData.magicSchools?.length || 0,
+        refinements: jsonData.verfeinerungen?.length || 0,
+        training: jsonData.abrichtungen?.length || 0
+      };
+      const confirmed = await this._showConfirmationDialog(actorData.name, counts);
 
       if (!confirmed) return;
 
@@ -127,15 +132,23 @@ export class CreatureImporter {
   /**
    * Show confirmation dialog
    */
-  static async _showConfirmationDialog(name, featureCount, weaponCount, masteryCount) {
+  static async _showConfirmationDialog(name, counts) {
+    // Build content lines, only showing non-zero counts
+    const lines = [];
+    if (counts.features) lines.push(`${counts.features} ${game.i18n.localize("CREATURE.Import.Features")}`);
+    if (counts.weapons) lines.push(`${counts.weapons} ${game.i18n.localize("CREATURE.Import.Weapons")}`);
+    if (counts.masteries) lines.push(`${counts.masteries} ${game.i18n.localize("CREATURE.Import.Masteries")}`);
+    if (counts.spells) lines.push(`${counts.spells} ${game.i18n.localize("CREATURE.Import.Spells")}`);
+    if (counts.skills) lines.push(`${counts.skills} ${game.i18n.localize("CREATURE.Import.Skills")}`);
+    if (counts.magicSchools) lines.push(`${counts.magicSchools} ${game.i18n.localize("CREATURE.Import.MagicSchools")}`);
+    if (counts.refinements) lines.push(`${counts.refinements} ${game.i18n.localize("CREATURE.Import.Refinements")}`);
+    if (counts.training) lines.push(`${counts.training} ${game.i18n.localize("CREATURE.Import.Training")}`);
+
+    const content = `<p><strong>${name}</strong></p><ul>${lines.map(l => `<li>${l}</li>`).join("")}</ul>`;
+
     return Dialog.confirm({
       title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
-      content: `<p>${game.i18n.format("CREATURE.ImportConfirmContent", {
-        name: name,
-        features: featureCount,
-        weapons: weaponCount,
-        masteries: masteryCount
-      })}</p>`,
+      content: content,
       yes: () => true,
       no: () => false,
       defaultYes: true

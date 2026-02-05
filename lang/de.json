@@ -8,9 +8,19 @@
     "ImportDialogTitle": "Kreatur-Datei importieren",
     "ImportDialogContent": "Wähle eine .json Datei zum Importieren:",
     "ImportConfirmTitle": "Import bestätigen",
-    "ImportConfirmContent": "Import von {name}:\n{features} Merkmale\n{weapons} Waffen\n{masteries} Meisterschaften",
     "ImportSuccess": "Kreatur erfolgreich importiert!",
     "ImportError": "Fehler beim Importieren der Kreatur: {error}",
+
+    "Import": {
+      "Features": "Merkmale",
+      "Weapons": "Waffen",
+      "Masteries": "Meisterschaften",
+      "Spells": "Zauber",
+      "Skills": "Fertigkeiten",
+      "MagicSchools": "Magieschulen",
+      "Refinements": "Verfeinerungen",
+      "Training": "Abrichtungen"
+    },
 
     "TabGeneral": "Allgemein",
     "TabRefinements": "Verfeinerungen",
