@@ -99,8 +99,11 @@ export class SpellAssignmentDialog extends Application {
    * @returns {Array} Array of spell data objects
    */
   async _loadSpellsForSkill(skillId) {
-    const maxGrade = parseInt(this.unassignedSpell.system.spellGrade) || 5;
-    console.log("SpellAssignmentDialog: maxGrade =", maxGrade, "from spellGrade =", this.unassignedSpell.system.spellGrade);
+    const rawGrade = this.unassignedSpell.system.spellGrade;
+    const maxGrade = (rawGrade !== undefined && rawGrade !== null && rawGrade !== "")
+      ? parseInt(rawGrade)
+      : 5;
+    console.log("SpellAssignmentDialog: maxGrade =", maxGrade, "from spellGrade =", rawGrade);
     const spells = [];
 
     // Get all spell compendiums
