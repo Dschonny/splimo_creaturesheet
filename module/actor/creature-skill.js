@@ -18,15 +18,7 @@ export default class CreatureSkill extends Skill {
 
         // For creatures, use the stored value directly
         let value = parseInt(this.actor.system.skills[this.id]?.value || 0);
-
-        // Add modifiers, but exclude size modifier for stealth
-        // (size is already factored into the creature's stealth value)
-        let modValue = this.mod;
-        if (this.id === "stealth" && this.actor.derivedValues?.size) {
-            const sizeModifier = 5 - this.actor.derivedValues.size.value;
-            modValue -= sizeModifier;
-        }
-        value += modValue;
+        value += this.mod;
 
         if (this._cache.enabled && this._cache.value === null)
             this._cache.value = value;

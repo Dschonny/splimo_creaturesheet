@@ -27,4 +27,23 @@ export default class CreatureActor extends SplittermondActor {
             this.skills[id] = new CreatureSkill(this, id);
         });
     }
+
+    /**
+     * Override _prepareModifier to exclude size modifier for stealth
+     * Creatures have fixed skill values that already include size considerations
+     */
+    _prepareModifier() {
+        // Call parent to get all standard modifiers
+        super._prepareModifier();
+
+        // Remove the size modifier from stealth (it's already in the creature's fixed value)
+        const sizeLabel = game.i18n.localize("splittermond.derivedAttribute.size.short");
+
+        // Find and remove the size modifier for stealth
+        if (this.modifier && this.modifier._modifiers && this.modifier._modifiers.stealth) {
+            this.modifier._modifiers.stealth = this.modifier._modifiers.stealth.filter(mod =>
+                mod.name !== sizeLabel
+            );
+        }
+    }
 }
