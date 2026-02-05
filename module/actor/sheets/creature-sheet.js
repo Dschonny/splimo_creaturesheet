@@ -78,6 +78,19 @@ export class CreatureSheet extends SplittermondActorSheet {
       context.fightingSkills[skill] = this.actor.skills[skill];
     });
 
+    // Add Handgemenge (melee) skill with value from first npcattack weapon
+    const firstAttack = this.actor.items.find(i => i.type === "npcattack");
+    if (firstAttack) {
+      const meleeValue = firstAttack.system.skillValue || 0;
+      // Create a simple skill-like object for display
+      context.fightingSkills.melee = {
+        id: "melee",
+        label: "splittermond.skillLabel.melee",
+        value: meleeValue,
+        points: meleeValue
+      };
+    }
+
     // Add creature-specific info
     context.creatureInfo = {
       basis: this.actor.system.creatureInfo?.basis || null,
