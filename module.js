@@ -3,7 +3,7 @@
  * Main entry point
  */
 
-import { CreatureActor } from "./module/actor/creature-actor.js";
+import CreatureActor from "./module/actor/creature-actor.js";
 import { CreatureSheet } from "./module/actor/sheets/creature-sheet.js";
 import { RefinementItem } from "./module/item/refinement.js";
 import { TrainingItem } from "./module/item/training.js";
@@ -15,6 +15,10 @@ import { CreatureImporter } from "./module/apps/creature-importer.js";
 
 Hooks.once("init", function() {
   console.log("Splimo Creaturesheet | Initializing module");
+
+  // Register creature actor document class for npc type
+  CONFIG.Actor.documentClasses = CONFIG.Actor.documentClasses || {};
+  CONFIG.Actor.documentClasses.npc = CreatureActor;
 
   // Register creature actor sheet for npc type
   Actors.registerSheet("splimo_creaturesheet", CreatureSheet, {

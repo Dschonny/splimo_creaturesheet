@@ -1,196 +1,28 @@
+import CreatureSkill from "./creature-skill.js";
+
+// Import the base Actor class from Splittermond system
+const SplittermondActor = game.splittermond?.apps?.SplittermondActor ||
+  (await import("/systems/splittermond/module/actor/actor.js")).default;
+
 /**
- * Creature Actor class - Extends standard NPC functionality
+ * Creature Actor - Extends the base Actor with creature-specific behavior
+ * Main difference: Uses CreatureSkill instead of regular Skill for fixed skill values
  */
-export class CreatureActor extends Actor {
+export default class CreatureActor extends SplittermondActor {
 
-  /**
-   * Prepare base data
-   */
-  prepareBaseData() {
-    super.prepareBaseData();
+    /**
+     * Override prepareDerivedData to use CreatureSkill instead of Skill
+     */
+    prepareDerivedData() {
+        // Call parent prepareDerivedData first, but we'll override skills
+        super.prepareDerivedData();
 
-    // Ensure all required data structures exist
-    if (!this.system.attributes) {
-      this.system.attributes = {};
-    }
-
-    if (!this.system.skills) {
-      this.system.skills = {};
-    }
-
-    if (!this.system.derivedValues) {
-      this.system.derivedValues = {};
-    }
-
-    if (!this.system.health) {
-      this.system.health = {
-        value: 0,
-        consumed: 0,
-        exhausted: 0,
-        channeled: { entries: [] }
-      };
-    }
-
-    if (!this.system.focus) {
-      this.system.focus = {
-        value: 0,
-        consumed: 0,
-        exhausted: 0,
-        channeled: { entries: [] }
-      };
-    }
-
-    if (!this.system.damageReduction) {
-      this.system.damageReduction = { value: 0 };
-    }
-  }
-
-  /**
-   * Prepare derived data
-   */
-  prepareDerivedData() {
-    super.prepareDerivedData();
-
-    // Update health and focus values
-    const maxHealth = this.system.derivedValues?.healthpoints?.value || 0;
-    const maxFocus = this.system.derivedValues?.focuspoints?.value || 0;
-
-    this.system.health.value = Math.max(
-      0,
-      maxHealth - (this.system.health.consumed || 0) - (this.system.health.exhausted || 0)
-    );
-
-    this.system.focus.value = Math.max(
-      0,
-      maxFocus - (this.system.focus.consumed || 0) - (this.system.focus.exhausted || 0)
-    );
-
-    // Prepare attributes for display
-    this._prepareAttributes();
-
-    // Prepare derived values for display
-    this._prepareDerivedValues();
-
-    // Prepare attacks
-    this._prepareAttacks();
-
-    // Prepare active defense
-    this._prepareActiveDefense();
-  }
-
-  /**
-   * Prepare attributes
-   */
-  _prepareAttributes() {
-    const attrs = this.system.attributes || {};
-
-    this.attributes = {};
-
-    const attrIds = [
-      "charisma", "agility", "intuition", "constitution",
-      "mysticism", "strength", "mind", "willpower"
-    ];
-
-    for (const attrId of attrIds) {
-      const attrData = attrs[attrId] || { value: 0, points: 0 };
-
-      this.attributes[attrId] = {
-        value: attrData.value || 0,
-        points: attrData.points || 0,
-        label: game.splittermond?.config?.attributes?.[attrId] || { short: attrId, long: attrId }
-      };
-    }
-  }
-
-  /**
-   * Prepare derived values
-   */
-  _prepareDerivedValues() {
-    const derived = this.system.derivedValues || {};
-
-    this.derivedValues = {};
-
-    const derivedIds = [
-      "size", "speed", "initiative", "healthpoints", "focuspoints",
-      "defense", "mindresist", "bodyresist"
-    ];
-
-    for (const derivedId of derivedIds) {
-      const derivedData = derived[derivedId] || { value: 0 };
-
-      this.derivedValues[derivedId] = {
-        value: derivedData.value || 0,
-        label: game.splittermond?.config?.derivedAttributes?.[derivedId] || { short: derivedId, long: derivedId }
-      };
-    }
-
-    // Damage reduction
-    this.damageReduction = {
-      value: this.system.damageReduction?.value || 0
-    };
-  }
-
-  /**
-   * Prepare attacks from npcattack items
-   */
-  _prepareAttacks() {
-    this.attacks = [];
-
-    for (const item of this.items) {
-      if (item.type === "npcattack") {
-        const skillValue = item.system.skillValue || 0;
-
-        this.attacks.push({
-          id: item.id,
-          name: item.name,
-          img: item.img,
-          skill: {
-            value: skillValue,
-            editable: true
-          },
-          skillId: "melee",
-          damage: item.system.damage || "1W6",
-          weaponSpeed: item.system.weaponSpeed || 0,
-          range: item.system.range || 0,
-          features: item.system.features || "",
-          item: item,
-          editable: true,
-          deletable: true,
-          isDamaged: false
-        });
-      }
-    }
-  }
-
-  /**
-   * Prepare active defense
-   */
-  _prepareActiveDefense() {
-    const defenseValue = this.system.derivedValues?.defense?.value || 0;
-
-    this.activeDefense = {
-      defense: [{
-        id: "defense",
-        name: "splittermond.derivedAttribute.defense.long",
-        skill: {
-          value: defenseValue
-        },
-        features: ""
-      }],
-      mindresist: [{
-        id: "mindresist",
-        name: "splittermond.derivedAttribute.mindresist.long",
-        skill: {
-          value: this.system.derivedValues?.mindresist?.value || 0
+        // Re-initialize skills with CreatureSkill instead of Skill
+        if (this.skills) {
+            // Replace each skill with a CreatureSkill instance
+            [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].forEach(id => {
+                this.skills[id] = new CreatureSkill(this, id);
+            });
         }
-      }],
-      bodyresist: [{
-        id: "bodyresist",
-        name: "splittermond.derivedAttribute.bodyresist.long",
-        skill: {
-          value: this.system.derivedValues?.bodyresist?.value || 0
-        }
-      }]
-    };
-  }
+    }
 }
