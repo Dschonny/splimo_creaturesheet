@@ -52,7 +52,10 @@
       "fortbewegung": "Movement",
       "sinne": "Senses",
       "natuerliche_waffen": "Natural Weapons",
-      "besondere_faehigkeiten": "Special Abilities"
+      "besondere_faehigkeiten": "Special Abilities",
+      "späher_jäger": "Scout/Hunter",
+      "kampffähigkeiten": "Combat Abilities",
+      "magische_fähigkeiten": "Magical Abilities"
     },
 
     "TrainingCategories": {
