@@ -137,10 +137,12 @@ export class CreatureDataMapper {
       }
     }
 
-    // Add spell items if any
+    // Add spells as npcfeature items with a special flag (not as spell items)
+    // Spell items require a valid skill reference which is hard to map reliably
+    // These will be displayed in a separate "Unassigned Spells" section
     if (jsonData.spells && Array.isArray(jsonData.spells)) {
       for (const spell of jsonData.spells) {
-        items.push(this._createSpellItem(spell));
+        items.push(this._createSpellAsFeature(spell));
       }
     }
 
@@ -333,7 +335,7 @@ export class CreatureDataMapper {
   }
 
   /**
-   * Creates a spell item from a spell
+   * Creates a spell item from a spell (currently unused - spells are imported as features)
    */
   static _createSpellItem(spell) {
     // Map the school name to skill ID
@@ -353,6 +355,25 @@ export class CreatureDataMapper {
         spellDuration: spell.spellDuration || "",
         description: spell.longDescription || "",
         page: spell.page || ""
+      }
+    };
+  }
+
+  /**
+   * Creates an npcfeature item from a spell (workaround until spell dialog is implemented)
+   * Uses a special flag to identify it as an unassigned spell for display in spells tab
+   */
+  static _createSpellAsFeature(spell) {
+    const schoolInfo = spell.school ? `[${spell.school}${spell.schoolGrade ? " " + spell.schoolGrade : ""}] ` : "";
+    return {
+      name: spell.name,
+      type: "npcfeature",
+      system: {
+        description: schoolInfo + (spell.longDescription || ""),
+        page: spell.page || "",
+        isUnassignedSpell: true,
+        spellSchool: spell.school || "",
+        spellGrade: spell.schoolGrade || 0
       }
     };
   }

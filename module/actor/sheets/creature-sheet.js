@@ -133,6 +133,11 @@ export class CreatureSheet extends SplittermondActorSheet {
     }));
     context.abrichtungenByCategory = abrichtungenArray.length > 0 ? abrichtungenArray : null;
 
+    // Collect unassigned spells (npcfeature items with isUnassignedSpell flag)
+    context.unassignedSpells = this.actor.items.filter(i =>
+      i.type === "npcfeature" && i.system.isUnassignedSpell
+    );
+
     return context;
   }
 

@@ -109,6 +109,8 @@
       "kampf": "Combat",
       "vertraute": "Familiar",
       "schwarm": "Swarm"
-    }
+    },
+
+    "UnassignedSpells": "Unassigned Spells"
   }
 }

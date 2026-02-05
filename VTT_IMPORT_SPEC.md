@@ -19,6 +19,7 @@ Der Splittermond Creature Editor exportiert Kreaturen im FoundryVTT-kompatiblen 
   "attributes": [...],
   "skills": [...],
   "powers": [...],
+  "magicSchools": [...],
   "spells": [...],
   "meleeWeapons": [...],
   "regelverstöße": [...]  // Optional
@@ -327,7 +328,53 @@ Array von besonderen Fähigkeiten und Eigenschaften der Kreatur.
 
 **Hinweis**: Merkmale können mehrfach vorkommen mit unterschiedlichen Stufen/Werten.
 
-## 9. Zauber (spells)
+## 9. Magieschulen (magicSchools)
+
+Array von Magieschulen, die die Kreatur beherrscht.
+
+### Struktur
+
+```json
+{
+  "name": "Heilungsmagie",
+  "id": "heilungsmagie",
+  "value": 6
+}
+```
+
+### Felder
+
+- **name** (string): Name der Magieschule
+- **id** (string): Technische ID (lowercase, underscores statt Leerzeichen)
+- **value** (number): Wert in dieser Magieschule
+
+### Mögliche Magieschulen
+
+| name | Attribute | Beschreibung |
+|------|-----------|--------------|
+| Bannmagie | MYS + WIL | Schutz vor und Auflösung von Magie |
+| Beherrschungsmagie | MYS + AUS | Kontrolle über Geist und Willen |
+| Bewegungsmagie | MYS + BEW | Manipulation von Bewegung und Position |
+| Erkenntnismagie | MYS + VER | Wissen und Wahrnehmung |
+| Felsmagie | MYS + KON | Kontrolle über Erde und Stein |
+| Feuermagie | MYS + AUS | Beherrschung von Flammen und Hitze |
+| Heilungsmagie | MYS + AUS | Heilung und Regeneration |
+| Illusionsmagie | MYS + AUS | Täuschung und Trugbilder |
+| Kampfmagie | MYS + STÄ | Magische Verstärkung im Kampf |
+| Lichtmagie | MYS + AUS | Kontrolle über Licht und Helligkeit |
+| Naturmagie | MYS + AUS | Verbindung zur Natur |
+| Schattenmagie | MYS + INT | Manipulation von Schatten und Dunkelheit |
+| Schicksalsmagie | MYS + AUS | Beeinflussung von Glück und Schicksal |
+| Stärkungsmagie | MYS + WIL | Verstärkung von Fähigkeiten |
+| Todosmagie | MYS + WIL | Magie des Todes und der Untoten |
+| Verwandlungsmagie | MYS + KON | Transformation von Körper und Form |
+| Wassermagie | MYS + INT | Beherrschung von Wasser und Flüssigkeiten |
+| Windmagie | MYS + BEW | Kontrolle über Luft und Wind |
+| Eismagie | MYS + WIL | Beherrschung von Kälte und Eis |
+
+**Hinweis**: Magieschulen werden typischerweise durch die Rolle "Familiar" oder Verfeinerungen wie "Von Magie durchdrungen" erhalten.
+
+## 10. Zauber (spells)
 
 Array von magischen Fähigkeiten der Kreatur.
 
@@ -373,7 +420,7 @@ Array von magischen Fähigkeiten der Kreatur.
 
 **Hinweis**: Bei Kreaturen sind die meisten Detail-Felder leer, da nur die Verfügbarkeit des Zaubers relevant ist.
 
-## 10. Nahkampfwaffen (meleeWeapons)
+## 11. Nahkampfwaffen (meleeWeapons)
 
 Array von Waffenangriffe der Kreatur.
 
@@ -558,6 +605,7 @@ Array von Waffenangriffe der Kreatur.
     {"name": "Sprung", "id": "sprung", "count": 1, "shortDescription": "Sprung", "longDescription": "Sprung", "page": "Bestienmeister"},
     {"name": "Natürliche Waffen", "id": "natuerliche_waffen", "count": 1, "shortDescription": "Natürliche Waffen", "longDescription": "Natürliche Waffen", "page": "Bestienmeister"}
   ],
+  "magicSchools": [],
   "spells": [],
   "meleeWeapons": [
     {

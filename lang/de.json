@@ -115,6 +115,8 @@
       "kampf": "Kampf",
       "vertraute": "Vertraute",
       "schwarm": "Schwarm"
-    }
+    },
+
+    "UnassignedSpells": "Nicht zugeordnete Zauber"
   }
 }
