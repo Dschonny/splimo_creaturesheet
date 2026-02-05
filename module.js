@@ -16,6 +16,11 @@ import { CreatureImporter } from "./module/apps/creature-importer.js";
 Hooks.once("init", function() {
   console.log("Splimo Creaturesheet | Initializing module");
 
+  // Register CreatureActor as the document class for npc actors
+  CONFIG.Actor.documentClasses = CONFIG.Actor.documentClasses || {};
+  CONFIG.Actor.documentClasses.npc = CreatureActor;
+  console.log("Splimo Creaturesheet | Registered CreatureActor for npc type");
+
   // Register creature actor sheet for npc type
   Actors.registerSheet("splimo_creaturesheet", CreatureSheet, {
     types: ["npc"],
