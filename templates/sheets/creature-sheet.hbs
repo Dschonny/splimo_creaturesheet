@@ -134,11 +134,22 @@
                 <div class="list skills" data-roll-type="skill">
                     <div class="list-header">
                         <h3>{{localize "splittermond.generalSkills"}}</h3>
+                        <div class="list-actions">
+                            <button class="button-inline" data-action="show-hide-skills" type="button">
+                                {{#if hideSkills}}
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{else}}
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                {{/if}}
+                            </button>
+                        </div>
                     </div>
                     <ol class="list-body skill-list">
                         {{#each generalSkills as |skill skillId|}}
                         <li class="list-item" data-skill="{{skillId}}">
-                            <label>{{localize skill.label}}</label>
+                            <label>
+                                <a class="rollable">{{localize skill.label}}</a>
+                            </label>
                             <div class="value">
                                 <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
@@ -152,7 +163,9 @@
                     <ol class="list-body skill-list">
                         {{#each fightingSkills as |skill skillId|}}
                         <li class="list-item" data-skill="{{skillId}}">
-                            <label>{{localize skill.label}}</label>
+                            <label>
+                                <a class="rollable">{{localize skill.label}}</a>
+                            </label>
                             <div class="value">
                                 <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
@@ -166,7 +179,9 @@
                     <ol class="list-body skill-list">
                         {{#each magicSkills as |skill skillId|}}
                         <li class="list-item" data-skill="{{skillId}}">
-                            <label>{{localize skill.label}}</label>
+                            <label>
+                                <a class="rollable">{{localize skill.label}}</a>
+                            </label>
                             <div class="value">
                                 <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
