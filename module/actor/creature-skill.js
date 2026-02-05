@@ -1,6 +1,7 @@
 // Import the base Skill class from Splittermond system
 const Skill = (await import("/systems/splittermond/module/actor/skill.js")).default;
 const Tooltip = await import("/systems/splittermond/module/util/tooltip.js");
+const Chat = await import("/systems/splittermond/module/util/chat.js");
 
 /**
  * Creature Skill - Extends the base Skill class with fixed values
@@ -17,7 +18,15 @@ export default class CreatureSkill extends Skill {
 
         // For creatures, use the stored value directly
         let value = parseInt(this.actor.system.skills[this.id]?.value || 0);
-        value += this.mod;
+
+        // Add modifiers, but exclude size modifier for stealth
+        // (size is already factored into the creature's stealth value)
+        let modValue = this.mod;
+        if (this.id === "stealth" && this.actor.derivedValues?.size) {
+            const sizeModifier = 5 - this.actor.derivedValues.size.value;
+            modValue -= sizeModifier;
+        }
+        value += modValue;
 
         if (this._cache.enabled && this._cache.value === null)
             this._cache.value = value;
@@ -25,10 +34,18 @@ export default class CreatureSkill extends Skill {
     }
 
     /**
-     * Override points getter to return 0 since creatures don't use the points system
+     * Override points getter to return the base value for creatures
+     * This will be displayed as "FW" (Fertigkeitswert) in the chat
      */
     get points() {
-        return 0;
+        return parseInt(this.actor.system.skills[this.id]?.value || 0);
+    }
+
+    /**
+     * Override attributeValues to return empty object since creatures don't use attributes
+     */
+    get attributeValues() {
+        return {};
     }
 
     /**
