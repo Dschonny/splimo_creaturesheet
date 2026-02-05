@@ -22,6 +22,13 @@
   gap: 1rem;
 }
 
+/* Two-column layout for Skills tab (50/50) */
+.creature-skills-tab {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .creature-general-left,
 .creature-general-right {
   display: flex;
