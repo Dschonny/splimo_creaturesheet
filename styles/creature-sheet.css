@@ -94,11 +94,11 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  margin-left: -0.5rem;
+  margin-left: -1rem;
 }
 
 .creature-skill-value .skill-base-value {
-  width: 3.15rem;
+  width: 3.3rem;
   text-align: center;
 }
 
