@@ -77,12 +77,14 @@
                 </div>
 
                 {{!-- Creature Info: Basis & Rolle --}}
-                {{#if creatureInfo.basis}}
-                <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
-                {{/if}}
-                {{#if creatureInfo.rolle}}
-                <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
-                {{/if}}
+                <div class="creature-info-box">
+                    {{#if creatureInfo.basis}}
+                    <p><strong>{{localize "CREATURE.Basis"}}:</strong> <span title="{{creatureInfo.basis.description}}">{{creatureInfo.basis.name}}</span></p>
+                    {{/if}}
+                    {{#if creatureInfo.rolle}}
+                    <p><strong>{{localize "CREATURE.Rolle"}}:</strong> <span title="{{creatureInfo.rolle.description}}">{{creatureInfo.rolle.name}}</span></p>
+                    {{/if}}
+                </div>
             </div>
 
             <div class="creature-general-right">

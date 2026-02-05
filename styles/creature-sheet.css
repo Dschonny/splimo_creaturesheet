@@ -29,6 +29,41 @@
   gap: 0.5rem;
 }
 
+/* Creature info box (Basis & Rolle) */
+.creature-info-box {
+  border: 1px solid var(--color-border-light-primary, #999);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background: var(--color-bg-light, rgba(0, 0, 0, 0.05));
+}
+
+.creature-info-box p {
+  margin: 0.25rem 0;
+  line-height: 1.4;
+}
+
+.creature-info-box p:first-child {
+  margin-top: 0;
+}
+
+.creature-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* Features/Merkmale: display as wrapped rows */
+.creature-general-right .taglist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.creature-general-right .taglist-item {
+  display: inline-block;
+}
+
 /* Refinement categories spacing */
 .refinement-category {
   margin-bottom: 0.5rem;
@@ -36,6 +71,10 @@
 
 .refinement-category h4 {
   font-weight: bold;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   margin-bottom: 0.25rem;
+}
+
+.refinement-category:first-child h4 {
+  margin-top: 0;
 }
