@@ -3,6 +3,47 @@
  */
 export class CreatureDataMapper {
 
+  // Mapping from German magic school names to Splittermond skill IDs
+  static MAGIC_SCHOOL_TO_SKILL = {
+    "bannmagie": "antimagic",
+    "beherrschungsmagie": "controlmagic",
+    "beherrschung": "controlmagic",
+    "bewegungsmagie": "motionmagic",
+    "erkenntnismagie": "insightmagic",
+    "erkenntnis": "insightmagic",
+    "felsmagie": "stonemagic",
+    "feuermagie": "firemagic",
+    "feuer": "firemagic",
+    "heilungsmagie": "healmagic",
+    "heilung": "healmagic",
+    "illusionsmagie": "illusionmagic",
+    "illusion": "illusionmagic",
+    "kampfmagie": "combatmagic",
+    "kampf": "combatmagic",
+    "lichtmagie": "lightmagic",
+    "licht": "lightmagic",
+    "naturmagie": "naturemagic",
+    "natur": "naturemagic",
+    "schattenmagie": "shadowmagic",
+    "schatten": "shadowmagic",
+    "schicksalsmagie": "fatemagic",
+    "schicksal": "fatemagic",
+    "schutzmagie": "protectionmagic",
+    "schutz": "protectionmagic",
+    "stärkungsmagie": "enhancemagic",
+    "stärkung": "enhancemagic",
+    "todesmagie": "deathmagic",
+    "tod": "deathmagic",
+    "verwandlungsmagie": "transformationmagic",
+    "verwandlung": "transformationmagic",
+    "wassermagie": "watermagic",
+    "wasser": "watermagic",
+    "windmagie": "windmagic",
+    "wind": "windmagic",
+    "eismagie": "watermagic", // Eismagie uses watermagic skill
+    "eis": "watermagic"
+  };
+
   /**
    * Maps a VTT Import JSON file to actor data
    * @param {Object} jsonData - Parsed JSON file content
@@ -19,6 +60,9 @@ export class CreatureDataMapper {
 
     // Map skills
     const skills = this._mapSkills(jsonData.skills);
+
+    // Add magic schools as skills
+    this._addMagicSchoolsToSkills(skills, jsonData.magicSchools);
 
     // Prepare actor data
     const actorData = {
@@ -200,6 +244,39 @@ export class CreatureDataMapper {
   }
 
   /**
+   * Adds magic schools to skills object
+   */
+  static _addMagicSchoolsToSkills(skills, magicSchools) {
+    if (!magicSchools || !Array.isArray(magicSchools)) {
+      return;
+    }
+
+    for (const school of magicSchools) {
+      // Get the skill ID for this magic school
+      const schoolNameLower = (school.name || school.id || "").toLowerCase();
+      const skillId = this.MAGIC_SCHOOL_TO_SKILL[schoolNameLower];
+
+      if (skillId) {
+        skills[skillId] = {
+          value: school.value || 0,
+          points: Math.floor((school.value || 0) / 2),
+          modifier: 0,
+          label: school.name || school.id
+        };
+      }
+    }
+  }
+
+  /**
+   * Maps a German magic school name to Splittermond skill ID
+   */
+  static _mapMagicSchoolToSkillId(schoolName) {
+    if (!schoolName) return null;
+    const normalized = schoolName.toLowerCase().trim();
+    return this.MAGIC_SCHOOL_TO_SKILL[normalized] || null;
+  }
+
+  /**
    * Creates an npcfeature item from a power
    */
   static _createNpcFeatureItem(power) {
@@ -259,10 +336,14 @@ export class CreatureDataMapper {
    * Creates a spell item from a spell
    */
   static _createSpellItem(spell) {
+    // Map the school name to skill ID
+    const skillId = this._mapMagicSchoolToSkillId(spell.school);
+
     return {
       name: spell.name,
       type: "spell",
       system: {
+        skill: skillId || "",
         school: spell.school || "",
         schoolGrade: spell.schoolGrade || 0,
         difficulty: spell.difficulty || "",
