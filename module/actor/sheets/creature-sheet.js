@@ -1,5 +1,6 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
 import CreatureSkill from "../creature-skill.js";
+import CreatureDerivedValue from "../creature-derived-value.js";
 
 // Import the Splittermond base actor sheet
 const SplittermondActorSheet = game.splittermond?.apps?.SplittermondActorSheet ||
@@ -39,9 +40,16 @@ export class CreatureSheet extends SplittermondActorSheet {
   async getData() {
     // Replace actor skills with CreatureSkill instances before getting data
     if (this.actor.skills) {
-      console.log("CreatureSheet: Replacing skills with CreatureSkill instances");
       [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].forEach(id => {
         this.actor.skills[id] = new CreatureSkill(this.actor, id);
+      });
+    }
+
+    // Replace actor derivedValues with CreatureDerivedValue instances
+    // This ensures fixed imported values are used without recalculation
+    if (this.actor.derivedValues) {
+      CONFIG.splittermond.derivedValues.forEach(id => {
+        this.actor.derivedValues[id] = new CreatureDerivedValue(this.actor, id);
       });
     }
 
