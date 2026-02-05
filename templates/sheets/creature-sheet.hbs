@@ -150,9 +150,12 @@
                             <label>
                                 <a class="rollable">{{localize skill.label}}</a>
                             </label>
-                            <div class="value">
-                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
-                                    data-dtype="Number">
+                            <div class="value creature-skill-value">
+                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.points}}"
+                                    data-dtype="Number" class="skill-base-value">
+                                {{#unless (eq skill.value skill.points)}}
+                                <span class="skill-total-value" title="{{localize 'CREATURE.SkillTotalWithModifiers'}}">({{skill.value}})</span>
+                                {{/unless}}
                             </div>
                         </li>
                         {{/each}}
@@ -166,9 +169,12 @@
                             <label>
                                 <a class="rollable">{{localize skill.label}}</a>
                             </label>
-                            <div class="value">
-                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
-                                    data-dtype="Number">
+                            <div class="value creature-skill-value">
+                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.points}}"
+                                    data-dtype="Number" class="skill-base-value">
+                                {{#unless (eq skill.value skill.points)}}
+                                <span class="skill-total-value" title="{{localize 'CREATURE.SkillTotalWithModifiers'}}">({{skill.value}})</span>
+                                {{/unless}}
                             </div>
                         </li>
                         {{/each}}
@@ -182,9 +188,12 @@
                             <label>
                                 <a class="rollable">{{localize skill.label}}</a>
                             </label>
-                            <div class="value">
-                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
-                                    data-dtype="Number">
+                            <div class="value creature-skill-value">
+                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.points}}"
+                                    data-dtype="Number" class="skill-base-value">
+                                {{#unless (eq skill.value skill.points)}}
+                                <span class="skill-total-value" title="{{localize 'CREATURE.SkillTotalWithModifiers'}}">({{skill.value}})</span>
+                                {{/unless}}
                             </div>
                         </li>
                         {{/each}}

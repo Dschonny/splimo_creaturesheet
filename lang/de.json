@@ -81,6 +81,7 @@
 
     "RollSkillCheck": "Fertigkeitsprobe würfeln",
     "RollAttack": "Angriff würfeln",
+    "SkillTotalWithModifiers": "Wert inkl. Modifikatoren",
 
     "Health": "Lebenspunkte",
     "HealthConsumed": "Verbraucht",

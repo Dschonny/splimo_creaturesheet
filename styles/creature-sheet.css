@@ -88,3 +88,21 @@
 .refinement-category:first-child h4 {
   margin-top: 0;
 }
+
+/* Creature skill values - show base value in input, modified total in parentheses */
+.creature-skill-value {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.creature-skill-value .skill-base-value {
+  width: 3rem;
+  text-align: center;
+}
+
+.creature-skill-value .skill-total-value {
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+  white-space: nowrap;
+}

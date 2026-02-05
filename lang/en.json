@@ -75,6 +75,7 @@
 
     "RollSkillCheck": "Roll Skill Check",
     "RollAttack": "Roll Attack",
+    "SkillTotalWithModifiers": "Value including modifiers",
 
     "Health": "Health Points",
     "HealthConsumed": "Consumed",
