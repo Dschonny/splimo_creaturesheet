@@ -94,15 +94,19 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  justify-content: flex-end;
 }
 
 .creature-skill-value .skill-base-value {
-  width: 3rem;
+  width: 3.5rem;
+  min-width: 3.5rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .creature-skill-value .skill-total-value {
   color: var(--color-text-dark-secondary, #666);
   font-size: 0.9em;
   white-space: nowrap;
+  flex-shrink: 0;
 }
