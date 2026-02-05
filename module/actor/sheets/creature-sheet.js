@@ -1,4 +1,5 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
+import { SpellAssignmentDialog } from "../../apps/spell-assignment-dialog.js";
 import CreatureSkill from "../creature-skill.js";
 import CreatureDerivedValue from "../creature-derived-value.js";
 
@@ -156,6 +157,9 @@ export class CreatureSheet extends SplittermondActorSheet {
 
     // Delete item
     html.find('[data-action="delete-item"]').click(this._onDeleteItem.bind(this));
+
+    // Assign unassigned spell
+    html.find('.unassigned-spells .taglist-item').click(this._onAssignSpell.bind(this));
   }
 
   /**
@@ -213,6 +217,23 @@ export class CreatureSheet extends SplittermondActorSheet {
       if (confirmed) {
         await item.delete();
       }
+    }
+  }
+
+  /**
+   * Handle assign unassigned spell
+   */
+  async _onAssignSpell(event) {
+    // Don't trigger if clicking on action buttons
+    if (event.target.closest('[data-action]')) return;
+
+    event.preventDefault();
+    const li = event.currentTarget.closest("[data-item-id]");
+    const itemId = li?.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+
+    if (item && item.system.isUnassignedSpell) {
+      await SpellAssignmentDialog.show(this.actor, item);
     }
   }
 }

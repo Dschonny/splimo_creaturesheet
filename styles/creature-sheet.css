@@ -116,3 +116,106 @@
   font-size: 0.9em;
   white-space: nowrap;
 }
+
+/* Unassigned spells - clickable items */
+.unassigned-spells .taglist-item {
+  cursor: pointer;
+}
+
+.unassigned-spells .taglist-item:hover {
+  background-color: var(--color-border-light-primary, rgba(0, 0, 0, 0.1));
+}
+
+.unassigned-spells .taglist-item .taglist-item-name {
+  flex: 1;
+}
+
+.unassigned-spells .spell-school {
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+  margin-left: 0.25rem;
+}
+
+/* Spell Assignment Dialog */
+.spell-assignment .spell-assignment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  height: 100%;
+}
+
+.spell-assignment .spell-assignment-header {
+  border-bottom: 1px solid var(--color-border-light-primary, #999);
+  padding-bottom: 0.5rem;
+}
+
+.spell-assignment .spell-assignment-header h2 {
+  margin: 0 0 0.25rem 0;
+}
+
+.spell-assignment .spell-info {
+  margin: 0;
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+}
+
+.spell-assignment .spell-info .spell-grade {
+  margin-left: 1rem;
+}
+
+.spell-assignment .school-selection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spell-assignment .school-select {
+  flex: 1;
+}
+
+.spell-assignment .spell-list-container {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid var(--color-border-light-primary, #999);
+  border-radius: 4px;
+  padding: 0.25rem;
+}
+
+.spell-assignment .spell-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spell-assignment .spell-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.spell-assignment .spell-list-item:hover {
+  background-color: var(--color-border-light-primary, rgba(0, 0, 0, 0.1));
+}
+
+.spell-assignment .spell-list-item .spell-name {
+  font-weight: 500;
+}
+
+.spell-assignment .spell-list-item .spell-grade,
+.spell-assignment .spell-list-item .spell-costs,
+.spell-assignment .spell-list-item .spell-difficulty {
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+  text-align: right;
+}
+
+.spell-assignment .hint {
+  color: var(--color-text-dark-secondary, #666);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}

@@ -242,7 +242,7 @@
                     </div>
                     <ul class="list-body taglist">
                         {{#each unassignedSpells}}
-                        <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
+                        <li class="taglist-item clickable" data-item-id="{{this._id}}" title="{{localize 'CREATURE.SpellAssignment.ClickToAssign'}}">
                             <div class="taglist-item-name">
                                 {{this.name}}
                                 {{#if this.system.spellSchool}}

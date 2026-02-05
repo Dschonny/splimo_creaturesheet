@@ -114,6 +114,20 @@
       "schwarm": "Swarm"
     },
 
-    "UnassignedSpells": "Unassigned Spells"
+    "UnassignedSpells": "Unassigned Spells",
+
+    "SpellAssignment": {
+      "Title": "Assign Spell",
+      "AssignSpell": "Assign Spell",
+      "SelectSchool": "Select Magic School",
+      "ChooseSchool": "-- Choose School --",
+      "MaxGrade": "Max Grade",
+      "NoSpellsFound": "No matching spells found",
+      "SelectSchoolFirst": "Please select a magic school first",
+      "ClickToAssign": "Click to assign",
+      "Success": "{name} assigned successfully",
+      "Error": "Error assigning spell: {error}",
+      "SpellNotFound": "Spell not found"
+    }
   }
 }

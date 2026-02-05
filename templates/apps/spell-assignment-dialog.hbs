@@ -1,0 +1,44 @@
+<div class="spell-assignment-content">
+    <header class="spell-assignment-header">
+        <h2>{{spellName}}</h2>
+        {{#if spellSchool}}
+        <p class="spell-info">
+            <span class="spell-school">{{spellSchool}}</span>
+            {{#if spellGrade}}
+            <span class="spell-grade">{{localize "CREATURE.SpellAssignment.MaxGrade"}}: {{spellGrade}}</span>
+            {{/if}}
+        </p>
+        {{/if}}
+    </header>
+
+    <div class="school-selection">
+        <label for="school-select">{{localize "CREATURE.SpellAssignment.SelectSchool"}}:</label>
+        <select class="school-select" id="school-select">
+            <option value="">{{localize "CREATURE.SpellAssignment.ChooseSchool"}}</option>
+            {{#each availableSchools}}
+            <option value="{{this.id}}" {{#if (eq this.id ../selectedSkillId)}}selected{{/if}}>
+                {{this.label}} ({{this.value}})
+            </option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="spell-list-container">
+        {{#if noSchoolSelected}}
+        <p class="hint">{{localize "CREATURE.SpellAssignment.SelectSchoolFirst"}}</p>
+        {{else if hasSpells}}
+        <ul class="spell-list">
+            {{#each spells}}
+            <li class="spell-list-item" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.SpellAssignment.ClickToAssign'}}">
+                <span class="spell-name">{{this.name}}</span>
+                <span class="spell-grade">{{this.grade}}</span>
+                <span class="spell-costs">{{this.costs}}</span>
+                <span class="spell-difficulty">{{this.difficulty}}</span>
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="hint">{{localize "CREATURE.SpellAssignment.NoSpellsFound"}}</p>
+        {{/if}}
+    </div>
+</div>
