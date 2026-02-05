@@ -33,17 +33,33 @@ export default class CreatureActor extends SplittermondActor {
      * Creatures have fixed skill values that already include size considerations
      */
     _prepareModifier() {
-        // Call parent to get all standard modifiers
-        super._prepareModifier();
+        const data = this.system;
 
-        // Remove the size modifier from stealth (it's already in the creature's fixed value)
-        const sizeLabel = game.i18n.localize("splittermond.derivedAttribute.size.short");
+        // Character-specific modifiers (hero levels)
+        if (this.type === "character") {
+            if (data.experience.heroLevel > 1) {
+                ["defense", "mindresist", "bodyresist"].forEach(d => {
+                    this.modifier.add(d, game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), 2 * (data.experience.heroLevel - 1), this);
+                });
+                this.modifier.add("splinterpoints", game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), data.experience.heroLevel - 1);
+            }
+        }
 
-        // Find and remove the size modifier for stealth
-        if (this.modifier && this.modifier._modifiers && this.modifier._modifiers.stealth) {
-            this.modifier._modifiers.stealth = this.modifier._modifiers.stealth.filter(mod =>
-                mod.name !== sizeLabel
-            );
+        // SKIP the size modifier for stealth - creatures have fixed skill values
+        // Original code:
+        // let stealthModifier = 5 - this.derivedValues.size.value;
+        // if (stealthModifier) {
+        //     this.modifier.add("stealth", game.i18n.localize("splittermond.derivedAttribute.size.short"), stealthModifier);
+        // }
+
+        // Handicap modifiers
+        let handicap = this.handicap;
+        if (handicap) {
+            let label = game.i18n.localize("splittermond.handicap");
+            ["athletics", "acrobatics", "dexterity", "stealth", "locksntraps", "seafaring", "animals"].forEach(skill => {
+                this.modifier.add(skill, label, -handicap, this, "equipment");
+            });
+            this.modifier.add("speed", label, -Math.floor(handicap / 2));
         }
     }
 }
