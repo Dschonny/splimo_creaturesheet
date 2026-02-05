@@ -55,7 +55,7 @@
         {{/each}}
 
         {{!-- Unassigned masteries (skill = "undefined") --}}
-        {{#with masteriesBySkill.undefined}}
+        {{#with (lookup masteriesBySkill "undefined")}}
         <li class="list-item" data-skill="undefined"><label>{{localize "CREATURE.UnassignedMasteries"}}</label>
             <ul class="taglist item-list">
                 {{#each this.masteries}}
