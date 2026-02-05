@@ -90,16 +90,25 @@
 }
 
 /* Creature skill values - show base value in input, modified total in parentheses */
-.splittermond.sheet .creature-skill-value {
+.splittermond.sheet.actor.npc .list.skills .list-item .value.creature-skill-value {
   display: flex !important;
   align-items: center !important;
   gap: 0.25rem !important;
   margin-left: -1.2rem !important;
+  width: auto !important;
+  overflow: visible !important;
 }
 
-.splittermond.sheet .creature-skill-value .skill-base-value {
+.splittermond.sheet.actor.npc .list.skills .list-item .value.creature-skill-value input.skill-base-value {
   width: 3.5rem !important;
+  min-width: 3.5rem !important;
   text-align: center !important;
+}
+
+.splittermond.sheet.actor.npc .list.skills .list-item .value.creature-skill-value .skill-total-value {
+  color: var(--color-text-dark-secondary, #666) !important;
+  font-size: 0.9em !important;
+  white-space: nowrap !important;
 }
 
 .creature-skill-value .skill-total-value {
