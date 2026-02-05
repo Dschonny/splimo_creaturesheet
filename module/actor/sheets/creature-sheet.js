@@ -1,4 +1,5 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
+import CreatureSkill from "../creature-skill.js";
 
 // Import the Splittermond base actor sheet
 const SplittermondActorSheet = game.splittermond?.apps?.SplittermondActorSheet ||
@@ -36,6 +37,14 @@ export class CreatureSheet extends SplittermondActorSheet {
 
   /** @override */
   async getData() {
+    // Replace actor skills with CreatureSkill instances before getting data
+    if (this.actor.skills) {
+      console.log("CreatureSheet: Replacing skills with CreatureSkill instances");
+      [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].forEach(id => {
+        this.actor.skills[id] = new CreatureSkill(this.actor, id);
+      });
+    }
+
     const context = await super.getData();
 
     // Override skill filtering to show all skills with value >= 1 when hideSkills is true
