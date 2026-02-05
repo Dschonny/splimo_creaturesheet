@@ -19,7 +19,8 @@ Hooks.once("init", async function() {
   // Preload template partials
   await loadTemplates([
     "modules/splimo_creaturesheet/templates/sheets/parts/mastery-list.hbs",
-    "modules/splimo_creaturesheet/templates/apps/spell-assignment-dialog.hbs"
+    "modules/splimo_creaturesheet/templates/apps/spell-assignment-dialog.hbs",
+    "modules/splimo_creaturesheet/templates/apps/mastery-assignment-dialog.hbs"
   ]);
 
   // Register creature actor sheet for npc type

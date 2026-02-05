@@ -219,3 +219,92 @@
   text-align: center;
   padding: 1rem;
 }
+
+/* Unassigned masteries - clickable items */
+.masteries .taglist-item.unassigned-mastery {
+  cursor: pointer;
+  border: 1px dashed var(--color-border-light-primary, #999);
+  border-radius: 3px;
+}
+
+.masteries .taglist-item.unassigned-mastery:hover {
+  background-color: var(--color-border-light-primary, rgba(0, 0, 0, 0.1));
+}
+
+/* Mastery Assignment Dialog - reuse spell assignment styles */
+.mastery-assignment .mastery-assignment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  height: 100%;
+}
+
+.mastery-assignment .mastery-assignment-header {
+  border-bottom: 1px solid var(--color-border-light-primary, #999);
+  padding-bottom: 0.5rem;
+}
+
+.mastery-assignment .mastery-assignment-header h2 {
+  margin: 0 0 0.25rem 0;
+}
+
+.mastery-assignment .mastery-info {
+  margin: 0;
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+}
+
+.mastery-assignment .skill-selection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mastery-assignment .skill-select {
+  flex: 1;
+}
+
+.mastery-assignment .mastery-list-container {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid var(--color-border-light-primary, #999);
+  border-radius: 4px;
+  padding: 0.25rem;
+}
+
+.mastery-assignment .mastery-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mastery-assignment .mastery-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.mastery-assignment .mastery-list-item:hover {
+  background-color: var(--color-border-light-primary, rgba(0, 0, 0, 0.1));
+}
+
+.mastery-assignment .mastery-list-item .mastery-name {
+  font-weight: 500;
+}
+
+.mastery-assignment .mastery-list-item .mastery-level {
+  color: var(--color-text-dark-secondary, #666);
+  font-size: 0.9em;
+  text-align: right;
+}
+
+.mastery-assignment .hint {
+  color: var(--color-text-dark-secondary, #666);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}

@@ -1,0 +1,36 @@
+<div class="mastery-assignment-content">
+    <header class="mastery-assignment-header">
+        <h2>{{masteryName}}</h2>
+        <p class="mastery-info">
+            <span class="mastery-level">{{localize "CREATURE.MasteryAssignment.Level"}}: {{masteryLevel}}</span>
+        </p>
+    </header>
+
+    <div class="skill-selection">
+        <label for="skill-select">{{localize "CREATURE.MasteryAssignment.SelectSkill"}}:</label>
+        <select class="skill-select" id="skill-select">
+            {{#each availableSkills}}
+            <option value="{{this.id}}" {{#if (eq this.id ../selectedSkillId)}}selected{{/if}}>
+                {{this.label}} {{#if this.value}}({{this.value}}){{/if}}
+            </option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="mastery-list-container">
+        {{#if noSkillSelected}}
+        <p class="hint">{{localize "CREATURE.MasteryAssignment.SelectSkillFirst"}}</p>
+        {{else if hasMasteries}}
+        <ul class="mastery-list">
+            {{#each masteries}}
+            <li class="mastery-list-item" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}">
+                <span class="mastery-name">{{this.name}}</span>
+                <span class="mastery-level">{{this.level}}</span>
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="hint">{{localize "CREATURE.MasteryAssignment.NoMasteriesFound"}}</p>
+        {{/if}}
+    </div>
+</div>

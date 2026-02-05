@@ -127,6 +127,19 @@
     "UnassignedSpells": "Unassigned Spells",
     "UnassignedMasteries": "Unassigned",
 
+    "MasteryAssignment": {
+      "Title": "Assign Mastery",
+      "SelectSkill": "Select Skill",
+      "Level": "Threshold",
+      "GeneralMasteries": "General",
+      "NoMasteriesFound": "No matching masteries found",
+      "SelectSkillFirst": "Please select a skill first",
+      "ClickToAssign": "Click to assign",
+      "Success": "{name} assigned successfully",
+      "Error": "Error assigning mastery: {error}",
+      "MasteryNotFound": "Mastery not found"
+    },
+
     "SpellAssignment": {
       "Title": "Assign Spell",
       "AssignSpell": "Assign Spell",

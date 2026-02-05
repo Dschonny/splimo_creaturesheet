@@ -1,4 +1,5 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
+import { findCompendiumMastery } from "./mastery-assignment-dialog.js";
 
 /**
  * Handles importing VTT Import JSON files into creature actors
@@ -32,6 +33,9 @@ export class CreatureImporter {
 
       // Map to actor data
       const { actorData, items } = CreatureDataMapper.mapJsonToActorData(jsonData);
+
+      // Try to match masteries with compendium items
+      await this._matchMasteriesWithCompendium(items);
 
       // Show confirmation dialog with counts from JSON data
       const counts = {
@@ -127,6 +131,32 @@ export class CreatureImporter {
 
       reader.readAsText(file);
     });
+  }
+
+  /**
+   * Try to match masteries with compendium items
+   * @param {Array} items - The items array to modify in place
+   */
+  static async _matchMasteriesWithCompendium(items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type !== "mastery" || !item.system.isUnassignedMastery) continue;
+
+      // Try to find matching mastery in compendium
+      const compendiumMastery = await findCompendiumMastery(item.name, item.system.skill);
+
+      if (compendiumMastery) {
+        // Replace with compendium data, keeping the original skill assignment
+        const originalSkill = item.system.skill;
+        items[i] = compendiumMastery;
+        items[i].system.skill = originalSkill;
+        // Remove the unassigned flag since we found a match
+        delete items[i].system.isUnassignedMastery;
+        console.log(`Matched mastery "${item.name}" with compendium item`);
+      } else {
+        console.log(`Could not find compendium match for mastery "${item.name}"`);
+      }
+    }
   }
 
   /**

@@ -320,6 +320,7 @@ export class CreatureDataMapper {
 
   /**
    * Creates a mastery item from a skill's mastery
+   * Initially marked as unassigned - the importer will try to match with compendium
    */
   static _createMasteryItem(mastery, skill) {
     return {
@@ -329,7 +330,8 @@ export class CreatureDataMapper {
         skill: skill.id || "general",
         level: mastery.level || 1,
         description: mastery.longDescription || mastery.shortDescription || "",
-        page: mastery.page || ""
+        page: mastery.page || "",
+        isUnassignedMastery: true
       }
     };
   }

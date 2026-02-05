@@ -12,7 +12,7 @@
         <li class="list-item" data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
             <ul class="taglist item-list">
                 {{#each skill.masteries}}
-                <li class="taglist-item item" data-item-id="{{this._id}}">
+                <li class="taglist-item item {{#if this.system.isUnassignedMastery}}unassigned-mastery{{/if}}" data-item-id="{{this._id}}" {{#if this.system.isUnassignedMastery}}title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}"{{/if}}>
                     <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
 
                     <div class="taglist-item-actions">
@@ -59,7 +59,7 @@
         <li class="list-item" data-skill="undefined"><label>{{localize "CREATURE.UnassignedMasteries"}}</label>
             <ul class="taglist item-list">
                 {{#each this.masteries}}
-                <li class="taglist-item item" data-item-id="{{this._id}}">
+                <li class="taglist-item item {{#if this.system.isUnassignedMastery}}unassigned-mastery{{/if}}" data-item-id="{{this._id}}" {{#if this.system.isUnassignedMastery}}title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}"{{/if}}>
                     <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
 
                     <div class="taglist-item-actions">

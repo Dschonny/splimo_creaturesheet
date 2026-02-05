@@ -131,6 +131,19 @@
     "UnassignedSpells": "Nicht zugeordnete Zauber",
     "UnassignedMasteries": "Nicht zugeordnet",
 
+    "MasteryAssignment": {
+      "Title": "Meisterschaft zuordnen",
+      "SelectSkill": "Fertigkeit wählen",
+      "Level": "Schwelle",
+      "GeneralMasteries": "Allgemein",
+      "NoMasteriesFound": "Keine passenden Meisterschaften gefunden",
+      "SelectSkillFirst": "Bitte wähle zuerst eine Fertigkeit",
+      "ClickToAssign": "Klicken zum Zuordnen",
+      "Success": "{name} erfolgreich zugeordnet",
+      "Error": "Fehler beim Zuordnen: {error}",
+      "MasteryNotFound": "Meisterschaft nicht gefunden"
+    },
+
     "SpellAssignment": {
       "Title": "Zauber zuordnen",
       "AssignSpell": "Zauber zuordnen",

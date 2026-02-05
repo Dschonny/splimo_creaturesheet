@@ -1,5 +1,6 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
 import { SpellAssignmentDialog } from "../../apps/spell-assignment-dialog.js";
+import { MasteryAssignmentDialog } from "../../apps/mastery-assignment-dialog.js";
 import CreatureSkill from "../creature-skill.js";
 import CreatureDerivedValue from "../creature-derived-value.js";
 
@@ -165,6 +166,9 @@ export class CreatureSheet extends SplittermondActorSheet {
 
     // Assign unassigned spell
     html.find('.unassigned-spells .taglist-item').click(this._onAssignSpell.bind(this));
+
+    // Assign unassigned mastery
+    html.find('.masteries .taglist-item.unassigned-mastery').click(this._onAssignMastery.bind(this));
   }
 
   /**
@@ -239,6 +243,23 @@ export class CreatureSheet extends SplittermondActorSheet {
 
     if (item && item.system.isUnassignedSpell) {
       await SpellAssignmentDialog.show(this.actor, item);
+    }
+  }
+
+  /**
+   * Handle assign unassigned mastery
+   */
+  async _onAssignMastery(event) {
+    // Don't trigger if clicking on action buttons
+    if (event.target.closest('[data-action]')) return;
+
+    event.preventDefault();
+    const li = event.currentTarget.closest("[data-item-id]");
+    const itemId = li?.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+
+    if (item && item.system.isUnassignedMastery) {
+      await MasteryAssignmentDialog.show(this.actor, item);
     }
   }
 }
