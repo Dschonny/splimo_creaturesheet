@@ -90,16 +90,16 @@
 }
 
 /* Creature skill values - show base value in input, modified total in parentheses */
-.creature-skill-value {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-left: -1.2rem;
+.splittermond.sheet .creature-skill-value {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+  margin-left: -1.2rem !important;
 }
 
-.creature-skill-value .skill-base-value {
-  width: 3.5rem;
-  text-align: center;
+.splittermond.sheet .creature-skill-value .skill-base-value {
+  width: 3.5rem !important;
+  text-align: center !important;
 }
 
 .creature-skill-value .skill-total-value {
