@@ -208,13 +208,13 @@
 
                 {{!-- Abrichtungen --}}
                 {{#if abrichtungenByCategory}}
-                <div class="list abrichtungen">
+                <div class="list masteries abrichtungen">
                     <div class="list-header">
                         <h3>{{localize "CREATURE.Abrichtungen"}}</h3>
                     </div>
                     <ol class="list-body">
                         {{#each abrichtungenByCategory}}
-                        <li class="list-item">
+                        <li class="list-item" data-category="{{@key}}">
                             <label>{{localize this.categoryKey}}</label>
                             <ul class="taglist item-list">
                                 {{#each this.items}}
