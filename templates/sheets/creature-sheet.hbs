@@ -10,7 +10,7 @@
                     placeholder="{{localize 'splittermond.name' }}" />
                 {{#unless limited}}
                 <ul class="npcfeatures taglist" data-item-type="npcfeature">
-                    {{#each itemsByType.npcfeature}}
+                    {{#each npcFeatures}}
                     <li class="taglist-item" data-item-id="{{this._id}}">
                         <div class="taglist-item-name">
                             <a data-action="edit-item">{{this.name}}</a>
@@ -89,13 +89,13 @@
 
             <div class="creature-general-right">
                 {{!-- NPC Features / Merkmale --}}
-                {{#if itemsByType.npcfeature}}
+                {{#if npcFeatures.length}}
                 <div class="list">
                     <div class="list-header">
                         <h3>{{localize "CREATURE.Features"}}</h3>
                     </div>
                     <ul class="list-body taglist">
-                        {{#each itemsByType.npcfeature}}
+                        {{#each npcFeatures}}
                         <li class="taglist-item" data-item-id="{{this._id}}" title="{{this.system.description}}">
                             <div class="taglist-item-name">{{this.name}}</div>
                         </li>

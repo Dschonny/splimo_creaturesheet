@@ -139,6 +139,11 @@ export class CreatureSheet extends SplittermondActorSheet {
       i.type === "npcfeature" && i.system.isUnassignedSpell
     );
 
+    // Filter npcfeatures to exclude unassigned spells (for display in header and general tab)
+    context.npcFeatures = this.actor.items.filter(i =>
+      i.type === "npcfeature" && !i.system.isUnassignedSpell
+    );
+
     return context;
   }
 
