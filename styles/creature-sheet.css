@@ -94,14 +94,14 @@
   display: flex !important;
   align-items: center !important;
   gap: 0.25rem !important;
-  margin-left: -1.2rem !important;
+  margin-left: -0.9rem !important;
   width: auto !important;
   overflow: visible !important;
 }
 
 .splittermond.sheet.actor.npc .list.skills .list-item .value.creature-skill-value input.skill-base-value {
-  width: 3.5rem !important;
-  min-width: 3.5rem !important;
+  width: 3.2rem !important;
+  min-width: 3.2rem !important;
   text-align: center !important;
 }
 
