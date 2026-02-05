@@ -31,7 +31,7 @@ export class CreatureDataMapper {
         sex: "",
         attributes: attributes,
         skills: skills,
-        derivedValues: derivedAttributes,
+        derivedAttributes: derivedAttributes,
         health: {
           max: derivedAttributes.healthpoints?.value || 0,
           value: derivedAttributes.healthpoints?.value || 0,
