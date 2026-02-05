@@ -103,7 +103,6 @@ export class SpellAssignmentDialog extends Application {
     const maxGrade = (rawGrade !== undefined && rawGrade !== null && rawGrade !== "")
       ? parseInt(rawGrade)
       : 5;
-    console.log("SpellAssignmentDialog: maxGrade =", maxGrade, "from spellGrade =", rawGrade);
     const spells = [];
 
     // Get all spell compendiums
@@ -125,7 +124,6 @@ export class SpellAssignmentDialog extends Application {
 
           // Filter by max grade (skillLevel <= unassigned spell's grade)
           const spellGrade = parseInt(entry.system.skillLevel) || 0;
-          console.log(`SpellAssignmentDialog: ${entry.name} grade=${spellGrade}, maxGrade=${maxGrade}, include=${spellGrade <= maxGrade}`);
           if (spellGrade > maxGrade) continue;
 
           spells.push({
