@@ -367,7 +367,12 @@ export class SpellAssignmentDialog extends Application {
 
           // Debug: Log first few spells to see their full structure
           if (spellCount <= 3) {
-            console.log(`Sample spell from ${pack.collection}:`, entry.name, "full entry:", entry);
+            console.log(`Sample spell from ${pack.collection}:`, entry.name);
+            console.log(`  - system keys:`, Object.keys(entry.system || {}));
+            console.log(`  - system.skill:`, entry.system?.skill);
+            console.log(`  - system.availableIn:`, entry.system?.availableIn);
+            console.log(`  - system.skills:`, entry.system?.skills);
+            console.log(`  - full system:`, JSON.stringify(entry.system, null, 2));
           }
 
           // Check if spell matches the skill - either as primary skill or in availableIn/skills array
