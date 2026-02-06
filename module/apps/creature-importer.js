@@ -161,13 +161,16 @@ export class CreatureImporter {
       const compendiumMastery = await findCompendiumMastery(item.name, item.system.skill);
 
       if (compendiumMastery) {
-        // Replace with compendium data, keeping the original skill assignment
+        // Replace with compendium data
         const originalSkill = item.system.skill;
         items[i] = compendiumMastery;
-        items[i].system.skill = originalSkill;
+        // Only keep original skill if it was valid, otherwise use compendium's skill
+        if (originalSkill && originalSkill !== "undefined") {
+          items[i].system.skill = originalSkill;
+        }
         // Remove the unassigned flag since we found a match
         delete items[i].system.isUnassignedMastery;
-        console.log(`Matched mastery "${item.name}" with compendium item`);
+        console.log(`Matched mastery "${item.name}" with compendium item (skill: ${items[i].system.skill})`);
       } else {
         console.log(`Could not find compendium match for mastery "${item.name}"`);
       }
