@@ -311,12 +311,12 @@
 
 /* Selected mastery in assignment dialog */
 .mastery-assignment .mastery-list-item.selected {
-  background-color: var(--color-cool-4, rgba(80, 120, 200, 0.3));
-  border: 2px solid var(--color-cool-3, #5078c8);
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--color-border-dark-primary, #444);
 }
 
 .mastery-assignment .mastery-list-item.selected:hover {
-  background-color: var(--color-cool-3, rgba(80, 120, 200, 0.5));
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 /* Preselected mastery (fuzzy match suggestion) */
@@ -357,7 +357,7 @@
 }
 
 .mastery-assignment .mastery-assignment-footer .confirm-btn {
-  background-color: var(--color-cool-3, #5078c8);
+  background-color: var(--color-border-dark-primary, #444);
   color: white;
 }
 
