@@ -347,6 +347,8 @@ export class SpellAssignmentDialog extends Application {
       : 5;
     const spells = [];
 
+    console.log(`_loadSpellsForSkill: Loading spells for skill "${skillId}", maxGrade: ${maxGrade}`);
+
     const packs = game.packs.filter(p => p.documentName === "Item");
 
     for (const pack of packs) {
@@ -356,13 +358,26 @@ export class SpellAssignmentDialog extends Application {
           fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.costs", "system.difficulty", "system.enhancementCosts"]
         });
 
+        let spellCount = 0;
+        let matchCount = 0;
+
         for (const entry of index) {
           if (entry.type !== "spell") continue;
+          spellCount++;
+
+          // Debug: Log first few spells to see their structure
+          if (spellCount <= 3) {
+            console.log(`Sample spell from ${pack.collection}:`, entry.name, "skill:", entry.system?.skill, "system:", entry.system);
+          }
+
           if (entry.system?.skill !== skillId) continue;
+          matchCount++;
 
           // Try different field names for spell grade (skillLevel is standard in Splittermond)
           const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
           const spellGrade = parseInt(gradeValue) || 0;
+
+          console.log(`Found spell "${entry.name}" with grade ${spellGrade} (maxGrade: ${maxGrade})`);
 
           if (spellGrade > maxGrade) continue;
 
@@ -376,11 +391,14 @@ export class SpellAssignmentDialog extends Application {
             difficulty: entry.system?.difficulty || ""
           });
         }
+
+        console.log(`Pack ${pack.collection}: ${spellCount} spells total, ${matchCount} match skill "${skillId}"`);
       } catch (err) {
         console.warn(`SpellAssignmentDialog: Could not index pack ${pack.collection}:`, err);
       }
     }
 
+    console.log(`_loadSpellsForSkill: Found ${spells.length} spells for skill "${skillId}"`);
     spells.sort((a, b) => a.grade - b.grade || a.name.localeCompare(b.name));
     return spells;
   }
