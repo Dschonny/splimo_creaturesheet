@@ -13,7 +13,11 @@
             <ul class="taglist item-list">
                 {{#each skill.masteries}}
                 <li class="taglist-item item {{#if this.system.isUnassignedMastery}}unassigned-mastery{{/if}}" data-item-id="{{this._id}}" {{#if this.system.isUnassignedMastery}}title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}"{{/if}}>
+                    {{#if this.system.isUnassignedMastery}}
+                    <div class="taglist-item-name">{{this.name}}</div>
+                    {{else}}
                     <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
+                    {{/if}}
 
                     <div class="taglist-item-actions">
                         <button class="button-inline" type="button" data-action="delete-item">
@@ -60,7 +64,11 @@
             <ul class="taglist item-list">
                 {{#each this.masteries}}
                 <li class="taglist-item item {{#if this.system.isUnassignedMastery}}unassigned-mastery{{/if}}" data-item-id="{{this._id}}" {{#if this.system.isUnassignedMastery}}title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}"{{/if}}>
+                    {{#if this.system.isUnassignedMastery}}
+                    <div class="taglist-item-name">{{this.name}}</div>
+                    {{else}}
                     <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
+                    {{/if}}
 
                     <div class="taglist-item-actions">
                         <button class="button-inline" type="button" data-action="delete-item">
