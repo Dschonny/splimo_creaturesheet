@@ -59,21 +59,41 @@
 
     "RefinementCategories": {
       "groesse": "Size",
+      "größe": "Size",
       "koerperliche_besonderheiten": "Physical Features",
+      "körperliche_besonderheiten": "Physical Features",
       "fortbewegung": "Movement",
+      "bewegungsarten": "Movement Types",
       "sinne": "Senses",
       "natuerliche_waffen": "Natural Weapons",
+      "natürliche_waffen": "Natural Weapons",
       "besondere_faehigkeiten": "Special Abilities",
+      "besondere_fähigkeiten": "Special Abilities",
       "späher_jäger": "Scout/Hunter",
+      "spaeher_jaeger": "Scout/Hunter",
       "kampffähigkeiten": "Combat Abilities",
-      "magische_fähigkeiten": "Magical Abilities"
+      "kampffaehigkeiten": "Combat Abilities",
+      "magische_fähigkeiten": "Magical Abilities",
+      "magische_faehigkeiten": "Magical Abilities",
+      "geistige_fähigkeiten": "Mental Abilities",
+      "geistige_faehigkeiten": "Mental Abilities",
+      "resistenzen": "Resistances",
+      "verwundbarkeiten": "Vulnerabilities",
+      "immunität": "Immunity",
+      "immunitaet": "Immunity",
+      "spezieller_typ": "Special Type",
+      "unterhaltung": "Entertainment",
+      "anfälligkeiten": "Susceptibilities",
+      "anfaelligkeiten": "Susceptibilities"
     },
 
     "TrainingCategories": {
       "grundausbildung": "Basic Training",
       "kampf": "Combat",
       "reittier": "Mount",
-      "sonstiges": "Miscellaneous"
+      "sonstiges": "Miscellaneous",
+      "allgemein": "General",
+      "helfer": "Helper"
     },
 
     "TotalCost": "Total Cost",
