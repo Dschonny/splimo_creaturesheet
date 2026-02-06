@@ -50,14 +50,15 @@ export async function findFuzzySpellMatches(name, skillId = null, maxGrade = 5) 
 
   for (const pack of packs) {
     try {
-      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel"] });
+      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade"] });
 
       for (const entry of index) {
         if (entry.type !== "spell") continue;
 
         if (skillId && entry.system?.skill !== skillId) continue;
 
-        const spellGrade = parseInt(entry.system?.skillLevel) || 0;
+        const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
+        const spellGrade = parseInt(gradeValue) || 0;
         if (spellGrade > maxGrade) continue;
 
         const score = fuzzyScore(name, entry.name);
@@ -94,7 +95,7 @@ export async function findCompendiumSpell(name, skillId = null) {
 
   for (const pack of packs) {
     try {
-      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel"] });
+      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade"] });
 
       for (const entry of index) {
         if (entry.type !== "spell") continue;
@@ -260,12 +261,13 @@ export class SpellAssignmentDialog extends Application {
 
     for (const pack of packs) {
       try {
-        const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel"] });
+        const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade"] });
 
         for (const entry of index) {
           if (entry.type !== "spell") continue;
 
-          const spellGrade = parseInt(entry.system?.skillLevel) || 0;
+          const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
+          const spellGrade = parseInt(gradeValue) || 0;
           if (spellGrade > maxGrade) continue;
 
           const score = fuzzyScore(name, entry.name);
@@ -349,14 +351,19 @@ export class SpellAssignmentDialog extends Application {
 
     for (const pack of packs) {
       try {
-        const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.costs", "system.difficulty"] });
+        // Request multiple possible field names for spell grade
+        const index = await pack.getIndex({
+          fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.costs", "system.difficulty", "system.enhancementCosts"]
+        });
 
         for (const entry of index) {
           if (entry.type !== "spell") continue;
           if (entry.system?.skill !== skillId) continue;
-          if (entry.system?.skillLevel === undefined || entry.system?.skillLevel === null) continue;
 
-          const spellGrade = parseInt(entry.system.skillLevel) || 0;
+          // Try different field names for spell grade (skillLevel is standard in Splittermond)
+          const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
+          const spellGrade = parseInt(gradeValue) || 0;
+
           if (spellGrade > maxGrade) continue;
 
           spells.push({
@@ -365,7 +372,7 @@ export class SpellAssignmentDialog extends Application {
             id: entry._id,
             name: entry.name,
             grade: spellGrade,
-            costs: entry.system?.costs || "",
+            costs: entry.system?.costs || entry.system?.enhancementCosts || "",
             difficulty: entry.system?.difficulty || ""
           });
         }
