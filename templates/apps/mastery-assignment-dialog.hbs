@@ -27,9 +27,10 @@
         {{else if hasMasteries}}
         <ul class="mastery-list">
             {{#each masteries}}
-            <li class="mastery-list-item" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}">
+            <li class="mastery-list-item {{#if this.isPreselected}}preselected{{/if}}" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}">
                 <span class="mastery-name">{{this.name}}</span>
                 <span class="mastery-level">{{this.level}}</span>
+                {{#if this.isPreselected}}<span class="preselect-badge">{{localize "CREATURE.MasteryAssignment.Recommended"}}</span>{{/if}}
             </li>
             {{/each}}
         </ul>

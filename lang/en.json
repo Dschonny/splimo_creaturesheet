@@ -138,7 +138,11 @@
       "ClickToAssign": "Click to assign",
       "Success": "{name} assigned successfully",
       "Error": "Error assigning mastery: {error}",
-      "MasteryNotFound": "Mastery not found"
+      "MasteryNotFound": "Mastery not found",
+      "Recommended": "Recommended",
+      "SequenceComplete": "Mastery assignment completed",
+      "UnassignedRemaining": "{count} masteries could not be auto-assigned",
+      "AssignNow": "Assign Now"
     },
 
     "SpellAssignment": {

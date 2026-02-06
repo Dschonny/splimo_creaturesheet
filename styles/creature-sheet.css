@@ -308,3 +308,40 @@
   text-align: center;
   padding: 1rem;
 }
+
+/* Preselected mastery in assignment dialog */
+.mastery-assignment .mastery-list-item.preselected {
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.3));
+  border: 1px solid var(--color-warm-1, #c8a060);
+}
+
+.mastery-assignment .mastery-list-item.preselected:hover {
+  background-color: var(--color-warm-1, rgba(200, 180, 100, 0.5));
+}
+
+.mastery-assignment .mastery-list-item {
+  grid-template-columns: 1fr auto auto;
+}
+
+.mastery-assignment .mastery-list-item .preselect-badge {
+  background-color: var(--color-warm-1, #c8a060);
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Import confirmation dialog - unassigned warning */
+.import-confirmation .unassigned-warning {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.2));
+  border: 1px solid var(--color-warm-1, #c8a060);
+  border-radius: 4px;
+}
+
+.import-confirmation .unassigned-warning p {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-dark-primary, #333);
+}

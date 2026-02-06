@@ -142,7 +142,11 @@
       "ClickToAssign": "Klicken zum Zuordnen",
       "Success": "{name} erfolgreich zugeordnet",
       "Error": "Fehler beim Zuordnen: {error}",
-      "MasteryNotFound": "Meisterschaft nicht gefunden"
+      "MasteryNotFound": "Meisterschaft nicht gefunden",
+      "Recommended": "Empfohlen",
+      "SequenceComplete": "Meisterschafts-Zuordnung abgeschlossen",
+      "UnassignedRemaining": "{count} Meisterschaften konnten nicht automatisch zugeordnet werden",
+      "AssignNow": "Jetzt zuweisen"
     },
 
     "SpellAssignment": {

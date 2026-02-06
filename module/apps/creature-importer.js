@@ -1,5 +1,5 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
-import { findCompendiumMastery } from "./mastery-assignment-dialog.js";
+import { findCompendiumMastery, MasteryAssignmentDialog } from "./mastery-assignment-dialog.js";
 
 /**
  * Handles importing VTT Import JSON files into creature actors
@@ -38,6 +38,7 @@ export class CreatureImporter {
       await this._matchMasteriesWithCompendium(items);
 
       // Show confirmation dialog with counts from JSON data
+      const unassignedMasteryCount = items.filter(i => i.type === "mastery" && i.system.isUnassignedMastery).length;
       const counts = {
         features: items.filter(i => i.type === "npcfeature" && !i.system.isUnassignedSpell).length,
         weapons: items.filter(i => i.type === "npcattack").length,
@@ -46,11 +47,14 @@ export class CreatureImporter {
         skills: jsonData.skills?.length || 0,
         magicSchools: jsonData.magicSchools?.length || 0,
         refinements: jsonData.verfeinerungen?.length || 0,
-        training: jsonData.abrichtungen?.length || 0
+        training: jsonData.abrichtungen?.length || 0,
+        unassignedMasteries: unassignedMasteryCount
       };
-      const confirmed = await this._showConfirmationDialog(actorData.name, counts);
+      const result = await this._showConfirmationDialog(actorData.name, counts);
 
-      if (!confirmed) return;
+      if (!result || result === "cancel") return;
+
+      const assignNow = result === "assign";
 
       // Create or update actor
       let targetActor = actor;
@@ -84,6 +88,17 @@ export class CreatureImporter {
       // Render actor sheet if newly created
       if (!actor) {
         targetActor.sheet.render(true);
+      }
+
+      // If user chose to assign masteries now, start sequential assignment
+      if (assignNow) {
+        const unassignedMasteries = targetActor.items.filter(i =>
+          i.type === "mastery" && i.system.isUnassignedMastery
+        );
+
+        if (unassignedMasteries.length > 0) {
+          MasteryAssignmentDialog.showSequential(targetActor, Array.from(unassignedMasteries));
+        }
       }
 
     } catch (error) {
@@ -161,6 +176,7 @@ export class CreatureImporter {
 
   /**
    * Show confirmation dialog
+   * @returns {Promise<string|null>} "import", "assign", or null for cancel
    */
   static async _showConfirmationDialog(name, counts) {
     // Build content lines, only showing non-zero counts
@@ -174,13 +190,52 @@ export class CreatureImporter {
     if (counts.refinements) lines.push(`${counts.refinements} ${game.i18n.localize("CREATURE.Import.Refinements")}`);
     if (counts.training) lines.push(`${counts.training} ${game.i18n.localize("CREATURE.Import.Training")}`);
 
-    const content = `<p><strong>${name}</strong></p><ul>${lines.map(l => `<li>${l}</li>`).join("")}</ul>`;
+    let content = `<div class="import-confirmation"><p><strong>${name}</strong></p><ul>${lines.map(l => `<li>${l}</li>`).join("")}</ul>`;
 
+    // Add unassigned mastery warning if any
+    if (counts.unassignedMasteries > 0) {
+      content += `<div class="unassigned-warning">
+        <p>${game.i18n.format("CREATURE.MasteryAssignment.UnassignedRemaining", { count: counts.unassignedMasteries })}</p>
+      </div>`;
+    }
+
+    content += "</div>";
+
+    // If there are unassigned masteries, show a three-button dialog
+    if (counts.unassignedMasteries > 0) {
+      return new Promise((resolve) => {
+        new Dialog({
+          title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
+          content: content,
+          buttons: {
+            assign: {
+              icon: '<i class="fas fa-check-double"></i>',
+              label: game.i18n.localize("CREATURE.MasteryAssignment.AssignNow"),
+              callback: () => resolve("assign")
+            },
+            import: {
+              icon: '<i class="fas fa-file-import"></i>',
+              label: game.i18n.localize("CREATURE.ImportConfirmTitle"),
+              callback: () => resolve("import")
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: game.i18n.localize("Cancel"),
+              callback: () => resolve("cancel")
+            }
+          },
+          default: "assign",
+          close: () => resolve("cancel")
+        }).render(true);
+      });
+    }
+
+    // No unassigned masteries - simple confirm dialog
     return Dialog.confirm({
       title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
       content: content,
-      yes: () => true,
-      no: () => false,
+      yes: () => "import",
+      no: () => "cancel",
       defaultYes: true
     });
   }
