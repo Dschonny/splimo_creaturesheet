@@ -27,11 +27,12 @@
         {{else if hasSpells}}
         <ul class="spell-list">
             {{#each spells}}
-            <li class="spell-list-item" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.SpellAssignment.ClickToAssign'}}">
+            <li class="spell-list-item {{#if this.isSelected}}selected{{/if}} {{#if this.isPreselected}}preselected{{/if}}" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.SpellAssignment.ClickToSelect'}}">
                 <span class="spell-name">{{this.name}}</span>
                 <span class="spell-grade">{{this.grade}}</span>
                 <span class="spell-costs">{{this.costs}}</span>
                 <span class="spell-difficulty">{{this.difficulty}}</span>
+                {{#if this.isPreselected}}<span class="preselect-badge">{{localize "CREATURE.SpellAssignment.Recommended"}}</span>{{/if}}
             </li>
             {{/each}}
         </ul>
@@ -39,4 +40,11 @@
         <p class="hint">{{localize "CREATURE.SpellAssignment.NoSpellsFound"}}</p>
         {{/if}}
     </div>
+
+    <footer class="spell-assignment-footer">
+        {{#if isSequential}}
+        <button type="button" class="skip-btn">{{localize "CREATURE.SpellAssignment.Skip"}}</button>
+        {{/if}}
+        <button type="button" class="confirm-btn" {{#unless selectedUuid}}disabled{{/unless}}>{{localize "CREATURE.SpellAssignment.Confirm"}}</button>
+    </footer>
 </div>

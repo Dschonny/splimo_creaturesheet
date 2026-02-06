@@ -1,5 +1,6 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
 import { findCompendiumMastery, MasteryAssignmentDialog } from "./mastery-assignment-dialog.js";
+import { findCompendiumSpell, SpellAssignmentDialog } from "./spell-assignment-dialog.js";
 
 /**
  * Handles importing VTT Import JSON files into creature actors
@@ -34,21 +35,26 @@ export class CreatureImporter {
       // Map to actor data
       const { actorData, items } = CreatureDataMapper.mapJsonToActorData(jsonData);
 
-      // Try to match masteries with compendium items
+      // Try to match masteries and spells with compendium items
       await this._matchMasteriesWithCompendium(items);
+      await this._matchSpellsWithCompendium(items);
 
       // Show confirmation dialog with counts from JSON data
       const unassignedMasteryCount = items.filter(i => i.type === "mastery" && i.system.isUnassignedMastery).length;
+      const unassignedSpellCount = items.filter(i => i.type === "npcfeature" && i.system.isUnassignedSpell).length;
+      const assignedSpellCount = items.filter(i => i.type === "spell").length;
+
       const counts = {
         features: items.filter(i => i.type === "npcfeature" && !i.system.isUnassignedSpell).length,
         weapons: items.filter(i => i.type === "npcattack").length,
         masteries: items.filter(i => i.type === "mastery").length,
-        spells: items.filter(i => i.type === "npcfeature" && i.system.isUnassignedSpell).length,
+        spells: assignedSpellCount + unassignedSpellCount,
         skills: jsonData.skills?.length || 0,
         magicSchools: jsonData.magicSchools?.length || 0,
         refinements: jsonData.verfeinerungen?.length || 0,
         training: jsonData.abrichtungen?.length || 0,
-        unassignedMasteries: unassignedMasteryCount
+        unassignedMasteries: unassignedMasteryCount,
+        unassignedSpells: unassignedSpellCount
       };
       const result = await this._showConfirmationDialog(actorData.name, counts);
 
@@ -90,14 +96,20 @@ export class CreatureImporter {
         targetActor.sheet.render(true);
       }
 
-      // If user chose to assign masteries now, start sequential assignment
+      // If user chose to assign now, start sequential assignment (masteries first, then spells)
       if (assignNow) {
         const unassignedMasteries = targetActor.items.filter(i =>
           i.type === "mastery" && i.system.isUnassignedMastery
         );
+        const unassignedSpells = targetActor.items.filter(i =>
+          i.type === "npcfeature" && i.system.isUnassignedSpell
+        );
 
+        // Start with masteries, then continue with spells
         if (unassignedMasteries.length > 0) {
-          MasteryAssignmentDialog.showSequential(targetActor, Array.from(unassignedMasteries));
+          this._startSequentialAssignment(targetActor, Array.from(unassignedMasteries), Array.from(unassignedSpells));
+        } else if (unassignedSpells.length > 0) {
+          SpellAssignmentDialog.showSequential(targetActor, Array.from(unassignedSpells));
         }
       }
 
@@ -105,6 +117,48 @@ export class CreatureImporter {
       console.error("Error importing creature:", error);
       ui.notifications.error(game.i18n.format("CREATURE.ImportError", { error: error.message }));
     }
+  }
+
+  /**
+   * Start sequential assignment: first masteries, then spells
+   */
+  static _startSequentialAssignment(actor, masteries, spells) {
+    let index = 0;
+
+    const showNextMastery = () => {
+      if (index >= masteries.length) {
+        // Done with masteries, start spells if any
+        if (spells.length > 0) {
+          SpellAssignmentDialog.showSequential(actor, spells);
+        } else {
+          ui.notifications.info(game.i18n.localize("CREATURE.MasteryAssignment.SequenceComplete"));
+        }
+        return;
+      }
+
+      const mastery = masteries[index];
+      index++;
+
+      if (!actor.items.get(mastery.id)) {
+        showNextMastery();
+        return;
+      }
+
+      MasteryAssignmentDialog.show(actor, mastery, {
+        useFuzzyPreselect: true,
+        isSequential: true,
+        onClose: (result) => {
+          if (result === "assigned" || result === "skipped") {
+            setTimeout(showNextMastery, 100);
+          } else {
+            // User cancelled - abort entire sequence
+            ui.notifications.info(game.i18n.localize("CREATURE.MasteryAssignment.SequenceAborted"));
+          }
+        }
+      });
+    };
+
+    showNextMastery();
   }
 
   /**
@@ -178,6 +232,28 @@ export class CreatureImporter {
   }
 
   /**
+   * Try to match spells with compendium items
+   * @param {Array} items - The items array to modify in place
+   */
+  static async _matchSpellsWithCompendium(items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type !== "npcfeature" || !item.system.isUnassignedSpell) continue;
+
+      // Try to find matching spell in compendium
+      const compendiumSpell = await findCompendiumSpell(item.name);
+
+      if (compendiumSpell) {
+        // Replace npcfeature with actual spell from compendium
+        items[i] = compendiumSpell;
+        console.log(`Matched spell "${item.name}" with compendium item`);
+      } else {
+        console.log(`Could not find compendium match for spell "${item.name}"`);
+      }
+    }
+  }
+
+  /**
    * Show confirmation dialog
    * @returns {Promise<string|null>} "import", "assign", or null for cancel
    */
@@ -195,17 +271,23 @@ export class CreatureImporter {
 
     let content = `<div class="import-confirmation"><p><strong>${name}</strong></p><ul>${lines.map(l => `<li>${l}</li>`).join("")}</ul>`;
 
-    // Add unassigned mastery warning if any
-    if (counts.unassignedMasteries > 0) {
-      content += `<div class="unassigned-warning">
-        <p>${game.i18n.format("CREATURE.MasteryAssignment.UnassignedRemaining", { count: counts.unassignedMasteries })}</p>
-      </div>`;
+    // Add unassigned warnings if any
+    const hasUnassigned = counts.unassignedMasteries > 0 || counts.unassignedSpells > 0;
+    if (hasUnassigned) {
+      content += `<div class="unassigned-warning">`;
+      if (counts.unassignedMasteries > 0) {
+        content += `<p>${game.i18n.format("CREATURE.MasteryAssignment.UnassignedRemaining", { count: counts.unassignedMasteries })}</p>`;
+      }
+      if (counts.unassignedSpells > 0) {
+        content += `<p>${game.i18n.format("CREATURE.SpellAssignment.UnassignedRemaining", { count: counts.unassignedSpells })}</p>`;
+      }
+      content += `</div>`;
     }
 
     content += "</div>";
 
-    // If there are unassigned masteries, show a three-button dialog
-    if (counts.unassignedMasteries > 0) {
+    // If there are unassigned items, show a three-button dialog
+    if (hasUnassigned) {
       return new Promise((resolve) => {
         new Dialog({
           title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
@@ -213,7 +295,7 @@ export class CreatureImporter {
           buttons: {
             assign: {
               icon: '<i class="fas fa-check-double"></i>',
-              label: game.i18n.localize("CREATURE.MasteryAssignment.AssignNow"),
+              label: game.i18n.localize("CREATURE.Import.AssignNow"),
               callback: () => resolve("assign")
             },
             import: {
@@ -233,7 +315,7 @@ export class CreatureImporter {
       });
     }
 
-    // No unassigned masteries - simple confirm dialog
+    // No unassigned items - simple confirm dialog
     return Dialog.confirm({
       title: game.i18n.localize("CREATURE.ImportConfirmTitle"),
       content: content,

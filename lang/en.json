@@ -19,7 +19,8 @@
       "Skills": "Skills",
       "MagicSchools": "Magic Schools",
       "Refinements": "Refinements",
-      "Training": "Training"
+      "Training": "Training",
+      "AssignNow": "Assign Now"
     },
 
     "TabGeneral": "General",
@@ -157,10 +158,17 @@
       "MaxGrade": "Max Grade",
       "NoSpellsFound": "No matching spells found",
       "SelectSchoolFirst": "Please select a magic school first",
+      "ClickToSelect": "Click to select",
       "ClickToAssign": "Click to assign",
+      "Confirm": "Assign",
+      "Skip": "Skip",
+      "Recommended": "Recommended",
       "Success": "{name} assigned successfully",
       "Error": "Error assigning spell: {error}",
-      "SpellNotFound": "Spell not found"
+      "SpellNotFound": "Spell not found",
+      "SequenceComplete": "Spell assignment completed",
+      "SequenceAborted": "Spell assignment cancelled",
+      "UnassignedRemaining": "{count} spells could not be auto-assigned"
     }
   }
 }

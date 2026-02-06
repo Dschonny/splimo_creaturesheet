@@ -220,6 +220,68 @@
   padding: 1rem;
 }
 
+/* Selected spell in assignment dialog */
+.spell-assignment .spell-list-item.selected {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--color-border-dark-primary, #444);
+}
+
+.spell-assignment .spell-list-item.selected:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Preselected spell (fuzzy match suggestion) */
+.spell-assignment .spell-list-item.preselected:not(.selected) {
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.15));
+}
+
+.spell-assignment .spell-list-item.preselected:not(.selected):hover {
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.3));
+}
+
+.spell-assignment .spell-list-item {
+  grid-template-columns: 1fr auto auto auto auto;
+  border: 2px solid transparent;
+}
+
+.spell-assignment .spell-list-item .preselect-badge {
+  background-color: var(--color-warm-1, #c8a060);
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Footer with confirm/skip buttons */
+.spell-assignment .spell-assignment-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-light-primary, #999);
+  margin-top: 0.5rem;
+}
+
+.spell-assignment .spell-assignment-footer button {
+  padding: 0.4rem 1rem;
+}
+
+.spell-assignment .spell-assignment-footer .confirm-btn {
+  background-color: var(--color-border-dark-primary, #444);
+  color: white;
+}
+
+.spell-assignment .spell-assignment-footer .confirm-btn:disabled {
+  background-color: var(--color-border-light-primary, #999);
+  cursor: not-allowed;
+}
+
+.spell-assignment .spell-assignment-footer .skip-btn {
+  background-color: transparent;
+  border: 1px solid var(--color-border-light-primary, #999);
+}
+
 /* Unassigned masteries - clickable items */
 .masteries .taglist-item.unassigned-mastery {
   cursor: pointer;

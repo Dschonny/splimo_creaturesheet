@@ -242,7 +242,7 @@ export class CreatureSheet extends SplittermondActorSheet {
     const item = this.actor.items.get(itemId);
 
     if (item && item.system.isUnassignedSpell) {
-      await SpellAssignmentDialog.show(this.actor, item);
+      await SpellAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
     }
   }
 

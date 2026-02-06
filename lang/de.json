@@ -19,7 +19,8 @@
       "Skills": "Fertigkeiten",
       "MagicSchools": "Magieschulen",
       "Refinements": "Verfeinerungen",
-      "Training": "Abrichtungen"
+      "Training": "Abrichtungen",
+      "AssignNow": "Jetzt zuweisen"
     },
 
     "TabGeneral": "Allgemein",
@@ -161,10 +162,17 @@
       "MaxGrade": "Max. Grad",
       "NoSpellsFound": "Keine passenden Zauber gefunden",
       "SelectSchoolFirst": "Bitte wähle zuerst eine Magieschule",
+      "ClickToSelect": "Klicken zum Auswählen",
       "ClickToAssign": "Klicken zum Zuordnen",
+      "Confirm": "Zuordnen",
+      "Skip": "Überspringen",
+      "Recommended": "Empfohlen",
       "Success": "{name} erfolgreich zugeordnet",
       "Error": "Fehler beim Zuordnen: {error}",
-      "SpellNotFound": "Zauber nicht gefunden"
+      "SpellNotFound": "Zauber nicht gefunden",
+      "SequenceComplete": "Zauber-Zuordnung abgeschlossen",
+      "SequenceAborted": "Zauber-Zuordnung abgebrochen",
+      "UnassignedRemaining": "{count} Zauber konnten nicht automatisch zugeordnet werden"
     }
   }
 }
