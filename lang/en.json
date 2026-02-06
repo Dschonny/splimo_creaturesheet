@@ -141,6 +141,7 @@
       "MasteryNotFound": "Mastery not found",
       "Recommended": "Recommended",
       "SequenceComplete": "Mastery assignment completed",
+      "SequenceAborted": "Mastery assignment cancelled",
       "UnassignedRemaining": "{count} masteries could not be auto-assigned",
       "AssignNow": "Assign Now"
     },

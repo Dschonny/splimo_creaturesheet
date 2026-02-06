@@ -89,13 +89,14 @@ export class MasteryAssignmentDialog extends Application {
 
   /**
    * Find the best matching skill for a mastery name by searching all compendiums
+   * If multiple skills have the same mastery, picks alphabetically first skill
    * @param {string} name - The mastery name to search for
    * @returns {Object|null} {skillId, uuid, score} or null
    */
   async _findBestMatchingSkill(name) {
     const maxLevel = this.unassignedMastery.system.level || 4;
     const packs = game.packs.filter(p => p.documentName === "Item");
-    let bestMatch = null;
+    const matches = [];
 
     for (const pack of packs) {
       try {
@@ -112,14 +113,18 @@ export class MasteryAssignmentDialog extends Application {
 
           // Only consider good matches
           if (score >= 0.5) {
-            if (!bestMatch || score > bestMatch.score) {
-              bestMatch = {
-                skillId: entry.system?.skill || "none",
-                uuid: `Compendium.${pack.collection}.${entry._id}`,
-                name: entry.name,
-                score
-              };
-            }
+            const skillId = entry.system?.skill || "none";
+            const skillLabel = skillId === "none"
+              ? game.i18n.localize("CREATURE.MasteryAssignment.GeneralMasteries")
+              : game.i18n.localize(`splittermond.skillLabel.${skillId}`);
+
+            matches.push({
+              skillId,
+              skillLabel,
+              uuid: `Compendium.${pack.collection}.${entry._id}`,
+              name: entry.name,
+              score
+            });
           }
         }
       } catch (err) {
@@ -127,9 +132,16 @@ export class MasteryAssignmentDialog extends Application {
       }
     }
 
-    if (bestMatch) {
-      console.log(`_findBestMatchingSkill: Best match for "${name}" -> "${bestMatch.name}" (skill: ${bestMatch.skillId}, score: ${bestMatch.score.toFixed(2)})`);
-    }
+    if (matches.length === 0) return null;
+
+    // Sort by score descending, then by skill label alphabetically
+    matches.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.skillLabel.localeCompare(b.skillLabel);
+    });
+
+    const bestMatch = matches[0];
+    console.log(`_findBestMatchingSkill: Best match for "${name}" -> "${bestMatch.name}" (skill: ${bestMatch.skillId}, score: ${bestMatch.score.toFixed(2)})`);
 
     return bestMatch;
   }
@@ -341,6 +353,7 @@ export class MasteryAssignmentDialog extends Application {
 
   /**
    * Show assignment dialogs sequentially for multiple unassigned masteries
+   * Aborts if user closes a dialog without assigning
    * @param {Actor} actor - The creature actor
    * @param {Array<Item>} unassignedMasteries - Array of unassigned mastery items
    */
@@ -367,8 +380,13 @@ export class MasteryAssignmentDialog extends Application {
       MasteryAssignmentDialog.show(actor, mastery, {
         useFuzzyPreselect: true,
         onClose: (assigned) => {
-          // Small delay to let the UI update
-          setTimeout(showNext, 100);
+          if (assigned) {
+            // Small delay to let the UI update, then show next
+            setTimeout(showNext, 100);
+          } else {
+            // User cancelled - abort the sequence
+            ui.notifications.info(game.i18n.localize("CREATURE.MasteryAssignment.SequenceAborted"));
+          }
         }
       });
     };

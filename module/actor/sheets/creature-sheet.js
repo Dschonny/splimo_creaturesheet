@@ -259,7 +259,7 @@ export class CreatureSheet extends SplittermondActorSheet {
     const item = this.actor.items.get(itemId);
 
     if (item && item.system.isUnassignedMastery) {
-      await MasteryAssignmentDialog.show(this.actor, item);
+      await MasteryAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
     }
   }
 }

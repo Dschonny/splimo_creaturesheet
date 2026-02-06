@@ -145,6 +145,7 @@
       "MasteryNotFound": "Meisterschaft nicht gefunden",
       "Recommended": "Empfohlen",
       "SequenceComplete": "Meisterschafts-Zuordnung abgeschlossen",
+      "SequenceAborted": "Meisterschafts-Zuordnung abgebrochen",
       "UnassignedRemaining": "{count} Meisterschaften konnten nicht automatisch zugeordnet werden",
       "AssignNow": "Jetzt zuweisen"
     },
