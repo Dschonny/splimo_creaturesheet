@@ -37,9 +37,18 @@ export class MasteryAssignmentDialog extends Application {
   async getData() {
     const availableSkills = this._getAvailableSkills();
 
+    // If using fuzzy preselect and no valid skill selected, find best matching skill
+    if (this.useFuzzyPreselect && (!this.selectedSkillId || this.selectedSkillId === "undefined")) {
+      const bestMatch = await this._findBestMatchingSkill(this.unassignedMastery.name);
+      if (bestMatch) {
+        this.selectedSkillId = bestMatch.skillId;
+        this.preselectedUuid = bestMatch.uuid;
+      }
+    }
+
     // Pre-select skill if not already set
     if (!this.selectedSkillId && availableSkills.length > 0) {
-      this.selectedSkillId = availableSkills[0].id;
+      this.selectedSkillId = availableSkills[0].skills[0]?.id || "none";
     }
 
     // Load masteries if a skill is selected
@@ -47,7 +56,7 @@ export class MasteryAssignmentDialog extends Application {
       this.masteries = await this._loadMasteriesForSkill(this.selectedSkillId);
     }
 
-    // If using fuzzy preselect, find best match and mark it
+    // If using fuzzy preselect but no preselectedUuid yet, find best match in current skill
     if (this.useFuzzyPreselect && this.masteries.length > 0 && !this.preselectedUuid) {
       const fuzzyMatches = await findFuzzyMasteryMatches(
         this.unassignedMastery.name,
@@ -76,6 +85,53 @@ export class MasteryAssignmentDialog extends Application {
       noSkillSelected: !this.selectedSkillId,
       hasPreselection: !!this.preselectedUuid
     };
+  }
+
+  /**
+   * Find the best matching skill for a mastery name by searching all compendiums
+   * @param {string} name - The mastery name to search for
+   * @returns {Object|null} {skillId, uuid, score} or null
+   */
+  async _findBestMatchingSkill(name) {
+    const maxLevel = this.unassignedMastery.system.level || 4;
+    const packs = game.packs.filter(p => p.documentName === "Item");
+    let bestMatch = null;
+
+    for (const pack of packs) {
+      try {
+        const index = await pack.getIndex({ fields: ["system.skill", "system.level"] });
+
+        for (const entry of index) {
+          if (entry.type !== "mastery") continue;
+
+          // Filter by max level
+          const entryLevel = entry.system?.level || 1;
+          if (entryLevel > maxLevel) continue;
+
+          const score = fuzzyScore(name, entry.name);
+
+          // Only consider good matches
+          if (score >= 0.5) {
+            if (!bestMatch || score > bestMatch.score) {
+              bestMatch = {
+                skillId: entry.system?.skill || "none",
+                uuid: `Compendium.${pack.collection}.${entry._id}`,
+                name: entry.name,
+                score
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`_findBestMatchingSkill: Could not search pack ${pack.collection}:`, err);
+      }
+    }
+
+    if (bestMatch) {
+      console.log(`_findBestMatchingSkill: Best match for "${name}" -> "${bestMatch.name}" (skill: ${bestMatch.skillId}, score: ${bestMatch.score.toFixed(2)})`);
+    }
+
+    return bestMatch;
   }
 
   /**
