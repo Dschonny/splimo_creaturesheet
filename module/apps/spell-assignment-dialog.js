@@ -353,9 +353,9 @@ export class SpellAssignmentDialog extends Application {
 
     for (const pack of packs) {
       try {
-        // Request multiple possible field names for spell grade
+        // Request multiple possible field names for spell grade and multi-school availability
         const index = await pack.getIndex({
-          fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.costs", "system.difficulty", "system.enhancementCosts"]
+          fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.costs", "system.difficulty", "system.enhancementCosts", "system.availableIn", "system.skills"]
         });
 
         let spellCount = 0;
@@ -365,12 +365,34 @@ export class SpellAssignmentDialog extends Application {
           if (entry.type !== "spell") continue;
           spellCount++;
 
-          // Debug: Log first few spells to see their structure
+          // Debug: Log first few spells to see their full structure
           if (spellCount <= 3) {
-            console.log(`Sample spell from ${pack.collection}:`, entry.name, "skill:", entry.system?.skill, "system:", entry.system);
+            console.log(`Sample spell from ${pack.collection}:`, entry.name, "full entry:", entry);
           }
 
-          if (entry.system?.skill !== skillId) continue;
+          // Check if spell matches the skill - either as primary skill or in availableIn/skills array
+          const primarySkill = entry.system?.skill;
+          const availableIn = entry.system?.availableIn; // might be array or object
+          const skillsArray = entry.system?.skills; // might be array
+
+          let matchesSkill = primarySkill === skillId;
+
+          // Check availableIn array/object
+          if (!matchesSkill && availableIn) {
+            if (Array.isArray(availableIn)) {
+              matchesSkill = availableIn.some(s => s.skill === skillId || s === skillId);
+            } else if (typeof availableIn === 'object') {
+              matchesSkill = Object.keys(availableIn).includes(skillId) ||
+                             Object.values(availableIn).some(v => v?.skill === skillId);
+            }
+          }
+
+          // Check skills array
+          if (!matchesSkill && skillsArray && Array.isArray(skillsArray)) {
+            matchesSkill = skillsArray.some(s => s.skill === skillId || s === skillId);
+          }
+
+          if (!matchesSkill) continue;
           matchCount++;
 
           // Try different field names for spell grade (skillLevel is standard in Splittermond)
