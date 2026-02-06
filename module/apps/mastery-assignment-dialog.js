@@ -123,11 +123,12 @@ export class MasteryAssignmentDialog extends Application {
   }
 
   /**
-   * Load masteries from compendiums that match the selected skill
+   * Load masteries from compendiums that match the selected skill and max level
    * @param {string} skillId - The skill ID
    * @returns {Array} Array of mastery data objects
    */
   async _loadMasteriesForSkill(skillId) {
+    const maxLevel = this.unassignedMastery.system.level || 4;
     const masteries = [];
 
     // Get all item compendiums
@@ -145,12 +146,16 @@ export class MasteryAssignmentDialog extends Application {
           const entrySkill = entry.system?.skill || "none";
           if (entrySkill !== skillId) continue;
 
+          // Filter by max level (threshold)
+          const entryLevel = entry.system?.level || 1;
+          if (entryLevel > maxLevel) continue;
+
           masteries.push({
             uuid: `Compendium.${pack.collection}.${entry._id}`,
             packId: pack.collection,
             id: entry._id,
             name: entry.name,
-            level: entry.system?.level || 1,
+            level: entryLevel,
             description: entry.system?.description || ""
           });
         }
