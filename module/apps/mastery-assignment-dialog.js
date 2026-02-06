@@ -244,6 +244,7 @@ export class MasteryAssignmentDialog extends Application {
 
 /**
  * Try to find a matching mastery in compendiums by name
+ * Uses prefix matching but only returns a result if exactly one match is found
  * @param {string} name - The mastery name to search for
  * @param {string} skillId - Optional skill ID to filter by
  * @returns {Object|null} The compendium mastery data or null
@@ -251,6 +252,7 @@ export class MasteryAssignmentDialog extends Application {
 export async function findCompendiumMastery(name, skillId = null) {
   const normalizedName = name.toLowerCase().trim();
   const packs = game.packs.filter(p => p.documentName === "Item");
+  const matches = [];
 
   for (const pack of packs) {
     try {
@@ -259,19 +261,51 @@ export async function findCompendiumMastery(name, skillId = null) {
       for (const entry of index) {
         if (entry.type !== "mastery") continue;
 
-        // Check name match (case-insensitive)
-        if (entry.name.toLowerCase().trim() === normalizedName) {
-          // If skillId is specified, also check skill match
-          if (skillId && entry.system?.skill !== skillId) continue;
+        const entryName = entry.name.toLowerCase().trim();
 
-          // Get the full document
-          const doc = await pack.getDocument(entry._id);
-          return doc?.toObject() || null;
+        // Check for exact match or prefix match (compendium name starts with import name)
+        const isExactMatch = entryName === normalizedName;
+        const isPrefixMatch = entryName.startsWith(normalizedName);
+
+        if (isExactMatch || isPrefixMatch) {
+          // If skillId is specified, also check skill match
+          if (skillId && skillId !== "undefined" && entry.system?.skill !== skillId) continue;
+
+          matches.push({
+            pack,
+            entry,
+            isExactMatch
+          });
         }
       }
     } catch (err) {
       console.warn(`findCompendiumMastery: Could not search pack ${pack.collection}:`, err);
     }
+  }
+
+  // If we have exactly one exact match, use it
+  const exactMatches = matches.filter(m => m.isExactMatch);
+  if (exactMatches.length === 1) {
+    const { pack, entry } = exactMatches[0];
+    const doc = await pack.getDocument(entry._id);
+    console.log(`findCompendiumMastery: Exact match for "${name}" -> "${entry.name}"`);
+    return doc?.toObject() || null;
+  }
+
+  // If no exact match but exactly one prefix match, use it
+  if (exactMatches.length === 0 && matches.length === 1) {
+    const { pack, entry } = matches[0];
+    const doc = await pack.getDocument(entry._id);
+    console.log(`findCompendiumMastery: Unique prefix match for "${name}" -> "${entry.name}"`);
+    return doc?.toObject() || null;
+  }
+
+  // Multiple matches or no matches - don't auto-assign
+  if (matches.length > 1) {
+    console.log(`findCompendiumMastery: Multiple matches for "${name}" (${matches.length}), skipping auto-assign:`,
+      matches.map(m => m.entry.name));
+  } else {
+    console.log(`findCompendiumMastery: No match found for "${name}"`);
   }
 
   return null;

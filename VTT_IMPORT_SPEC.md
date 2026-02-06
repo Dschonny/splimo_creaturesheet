@@ -286,6 +286,25 @@ Array von Fertigkeits-Objekten mit Werten und zugehörigen Meisterschaften.
 
 **Hinweis**: Nur Fertigkeiten mit value > 0 werden exportiert.
 
+### Spezielle Fertigkeit "undefined"
+
+Wenn die Kreatur Meisterschaften besitzt, deren Fertigkeit nicht festgelegt ist (z.B. "Wählbar") oder deren zugeordnete Fertigkeit keinen Wert > 0 hat, werden diese unter einer speziellen Fertigkeit mit `name: "undefined"` zusammengefasst:
+
+```json
+{
+  "name": "undefined",
+  "id": "undefined",
+  "attribute1": null,
+  "attribute2": null,
+  "value": 0,
+  "points": 0,
+  "modifier": 0,
+  "masterships": [...]
+}
+```
+
+Diese Fertigkeit erscheint nur, wenn solche Meisterschaften vorhanden sind.
+
 ### Meisterschaften (masterships)
 
 Fertigkeiten können zugeordnete Meisterschaften haben:
@@ -298,7 +317,7 @@ Fertigkeiten können zugeordnete Meisterschaften haben:
 - **page** (string | null): Seitenreferenz im Regelwerk
 - **specialization** (boolean): Ist es eine Spezialisierung? (Standard: false)
 
-**Besonderheit**: Meisterschaften mit Fertigkeit "Wählbar" werden allen passenden Fertigkeiten zugeordnet.
+**Hinweis**: Jede Meisterschaft erscheint nur einmal unter ihrer zugeordneten Fertigkeit (oder unter "undefined" wenn keine feste Zuordnung besteht).
 
 ## 8. Kräfte/Merkmale (powers)
 
