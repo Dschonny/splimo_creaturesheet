@@ -42,6 +42,28 @@ function levenshteinDistance(a, b) {
 }
 
 /**
+ * Parse availableIn string to check if skill is available and get its grade
+ * @param {string} availableIn - String like "motionmagic 0 , windmagic 0"
+ * @param {string} skillId - The skill to check for
+ * @returns {Object|null} {matched: true, grade: number} or null
+ */
+function parseAvailableIn(availableIn, skillId) {
+  if (!availableIn || typeof availableIn !== 'string') return null;
+
+  const entries = availableIn.split(',').map(s => s.trim());
+  for (const e of entries) {
+    const parts = e.split(/\s+/);
+    if (parts.length >= 1 && parts[0] === skillId) {
+      return {
+        matched: true,
+        grade: parts.length >= 2 ? (parseInt(parts[1]) || 0) : 0
+      };
+    }
+  }
+  return null;
+}
+
+/**
  * Find best fuzzy matches for a spell name in compendiums
  */
 export async function findFuzzySpellMatches(name, skillId = null, maxGrade = 5) {
@@ -50,15 +72,26 @@ export async function findFuzzySpellMatches(name, skillId = null, maxGrade = 5) 
 
   for (const pack of packs) {
     try {
-      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade"] });
+      const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.availableIn"] });
 
       for (const entry of index) {
         if (entry.type !== "spell") continue;
 
-        if (skillId && entry.system?.skill !== skillId) continue;
+        // Check skill match (primary skill or via availableIn)
+        let spellGrade;
+        if (skillId) {
+          const availableInMatch = parseAvailableIn(entry.system?.availableIn, skillId);
+          if (entry.system?.skill === skillId) {
+            spellGrade = parseInt(entry.system?.skillLevel ?? entry.system?.schoolGrade) || 0;
+          } else if (availableInMatch) {
+            spellGrade = availableInMatch.grade;
+          } else {
+            continue; // Doesn't match this skill
+          }
+        } else {
+          spellGrade = parseInt(entry.system?.skillLevel ?? entry.system?.schoolGrade) || 0;
+        }
 
-        const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
-        const spellGrade = parseInt(gradeValue) || 0;
         if (spellGrade > maxGrade) continue;
 
         const score = fuzzyScore(name, entry.name);
@@ -261,19 +294,42 @@ export class SpellAssignmentDialog extends Application {
 
     for (const pack of packs) {
       try {
-        const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade"] });
+        const index = await pack.getIndex({ fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.availableIn"] });
 
         for (const entry of index) {
           if (entry.type !== "spell") continue;
 
-          const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
-          const spellGrade = parseInt(gradeValue) || 0;
-          if (spellGrade > maxGrade) continue;
-
           const score = fuzzyScore(name, entry.name);
+          if (score < 0.5) continue;
 
-          if (score >= 0.5) {
-            const skillId = entry.system?.skill;
+          // Parse availableIn to get all skills this spell is available in
+          const availableIn = entry.system?.availableIn;
+          const skillsToCheck = [];
+
+          // Add primary skill
+          const primarySkill = entry.system?.skill;
+          const primaryGrade = parseInt(entry.system?.skillLevel ?? entry.system?.schoolGrade) || 0;
+          if (primarySkill && primaryGrade <= maxGrade) {
+            skillsToCheck.push({ skillId: primarySkill, grade: primaryGrade });
+          }
+
+          // Parse availableIn string for additional skills
+          if (availableIn && typeof availableIn === 'string') {
+            const entries = availableIn.split(',').map(s => s.trim());
+            for (const e of entries) {
+              const parts = e.split(/\s+/);
+              if (parts.length >= 1) {
+                const skillId = parts[0];
+                const grade = parts.length >= 2 ? (parseInt(parts[1]) || 0) : 0;
+                if (grade <= maxGrade && !skillsToCheck.some(s => s.skillId === skillId)) {
+                  skillsToCheck.push({ skillId, grade });
+                }
+              }
+            }
+          }
+
+          // Add a match for each skill
+          for (const { skillId, grade } of skillsToCheck) {
             const skillLabel = skillId
               ? game.i18n.localize(`splittermond.skillLabel.${skillId}`)
               : "";
@@ -283,6 +339,7 @@ export class SpellAssignmentDialog extends Application {
               skillLabel,
               uuid: `Compendium.${pack.collection}.${entry._id}`,
               name: entry.name,
+              grade,
               score
             });
           }
@@ -375,36 +432,44 @@ export class SpellAssignmentDialog extends Application {
             console.log(`  - full system:`, JSON.stringify(entry.system, null, 2));
           }
 
-          // Check if spell matches the skill - either as primary skill or in availableIn/skills array
+          // Check if spell matches the skill - either as primary skill or in availableIn string
           const primarySkill = entry.system?.skill;
-          const availableIn = entry.system?.availableIn; // might be array or object
-          const skillsArray = entry.system?.skills; // might be array
+          const availableIn = entry.system?.availableIn; // string like "motionmagic 0 , windmagic 0"
 
           let matchesSkill = primarySkill === skillId;
+          let gradeFromAvailableIn = null;
 
-          // Check availableIn array/object
-          if (!matchesSkill && availableIn) {
-            if (Array.isArray(availableIn)) {
-              matchesSkill = availableIn.some(s => s.skill === skillId || s === skillId);
-            } else if (typeof availableIn === 'object') {
-              matchesSkill = Object.keys(availableIn).includes(skillId) ||
-                             Object.values(availableIn).some(v => v?.skill === skillId);
+          // Check availableIn string (format: "skillId grade , skillId grade , ...")
+          if (!matchesSkill && availableIn && typeof availableIn === 'string') {
+            // Split by comma and check each entry
+            const entries = availableIn.split(',').map(s => s.trim());
+            for (const e of entries) {
+              // Parse "skillId grade" format
+              const parts = e.split(/\s+/);
+              if (parts.length >= 1 && parts[0] === skillId) {
+                matchesSkill = true;
+                // Extract grade if present
+                if (parts.length >= 2) {
+                  gradeFromAvailableIn = parseInt(parts[1]) || 0;
+                }
+                break;
+              }
             }
-          }
-
-          // Check skills array
-          if (!matchesSkill && skillsArray && Array.isArray(skillsArray)) {
-            matchesSkill = skillsArray.some(s => s.skill === skillId || s === skillId);
           }
 
           if (!matchesSkill) continue;
           matchCount++;
 
-          // Try different field names for spell grade (skillLevel is standard in Splittermond)
-          const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
-          const spellGrade = parseInt(gradeValue) || 0;
+          // Use grade from availableIn if matched that way, otherwise use skillLevel
+          let spellGrade;
+          if (gradeFromAvailableIn !== null) {
+            spellGrade = gradeFromAvailableIn;
+          } else {
+            const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
+            spellGrade = parseInt(gradeValue) || 0;
+          }
 
-          console.log(`Found spell "${entry.name}" with grade ${spellGrade} (maxGrade: ${maxGrade})`);
+          console.log(`Found spell "${entry.name}" with grade ${spellGrade} (maxGrade: ${maxGrade}, fromAvailableIn: ${gradeFromAvailableIn !== null})`);
 
           if (spellGrade > maxGrade) continue;
 
