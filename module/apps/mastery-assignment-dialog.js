@@ -7,8 +7,9 @@ export class MasteryAssignmentDialog extends Application {
    * @param {Actor} actor - The creature actor
    * @param {Item} unassignedMastery - The mastery item that needs assignment
    * @param {Object} options - Application options
-   * @param {Function} options.onClose - Callback when dialog closes (assigned: boolean)
+   * @param {Function} options.onClose - Callback when dialog closes (result: "assigned"|"skipped"|"cancelled")
    * @param {boolean} options.useFuzzyPreselect - Whether to pre-select best fuzzy match
+   * @param {boolean} options.isSequential - Whether this is part of a sequential assignment
    */
   constructor(actor, unassignedMastery, options = {}) {
     super(options);
@@ -18,8 +19,10 @@ export class MasteryAssignmentDialog extends Application {
     this.masteries = [];
     this.onCloseCallback = options.onClose || null;
     this.useFuzzyPreselect = options.useFuzzyPreselect || false;
+    this.isSequential = options.isSequential || false;
     this.preselectedUuid = null;
-    this.wasAssigned = false;
+    this.selectedUuid = null;
+    this.closeResult = "cancelled"; // "assigned", "skipped", or "cancelled"
   }
 
   static get defaultOptions() {
@@ -69,9 +72,15 @@ export class MasteryAssignmentDialog extends Application {
       }
     }
 
-    // Mark preselected mastery
+    // Auto-select preselected mastery if nothing selected yet
+    if (this.preselectedUuid && !this.selectedUuid) {
+      this.selectedUuid = this.preselectedUuid;
+    }
+
+    // Mark preselected and selected masteries
     for (const m of this.masteries) {
       m.isPreselected = m.uuid === this.preselectedUuid;
+      m.isSelected = m.uuid === this.selectedUuid;
     }
 
     return {
@@ -83,7 +92,9 @@ export class MasteryAssignmentDialog extends Application {
       masteries: this.masteries,
       hasMasteries: this.masteries.length > 0,
       noSkillSelected: !this.selectedSkillId,
-      hasPreselection: !!this.preselectedUuid
+      hasPreselection: !!this.preselectedUuid,
+      selectedUuid: this.selectedUuid,
+      isSequential: this.isSequential
     };
   }
 
@@ -269,8 +280,30 @@ export class MasteryAssignmentDialog extends Application {
     // Skill selection change
     html.find('.skill-select').change(this._onSkillChange.bind(this));
 
-    // Mastery click
+    // Mastery click - select, not assign
     html.find('.mastery-list-item').click(this._onMasteryClick.bind(this));
+
+    // Confirm button
+    html.find('.confirm-btn').click(this._onConfirm.bind(this));
+
+    // Skip button
+    html.find('.skip-btn').click(this._onSkip.bind(this));
+
+    // Auto-scroll to selected item
+    this._scrollToSelected(html);
+  }
+
+  /**
+   * Scroll the mastery list to show the selected item
+   */
+  _scrollToSelected(html) {
+    const selectedItem = html.find('.mastery-list-item.selected')[0];
+    if (selectedItem) {
+      // Small delay to ensure the list is rendered
+      setTimeout(() => {
+        selectedItem.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }, 50);
+    }
   }
 
   /**
@@ -278,17 +311,40 @@ export class MasteryAssignmentDialog extends Application {
    */
   async _onSkillChange(event) {
     this.selectedSkillId = event.currentTarget.value || null;
+    // Reset selection when skill changes
+    this.selectedUuid = null;
+    this.preselectedUuid = null;
     this.render(true);
   }
 
   /**
-   * Handle mastery click - assign the mastery
+   * Handle mastery click - select the mastery
    */
-  async _onMasteryClick(event) {
+  _onMasteryClick(event) {
     const uuid = event.currentTarget.dataset.uuid;
     if (!uuid) return;
 
-    await this._assignMastery(uuid);
+    this.selectedUuid = uuid;
+    this.render(true);
+  }
+
+  /**
+   * Handle confirm button - assign the selected mastery
+   */
+  async _onConfirm(event) {
+    event.preventDefault();
+    if (!this.selectedUuid) return;
+
+    await this._assignMastery(this.selectedUuid);
+  }
+
+  /**
+   * Handle skip button - skip this mastery and continue with next
+   */
+  _onSkip(event) {
+    event.preventDefault();
+    this.closeResult = "skipped";
+    this.close();
   }
 
   /**
@@ -315,7 +371,7 @@ export class MasteryAssignmentDialog extends Application {
       ui.notifications.info(game.i18n.format("CREATURE.MasteryAssignment.Success", { name: masteryData.name }));
 
       // Mark as assigned before closing
-      this.wasAssigned = true;
+      this.closeResult = "assigned";
 
       // Close the dialog
       this.close();
@@ -333,7 +389,7 @@ export class MasteryAssignmentDialog extends Application {
     await super.close(options);
 
     if (this.onCloseCallback) {
-      this.onCloseCallback(this.wasAssigned);
+      this.onCloseCallback(this.closeResult);
     }
   }
 
@@ -342,8 +398,9 @@ export class MasteryAssignmentDialog extends Application {
    * @param {Actor} actor - The creature actor
    * @param {Item} unassignedMastery - The mastery item
    * @param {Object} options - Additional options
-   * @param {Function} options.onClose - Callback when dialog closes
+   * @param {Function} options.onClose - Callback when dialog closes (result: "assigned"|"skipped"|"cancelled")
    * @param {boolean} options.useFuzzyPreselect - Pre-select best fuzzy match
+   * @param {boolean} options.isSequential - Whether this is part of a sequential assignment
    */
   static async show(actor, unassignedMastery, options = {}) {
     const dialog = new MasteryAssignmentDialog(actor, unassignedMastery, options);
@@ -353,7 +410,8 @@ export class MasteryAssignmentDialog extends Application {
 
   /**
    * Show assignment dialogs sequentially for multiple unassigned masteries
-   * Aborts if user closes a dialog without assigning
+   * - "assigned" or "skipped": continue to next mastery
+   * - "cancelled" (X button): abort entire sequence
    * @param {Actor} actor - The creature actor
    * @param {Array<Item>} unassignedMasteries - Array of unassigned mastery items
    */
@@ -379,12 +437,13 @@ export class MasteryAssignmentDialog extends Application {
 
       MasteryAssignmentDialog.show(actor, mastery, {
         useFuzzyPreselect: true,
-        onClose: (assigned) => {
-          if (assigned) {
-            // Small delay to let the UI update, then show next
+        isSequential: true,
+        onClose: (result) => {
+          if (result === "assigned" || result === "skipped") {
+            // Continue to next mastery
             setTimeout(showNext, 100);
           } else {
-            // User cancelled - abort the sequence
+            // User cancelled (X button) - abort the sequence
             ui.notifications.info(game.i18n.localize("CREATURE.MasteryAssignment.SequenceAborted"));
           }
         }

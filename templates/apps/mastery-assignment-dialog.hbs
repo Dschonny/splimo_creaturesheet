@@ -27,7 +27,7 @@
         {{else if hasMasteries}}
         <ul class="mastery-list">
             {{#each masteries}}
-            <li class="mastery-list-item {{#if this.isPreselected}}preselected{{/if}}" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.MasteryAssignment.ClickToAssign'}}">
+            <li class="mastery-list-item {{#if this.isSelected}}selected{{/if}} {{#if this.isPreselected}}preselected{{/if}}" data-uuid="{{this.uuid}}" title="{{localize 'CREATURE.MasteryAssignment.ClickToSelect'}}">
                 <span class="mastery-name">{{this.name}}</span>
                 <span class="mastery-level">{{this.level}}</span>
                 {{#if this.isPreselected}}<span class="preselect-badge">{{localize "CREATURE.MasteryAssignment.Recommended"}}</span>{{/if}}
@@ -38,4 +38,11 @@
         <p class="hint">{{localize "CREATURE.MasteryAssignment.NoMasteriesFound"}}</p>
         {{/if}}
     </div>
+
+    <footer class="mastery-assignment-footer">
+        {{#if isSequential}}
+        <button type="button" class="skip-btn">{{localize "CREATURE.MasteryAssignment.Skip"}}</button>
+        {{/if}}
+        <button type="button" class="confirm-btn" {{#unless selectedUuid}}disabled{{/unless}}>{{localize "CREATURE.MasteryAssignment.Confirm"}}</button>
+    </footer>
 </div>

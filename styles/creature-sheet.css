@@ -309,18 +309,28 @@
   padding: 1rem;
 }
 
-/* Preselected mastery in assignment dialog */
-.mastery-assignment .mastery-list-item.preselected {
-  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.3));
-  border: 1px solid var(--color-warm-1, #c8a060);
+/* Selected mastery in assignment dialog */
+.mastery-assignment .mastery-list-item.selected {
+  background-color: var(--color-cool-4, rgba(80, 120, 200, 0.3));
+  border: 2px solid var(--color-cool-3, #5078c8);
 }
 
-.mastery-assignment .mastery-list-item.preselected:hover {
-  background-color: var(--color-warm-1, rgba(200, 180, 100, 0.5));
+.mastery-assignment .mastery-list-item.selected:hover {
+  background-color: var(--color-cool-3, rgba(80, 120, 200, 0.5));
+}
+
+/* Preselected mastery (fuzzy match suggestion) */
+.mastery-assignment .mastery-list-item.preselected:not(.selected) {
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.15));
+}
+
+.mastery-assignment .mastery-list-item.preselected:not(.selected):hover {
+  background-color: var(--color-warm-2, rgba(200, 180, 100, 0.3));
 }
 
 .mastery-assignment .mastery-list-item {
   grid-template-columns: 1fr auto auto;
+  border: 2px solid transparent;
 }
 
 .mastery-assignment .mastery-list-item .preselect-badge {
@@ -330,6 +340,35 @@
   border-radius: 3px;
   font-size: 0.75em;
   font-weight: 500;
+}
+
+/* Footer with confirm/skip buttons */
+.mastery-assignment .mastery-assignment-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-light-primary, #999);
+  margin-top: 0.5rem;
+}
+
+.mastery-assignment .mastery-assignment-footer button {
+  padding: 0.4rem 1rem;
+}
+
+.mastery-assignment .mastery-assignment-footer .confirm-btn {
+  background-color: var(--color-cool-3, #5078c8);
+  color: white;
+}
+
+.mastery-assignment .mastery-assignment-footer .confirm-btn:disabled {
+  background-color: var(--color-border-light-primary, #999);
+  cursor: not-allowed;
+}
+
+.mastery-assignment .mastery-assignment-footer .skip-btn {
+  background-color: transparent;
+  border: 1px solid var(--color-border-light-primary, #999);
 }
 
 /* Import confirmation dialog - unassigned warning */
