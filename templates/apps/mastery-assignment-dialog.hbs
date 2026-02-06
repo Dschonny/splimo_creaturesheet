@@ -10,9 +10,13 @@
         <label for="skill-select">{{localize "CREATURE.MasteryAssignment.SelectSkill"}}:</label>
         <select class="skill-select" id="skill-select">
             {{#each availableSkills}}
-            <option value="{{this.id}}" {{#if (eq this.id ../selectedSkillId)}}selected{{/if}}>
-                {{this.label}} {{#if this.value}}({{this.value}}){{/if}}
-            </option>
+            <optgroup label="{{this.label}}">
+                {{#each this.skills}}
+                <option value="{{this.id}}" {{#if (eq this.id ../../selectedSkillId)}}selected{{/if}}>
+                    {{this.label}} {{#if this.value}}({{this.value}}){{/if}}
+                </option>
+                {{/each}}
+            </optgroup>
             {{/each}}
         </select>
     </div>

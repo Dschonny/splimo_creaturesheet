@@ -54,37 +54,72 @@ export class MasteryAssignmentDialog extends Application {
   }
 
   /**
-   * Get skills that the creature has (value > 0)
-   * @returns {Array} Array of {id, label, value} objects
+   * Get all skills grouped by category
+   * @returns {Array} Array of skill groups with {category, label, skills} objects
    */
   _getAvailableSkills() {
-    const skills = [];
-    const allSkills = [
-      ...CONFIG.splittermond.skillGroups.general,
-      ...CONFIG.splittermond.skillGroups.fighting,
-      ...CONFIG.splittermond.skillGroups.magic
-    ];
+    const groups = [];
 
-    for (const skillId of allSkills) {
-      const skill = this.actor.system.skills?.[skillId];
-      const value = skill?.value || 0;
-      if (value > 0) {
-        skills.push({
-          id: skillId,
-          label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
-          value: value
-        });
-      }
-    }
-
-    // Also add "none" option for general masteries
-    skills.unshift({
-      id: "none",
-      label: game.i18n.localize("CREATURE.MasteryAssignment.GeneralMasteries"),
-      value: 0
+    // General masteries (no skill)
+    groups.push({
+      category: "none",
+      label: game.i18n.localize("CREATURE.MasteryAssignment.NoSkill"),
+      skills: [{
+        id: "none",
+        label: game.i18n.localize("CREATURE.MasteryAssignment.GeneralMasteries"),
+        value: 0
+      }]
     });
 
-    return skills;
+    // General skills
+    const generalSkills = CONFIG.splittermond.skillGroups.general.map(skillId => {
+      const skill = this.actor.system.skills?.[skillId];
+      return {
+        id: skillId,
+        label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
+        value: skill?.value || 0
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+
+    groups.push({
+      category: "general",
+      label: game.i18n.localize("splittermond.generalSkills"),
+      skills: generalSkills
+    });
+
+    // Fighting skills
+    const fightingSkills = CONFIG.splittermond.skillGroups.fighting.map(skillId => {
+      const skill = this.actor.system.skills?.[skillId];
+      return {
+        id: skillId,
+        label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
+        value: skill?.value || 0
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+
+    groups.push({
+      category: "fighting",
+      label: game.i18n.localize("splittermond.fightingSkills"),
+      skills: fightingSkills
+    });
+
+    // Magic skills
+    const magicSkills = CONFIG.splittermond.skillGroups.magic.map(skillId => {
+      const skill = this.actor.system.skills?.[skillId];
+      return {
+        id: skillId,
+        label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
+        value: skill?.value || 0
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+
+    groups.push({
+      category: "magic",
+      label: game.i18n.localize("splittermond.magicSkills"),
+      skills: magicSkills
+    });
+
+    return groups;
   }
 
   /**
