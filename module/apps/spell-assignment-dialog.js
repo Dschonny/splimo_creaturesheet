@@ -404,7 +404,6 @@ export class SpellAssignmentDialog extends Application {
       : 5;
     const spells = [];
 
-    console.log(`_loadSpellsForSkill: Loading spells for skill "${skillId}", maxGrade: ${maxGrade}`);
 
     const packs = game.packs.filter(p => p.documentName === "Item");
 
@@ -415,22 +414,8 @@ export class SpellAssignmentDialog extends Application {
           fields: ["system.skill", "system.skillLevel", "system.schoolGrade", "system.costs", "system.difficulty", "system.enhancementCosts", "system.availableIn", "system.skills"]
         });
 
-        let spellCount = 0;
-        let matchCount = 0;
-
         for (const entry of index) {
           if (entry.type !== "spell") continue;
-          spellCount++;
-
-          // Debug: Log first few spells to see their full structure
-          if (spellCount <= 3) {
-            console.log(`Sample spell from ${pack.collection}:`, entry.name);
-            console.log(`  - system keys:`, Object.keys(entry.system || {}));
-            console.log(`  - system.skill:`, entry.system?.skill);
-            console.log(`  - system.availableIn:`, entry.system?.availableIn);
-            console.log(`  - system.skills:`, entry.system?.skills);
-            console.log(`  - full system:`, JSON.stringify(entry.system, null, 2));
-          }
 
           // Check if spell matches the skill - either as primary skill or in availableIn string
           const primarySkill = entry.system?.skill;
@@ -458,7 +443,6 @@ export class SpellAssignmentDialog extends Application {
           }
 
           if (!matchesSkill) continue;
-          matchCount++;
 
           // Use grade from availableIn if matched that way, otherwise use skillLevel
           let spellGrade;
@@ -468,8 +452,6 @@ export class SpellAssignmentDialog extends Application {
             const gradeValue = entry.system?.skillLevel ?? entry.system?.schoolGrade ?? 0;
             spellGrade = parseInt(gradeValue) || 0;
           }
-
-          console.log(`Found spell "${entry.name}" with grade ${spellGrade} (maxGrade: ${maxGrade}, fromAvailableIn: ${gradeFromAvailableIn !== null})`);
 
           if (spellGrade > maxGrade) continue;
 
@@ -484,13 +466,11 @@ export class SpellAssignmentDialog extends Application {
           });
         }
 
-        console.log(`Pack ${pack.collection}: ${spellCount} spells total, ${matchCount} match skill "${skillId}"`);
       } catch (err) {
         console.warn(`SpellAssignmentDialog: Could not index pack ${pack.collection}:`, err);
       }
     }
 
-    console.log(`_loadSpellsForSkill: Found ${spells.length} spells for skill "${skillId}"`);
     spells.sort((a, b) => a.grade - b.grade || a.name.localeCompare(b.name));
     return spells;
   }
@@ -552,6 +532,12 @@ export class SpellAssignmentDialog extends Application {
       }
 
       const spellData = spellDoc.toObject();
+
+      // Override the skill to match the selected school (important for multi-school spells)
+      if (this.selectedSkillId && spellData.system) {
+        spellData.system.skill = this.selectedSkillId;
+      }
+
       await this.actor.createEmbeddedDocuments("Item", [spellData]);
       await this.unassignedSpell.delete();
 
