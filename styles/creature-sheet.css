@@ -23,7 +23,8 @@
 }
 
 /* Two-column layout for Skills tab (35/65) */
-.splittermond.sheet.actor.npc .creature-skills-tab {
+/* Only apply grid when tab is active, otherwise let it be hidden */
+.splittermond.sheet.actor.npc .creature-skills-tab.active {
   display: grid !important;
   grid-template-columns: 35fr 65fr !important;
   gap: 1rem !important;
