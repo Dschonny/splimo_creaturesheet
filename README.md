@@ -23,8 +23,9 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 
 ### Voraussetzungen
 
-- FoundryVTT v11 oder höher
-- Splittermond System v2.0.0 oder höher
+- FoundryVTT V13 oder V14
+- Splittermond-System 13.x oder 14.x
+- Für Foundry V12 / Splittermond 0.12 bleibt Version 1.0.0 des Moduls zuständig
 
 ## Verwendung
 
@@ -49,7 +50,7 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 
 ### Werte bearbeiten
 
-**Wichtig**: Alle Werte sind vollständig manuell editierbar. Es gibt keine automatischen Berechnungen oder Abhängigkeiten zwischen Werten.
+**Wichtig**: Der Bogen baut ab Version 2.0 auf dem NSC-Bogen von Splittermond auf. Fertigkeiten und abgeleitete Werte werden als Endwert eingegeben; Modifikatoren aus Meisterschaften, Zuständen usw. rechnet Splittermond wie bei jedem NSC hinzu. Kreatur-spezifische Angaben (Basis, Rolle, Verfeinerungen, Abrichtungen) stehen im Tab „Kreatur“. Kreaturen aus Version 1.x werden beim ersten Laden automatisch umgestellt.
 
 - **Attribute**: Direkt im "Allgemein"-Tab bearbeiten
 - **Fertigkeiten**: Direkt bearbeiten, Würfel-Icon für Proben

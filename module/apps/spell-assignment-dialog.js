@@ -1,4 +1,4 @@
-import { getSpellGrade, getSpellSchool } from "../compat.js";
+import { getSkillValue, getSpellGrade, getSpellSchool } from "../compat.js";
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
 
 /**
@@ -375,7 +375,7 @@ export class SpellAssignmentDialog extends Application {
       // Nur Schulen, die die Kreatur wirklich beherrscht (Punkte gesetzt); der Endwert ergibt sich bei
       // Splittermond-NSC aus Attributen + Punkten und waere sonst fuer jede Schule > 0
       const points = Number(this.actor.system.skills?.[skillId]?.points) || 0;
-      const value = this.actor.skills?.[skillId]?.value || 0;
+      const value = getSkillValue(this.actor, skillId);
       if (points !== 0 && value > 0) {
         schools.push({
           id: skillId,

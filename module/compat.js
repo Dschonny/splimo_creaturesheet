@@ -43,6 +43,17 @@ export const isUnassignedMastery = (item) => item?.type === "mastery" && !!itemF
 export const getSpellSchool = (item) => itemFlag(item, "spellSchool") || "";
 export const getSpellGrade = (item) => itemFlag(item, "spellGrade") ?? "";
 
+/**
+ * Endwert einer Fertigkeit als Zahl. Splittermond 13 liefert eine Zahl, Splittermond 14 einen Ausdruck
+ * (mit calculateSync()/display).
+ */
+export function getSkillValue(actor, skillId) {
+  const value = actor?.skills?.[skillId]?.value;
+  if (typeof value === "number") return value;
+  if (typeof value?.calculateSync === "function") return Number(value.calculateSync()) || 0;
+  return Number(value?.display ?? value) || 0;
+}
+
 /* -------------------------------------------- */
 /*  Umwandeln vor dem Speichern                 */
 /* -------------------------------------------- */

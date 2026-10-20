@@ -1,3 +1,4 @@
+import { getSkillValue } from "../compat.js";
 /**
  * Dialog for assigning unassigned masteries to proper mastery items from compendiums
  */
@@ -180,7 +181,7 @@ export class MasteryAssignmentDialog extends Application {
       return {
         id: skillId,
         label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
-        value: this.actor.skills?.[skillId]?.value || 0
+        value: getSkillValue(this.actor, skillId)
       };
     }).sort((a, b) => a.label.localeCompare(b.label));
 
@@ -211,7 +212,7 @@ export class MasteryAssignmentDialog extends Application {
       return {
         id: skillId,
         label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
-        value: this.actor.skills?.[skillId]?.value || 0
+        value: getSkillValue(this.actor, skillId)
       };
     }).sort((a, b) => a.label.localeCompare(b.label));
 
