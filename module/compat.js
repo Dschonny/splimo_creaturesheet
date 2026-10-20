@@ -6,8 +6,8 @@
  *   Actor: flags.splimo_creaturesheet.creatureInfo = { basis, rolle, verfeinerungen, abrichtungen }
  *   Item:  flags.splimo_creaturesheet.unassignedSpell / unassignedMastery / spellSchool / spellGrade
  *
- * Fertigkeiten und abgeleitete Werte nutzen das NSC-Modell von Splittermond: Der Bogen zeigt den Endwert,
- * gespeichert werden Punkte so, dass Attribut1 + Attribut2 + Punkte (+ Modifikatoren) den Endwert ergeben.
+ * Grundwerte von Kreaturen haengen nicht von Attributen ab (siehe module/actor/creature-values.js):
+ * Fertigkeiten speichern den Grundwert als Punkte, abgeleitete Werte in derivedAttributes.
  */
 
 export const MODULE_ID = "splimo_creaturesheet";
@@ -78,23 +78,15 @@ export function moveItemMarkersToFlags(itemData) {
 }
 
 /**
- * Rechnet feste Kreatur-Fertigkeitswerte in Splittermond-NSC-Punkte um.
- * @param {object} system          Roher system-Block eines NSC (attributes, skills, derivedAttributes)
- * @param {object} fixedValues     { skillId: Endwert }
+ * Uebernimmt feste Kreatur-Fertigkeitswerte als Splittermond-Punkte. Fuer Kreaturen zaehlen Attribute nicht
+ * zum Fertigkeitswert (siehe module/actor/creature-values.js), Punkte sind also der Grundwert.
+ * @param {object} system          Roher system-Block eines NSC
+ * @param {object} fixedValues     { skillId: Grundwert }
  */
 export function fixedSkillValuesToPoints(system, fixedValues) {
-  const skillAttributes = CONFIG.splittermond?.skillAttributes ?? {};
-  const attr = (id) => Number(system.attributes?.[id]?.value) || 0;
-  const size = Number(system.derivedAttributes?.size?.value) || 5;
   system.skills ??= {};
   for (const [skillId, raw] of Object.entries(fixedValues)) {
-    const target = Number(raw) || 0;
-    const [a1, a2] = skillAttributes[skillId] ?? [];
-    let points = target - attr(a1) - attr(a2);
-    // Splittermond gibt NSC automatisch (5 - Groesse) auf Heimlichkeit. Die Kreaturwerte enthalten die
-    // Groesse schon, deshalb wird der Zuschlag hier herausgerechnet.
-    if (skillId === "stealth") points -= 5 - size;
-    system.skills[skillId] = { points, value: 0 };
+    system.skills[skillId] = { points: Number(raw) || 0, value: 0 };
   }
   return system;
 }

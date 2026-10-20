@@ -50,7 +50,7 @@ Ein FoundryVTT-Modul für das Splittermond-System, das Charakter-Sheets für Kre
 
 ### Werte bearbeiten
 
-**Wichtig**: Der Bogen baut ab Version 2.0 auf dem NSC-Bogen von Splittermond auf. Fertigkeiten werden als Endwert eingegeben; Modifikatoren aus Meisterschaften, Zuständen usw. rechnet Splittermond wie bei jedem NSC hinzu (der Größen-Zuschlag auf Heimlichkeit ist herausgerechnet). Abgeleitete Werte (GK, GSW, INI, LP, FO, VTD, KW, GW) sind bei Kreaturen fest: Es gilt genau der eingetragene Wert, ohne Modifikatoren und ohne Berechnung aus Attributen. Kreatur-spezifische Angaben (Basis, Rolle, Verfeinerungen, Abrichtungen) stehen im Tab „Kreatur“. Kreaturen aus Version 1.x werden beim ersten Laden automatisch umgestellt.
+**Wichtig**: Der Bogen baut ab Version 2.0 auf dem NSC-Bogen von Splittermond auf. Kreaturen nach dem Bestienmeister-Baukasten haben feste Grundwerte: Fertigkeiten und abgeleitete Werte (GK, GSW, INI, LP, FO, VTD, KW, GW) hängen nicht von Attributen ab. Boni und Mali aus Gegenständen, Meisterschaften, Abrichtungen, Zuständen und Wunden wirken wie bei jedem anderen Akteur. Den automatischen Größen-Zuschlag auf Heimlichkeit gibt es für Kreaturen nicht. Im Bogen wird der Endwert eingetragen; gespeichert wird der Grundwert. Kreatur-spezifische Angaben (Basis, Rolle, Verfeinerungen, Abrichtungen) stehen im Tab „Kreatur“. Kreaturen aus Version 1.x werden beim ersten Laden automatisch umgestellt.
 
 - **Attribute**: Direkt im "Allgemein"-Tab bearbeiten
 - **Fertigkeiten**: Direkt bearbeiten, Würfel-Icon für Proben
