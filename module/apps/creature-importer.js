@@ -1,4 +1,5 @@
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
+import { isUnassignedMastery, isUnassignedSpell, moveItemMarkersToFlags, SHEET_ID } from "../compat.js";
 import { findCompendiumMastery, MasteryAssignmentDialog } from "./mastery-assignment-dialog.js";
 import { findCompendiumSpell, SpellAssignmentDialog } from "./spell-assignment-dialog.js";
 
@@ -62,6 +63,9 @@ export class CreatureImporter {
 
       const assignNow = result === "assign";
 
+      // Zuordnungs-Markierungen gehoeren in die Modul-Flags (Splittermond verwirft unbekannte system-Felder)
+      items.forEach(moveItemMarkersToFlags);
+
       // Create or update actor
       let targetActor = actor;
 
@@ -81,7 +85,7 @@ export class CreatureImporter {
       }
 
       // Set creature sheet as default for this actor
-      await targetActor.setFlag("core", "sheetClass", "splimo_creaturesheet.CreatureSheet");
+      await targetActor.setFlag("core", "sheetClass", SHEET_ID);
 
       // Create items
       if (items.length > 0) {
@@ -98,12 +102,8 @@ export class CreatureImporter {
 
       // If user chose to assign now, start sequential assignment (masteries first, then spells)
       if (assignNow) {
-        const unassignedMasteries = targetActor.items.filter(i =>
-          i.type === "mastery" && i.system.isUnassignedMastery
-        );
-        const unassignedSpells = targetActor.items.filter(i =>
-          i.type === "npcfeature" && i.system.isUnassignedSpell
-        );
+        const unassignedMasteries = targetActor.items.filter(isUnassignedMastery);
+        const unassignedSpells = targetActor.items.filter(isUnassignedSpell);
 
         // Start with masteries, then continue with spells
         if (unassignedMasteries.length > 0) {

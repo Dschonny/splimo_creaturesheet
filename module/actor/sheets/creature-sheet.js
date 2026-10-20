@@ -1,265 +1,131 @@
 import { CreatureImporter } from "../../apps/creature-importer.js";
 import { SpellAssignmentDialog } from "../../apps/spell-assignment-dialog.js";
 import { MasteryAssignmentDialog } from "../../apps/mastery-assignment-dialog.js";
-import CreatureSkill from "../creature-skill.js";
-import CreatureDerivedValue from "../creature-derived-value.js";
+import {
+  getCreatureInfo,
+  getSpellGrade,
+  getSpellSchool,
+  isUnassignedMastery,
+  isUnassignedSpell,
+  MODULE_ID
+} from "../../compat.js";
 
-// Import the Splittermond base actor sheet
-const SplittermondActorSheet = game.splittermond?.apps?.SplittermondActorSheet ||
-  (await import("/systems/splittermond/module/actor/sheets/actor-sheet.js")).default;
+const TEMPLATE_PATH = `modules/${MODULE_ID}/templates/sheets`;
 
 /**
- * Creature Sheet Application - Extends Splittermond NPC functionality
+ * Baut den Kreaturen-Bogen auf dem NSC-Bogen von Splittermond auf.
+ *
+ * Die Klasse wird erst zur Laufzeit erzeugt, weil Splittermond seine Bogenklassen nur ueber
+ * CONFIG.Actor.sheetClasses bereitstellt (das System wird als ein Bundle ausgeliefert).
+ * @param {typeof foundry.applications.sheets.ActorSheetV2} NpcSheet  Splittermonds NSC-Bogen
  */
-export class CreatureSheet extends SplittermondActorSheet {
+export function createCreatureSheetClass(NpcSheet) {
+  const creaturePart = {
+    template: `${TEMPLATE_PATH}/creature-tab.hbs`,
+    scrollable: [""],
+    classes: ["scrollable"]
+  };
 
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["splittermond", "sheet", "actor", "npc"],
-      template: "modules/splimo_creaturesheet/templates/sheets/creature-sheet.hbs",
-      width: 750,
-      height: 800,
-      tabs: [
-        {
-          navSelector: ".sheet-navigation[data-group='primary']",
-          contentSelector: "main",
-          initial: "general"
-        },
-        {
-          navSelector: ".subnav[data-group='fight-action-type']",
-          contentSelector: "section div.tab-list",
-          initial: "attack"
-        }
-      ],
-      scrollY: [".tab[data-tab='general']", ".tab[data-tab='skills']", ".tab[data-tab='spells']", ".tab[data-tab='inventory']"],
-      submitOnClose: false,
-      overlays: ["#health", "#focus"]
-    });
+  // Kreatur-Tab direkt hinter "Allgemein" einhaengen, Reihenfolge der uebrigen Teile beibehalten
+  const parts = {};
+  for (const [key, part] of Object.entries(NpcSheet.PARTS)) {
+    parts[key] = part;
+    if (key === "general") parts.creature = creaturePart;
   }
+  parts.creature ??= creaturePart;
 
-  /** @override */
-  async getData() {
-    // Replace actor skills with CreatureSkill instances before getting data
-    if (this.actor.skills) {
-      [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].forEach(id => {
-        this.actor.skills[id] = new CreatureSkill(this.actor, id);
-      });
-    }
+  const primary = NpcSheet.TABS.primary;
+  const tabs = [];
+  for (const tab of primary.tabs) {
+    tabs.push(tab);
+    if (tab.id === "general") tabs.push({ id: "creature", group: "primary", label: "CREATURE.TabCreature" });
+  }
+  if (!tabs.some(t => t.id === "creature")) tabs.push({ id: "creature", group: "primary", label: "CREATURE.TabCreature" });
 
-    // Replace actor derivedValues with CreatureDerivedValue instances
-    // This ensures fixed imported values are used without recalculation
-    if (this.actor.derivedValues) {
-      CONFIG.splittermond.derivedValues.forEach(id => {
-        this.actor.derivedValues[id] = new CreatureDerivedValue(this.actor, id);
-      });
-    }
-
-    const context = await super.getData();
-
-    // Override skill filtering to show all skills with value >= 1 when hideSkills is true
-    // Show all skills when hideSkills is false
-    context.generalSkills = {};
-    CONFIG.splittermond.skillGroups.general.filter(s =>
-      !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
-    ).forEach(skill => {
-      context.generalSkills[skill] = this.actor.skills[skill];
-    });
-
-    context.magicSkills = {};
-    CONFIG.splittermond.skillGroups.magic.filter(s =>
-      !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
-    ).forEach(skill => {
-      context.magicSkills[skill] = this.actor.skills[skill];
-    });
-
-    context.fightingSkills = {};
-    CONFIG.splittermond.skillGroups.fighting.filter(s =>
-      !context.hideSkills || (this.actor.skills[s]?.value || 0) >= 1
-    ).forEach(skill => {
-      context.fightingSkills[skill] = this.actor.skills[skill];
-    });
-
-    // Add Handgemenge (melee) skill with value from first npcattack weapon
-    const firstAttack = this.actor.items.find(i => i.type === "npcattack");
-    if (firstAttack) {
-      const meleeValue = firstAttack.system.skillValue || 0;
-      // Create a simple skill-like object for display
-      context.fightingSkills.melee = {
-        id: "melee",
-        label: "splittermond.skillLabel.melee",
-        value: meleeValue,
-        points: meleeValue
-      };
-    }
-
-    // Add creature-specific info
-    context.creatureInfo = {
-      basis: this.actor.system.creatureInfo?.basis || null,
-      rolle: this.actor.system.creatureInfo?.rolle || null,
-      verfeinerungen: this.actor.system.creatureInfo?.verfeinerungen || [],
-      abrichtungen: this.actor.system.creatureInfo?.abrichtungen || []
+  return class CreatureSheet extends NpcSheet {
+    static DEFAULT_OPTIONS = {
+      classes: ["splimo-creature"],
+      window: {
+        controls: [
+          {
+            icon: "fa-solid fa-file-import",
+            label: "CREATURE.ImportCreature",
+            action: "import-creature",
+            visible: CreatureSheet.#canImport
+          }
+        ]
+      },
+      actions: {
+        "import-creature": CreatureSheet.#onImportCreature,
+        "assign-spell": CreatureSheet.#onAssignSpell,
+        "assign-mastery": CreatureSheet.#onAssignMastery
+      }
     };
 
-    // Group verfeinerungen by category
-    const verfeinerungenGrouped = {};
-    for (const verf of context.creatureInfo.verfeinerungen) {
-      const cat = verf.category || "other";
-      if (!verfeinerungenGrouped[cat]) {
-        verfeinerungenGrouped[cat] = [];
+    static PARTS = parts;
+
+    static TABS = { ...NpcSheet.TABS, primary: { ...primary, tabs } };
+
+    static #canImport() {
+      return this.isEditable;
+    }
+
+    async _prepareContext(options) {
+      const context = await super._prepareContext(options);
+      const info = getCreatureInfo(this.actor);
+
+      context.creatureInfo = info;
+      context.verfeinerungenByCategory = groupByCategory(info.verfeinerungen, "other", "CREATURE.RefinementCategories");
+      context.abrichtungenByCategory = groupByCategory(info.abrichtungen, "allgemein", "CREATURE.AbrichtungCategory");
+
+      // Nicht zugeordnete Zauber sind npcfeature-Items mit Markierung; sie gehoeren nicht in die Merkmalsliste
+      context.unassignedSpells = (context.items ?? [])
+        .filter(isUnassignedSpell)
+        .map(i => ({ ...i, spellSchool: getSpellSchool(i), spellGrade: getSpellGrade(i) }));
+      if (context.itemsByType?.npcfeature) {
+        context.itemsByType.npcfeature = context.itemsByType.npcfeature.filter(i => !isUnassignedSpell(i));
       }
-      verfeinerungenGrouped[cat].push(verf);
+      context.unassignedMasteries = (context.items ?? []).filter(isUnassignedMastery);
+      context.hasCreatureInfo = !!(info.basis || info.rolle || info.verfeinerungen.length || info.abrichtungen.length);
+      return context;
     }
 
-    // Convert to array with localization keys (or null if empty)
-    const verfeinerungenArray = Object.entries(verfeinerungenGrouped).map(([cat, items]) => ({
-      categoryKey: `CREATURE.RefinementCategories.${cat}`,
-      items: items
-    }));
-    context.verfeinerungenByCategory = verfeinerungenArray.length > 0 ? verfeinerungenArray : null;
-
-    // Group abrichtungen by category
-    const abrichtungenGrouped = {};
-    for (const abr of context.creatureInfo.abrichtungen) {
-      const cat = abr.category || "allgemein";
-      if (!abrichtungenGrouped[cat]) {
-        abrichtungenGrouped[cat] = [];
-      }
-      abrichtungenGrouped[cat].push(abr);
+    static async #onImportCreature(event) {
+      event.preventDefault();
+      await CreatureImporter.import(this.actor);
     }
 
-    // Convert to array with localization keys (or null if empty)
-    const abrichtungenArray = Object.entries(abrichtungenGrouped).map(([cat, items]) => ({
-      categoryKey: `CREATURE.AbrichtungCategory.${cat}`,
-      items: items
-    }));
-    context.abrichtungenByCategory = abrichtungenArray.length > 0 ? abrichtungenArray : null;
-
-    // Collect unassigned spells (npcfeature items with isUnassignedSpell flag)
-    context.unassignedSpells = this.actor.items.filter(i =>
-      i.type === "npcfeature" && i.system.isUnassignedSpell
-    );
-
-    // Filter npcfeatures to exclude unassigned spells (for display in header and general tab)
-    context.npcFeatures = this.actor.items.filter(i =>
-      i.type === "npcfeature" && !i.system.isUnassignedSpell
-    );
-
-    return context;
-  }
-
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // Import creature
-    html.find('.import-creature').click(this._onImportCreature.bind(this));
-
-    // Add item
-    html.find('[data-action="add-item"]').click(this._onAddItem.bind(this));
-
-    // Edit item
-    html.find('[data-action="edit-item"]').click(this._onEditItem.bind(this));
-
-    // Delete item
-    html.find('[data-action="delete-item"]').click(this._onDeleteItem.bind(this));
-
-    // Assign unassigned spell
-    html.find('.unassigned-spells .taglist-item').click(this._onAssignSpell.bind(this));
-
-    // Assign unassigned mastery
-    html.find('.masteries .taglist-item.unassigned-mastery').click(this._onAssignMastery.bind(this));
-  }
-
-  /**
-   * Handle creature import
-   */
-  async _onImportCreature(event) {
-    event.preventDefault();
-    await CreatureImporter.import(this.actor);
-  }
-
-  /**
-   * Handle add item
-   */
-  async _onAddItem(event) {
-    event.preventDefault();
-    const button = event.currentTarget;
-    const itemType = button.dataset.itemType || "npcfeature";
-
-    const itemData = {
-      name: game.i18n.localize(`TYPES.Item.${itemType}`),
-      type: itemType
-    };
-
-    await this.actor.createEmbeddedDocuments("Item", [itemData]);
-  }
-
-  /**
-   * Handle edit item
-   */
-  _onEditItem(event) {
-    event.preventDefault();
-    const li = event.currentTarget.closest("[data-item-id]");
-    const itemId = li.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    if (item) {
-      item.sheet.render(true);
-    }
-  }
-
-  /**
-   * Handle delete item
-   */
-  async _onDeleteItem(event) {
-    event.preventDefault();
-    const li = event.currentTarget.closest("[data-item-id]");
-    const itemId = li.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-
-    if (item) {
-      const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("CREATURE.DeleteItem"),
-        content: `<p>${game.i18n.format("CREATURE.DeleteItemConfirm", { name: item.name })}</p>`
-      });
-
-      if (confirmed) {
-        await item.delete();
+    static async #onAssignSpell(event, target) {
+      if (event.target.closest("button")) return;
+      const item = this.actor.items.get(target.closest("[data-item-id]")?.dataset.itemId);
+      if (item && isUnassignedSpell(item)) {
+        await SpellAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
       }
     }
-  }
 
-  /**
-   * Handle assign unassigned spell
-   */
-  async _onAssignSpell(event) {
-    // Don't trigger if clicking on action buttons
-    if (event.target.closest('[data-action]')) return;
-
-    event.preventDefault();
-    const li = event.currentTarget.closest("[data-item-id]");
-    const itemId = li?.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-
-    if (item && item.system.isUnassignedSpell) {
-      await SpellAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
+    static async #onAssignMastery(event, target) {
+      if (event.target.closest("button")) return;
+      const item = this.actor.items.get(target.closest("[data-item-id]")?.dataset.itemId);
+      if (item && isUnassignedMastery(item)) {
+        await MasteryAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
+      }
     }
+  };
+}
+
+function groupByCategory(entries, fallback, labelPrefix) {
+  const groups = {};
+  for (const entry of entries ?? []) {
+    const category = entry.category || entry.kategorie || fallback;
+    (groups[category] ??= []).push({
+      ...entry,
+      cost: entry.cost ?? entry.kosten ?? entry.potentialCost
+    });
   }
-
-  /**
-   * Handle assign unassigned mastery
-   */
-  async _onAssignMastery(event) {
-    // Don't trigger if clicking on action buttons
-    if (event.target.closest('[data-action]')) return;
-
-    event.preventDefault();
-    const li = event.currentTarget.closest("[data-item-id]");
-    const itemId = li?.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-
-    if (item && item.system.isUnassignedMastery) {
-      await MasteryAssignmentDialog.show(this.actor, item, { useFuzzyPreselect: true });
-    }
-  }
+  const list = Object.entries(groups).map(([category, items]) => ({
+    categoryKey: `${labelPrefix}.${category}`,
+    category,
+    items
+  }));
+  return list.length ? list : null;
 }

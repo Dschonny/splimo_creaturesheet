@@ -177,11 +177,10 @@ export class MasteryAssignmentDialog extends Application {
 
     // General skills
     const generalSkills = CONFIG.splittermond.skillGroups.general.map(skillId => {
-      const skill = this.actor.system.skills?.[skillId];
       return {
         id: skillId,
         label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
-        value: skill?.value || 0
+        value: this.actor.skills?.[skillId]?.value || 0
       };
     }).sort((a, b) => a.label.localeCompare(b.label));
 
@@ -209,11 +208,10 @@ export class MasteryAssignmentDialog extends Application {
 
     // Magic skills
     const magicSkills = CONFIG.splittermond.skillGroups.magic.map(skillId => {
-      const skill = this.actor.system.skills?.[skillId];
       return {
         id: skillId,
         label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
-        value: skill?.value || 0
+        value: this.actor.skills?.[skillId]?.value || 0
       };
     }).sort((a, b) => a.label.localeCompare(b.label));
 

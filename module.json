@@ -1,10 +1,10 @@
 {
   "id": "splimo_creaturesheet",
   "title": "Splittermond Creature Sheet",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "compatibility": {
-    "minimum": "11",
-    "verified": "12"
+    "minimum": "13",
+    "verified": "13.351"
   },
   "description": "Adds creature/animal character sheets to the Splittermond system with VTT Import JSON support for importing creatures from the Splittermond Creature Editor.",
   "authors": [
@@ -18,7 +18,7 @@
         "id": "splittermond",
         "type": "system",
         "compatibility": {
-          "minimum": "0.10.0"
+          "minimum": "13.0.0"
         }
       }
     ]

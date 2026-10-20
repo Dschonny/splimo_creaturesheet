@@ -3,14 +3,12 @@
     "TypeCreature": "Creature",
     "TypeRefinement": "Refinement",
     "TypeTraining": "Training",
-
     "ImportCreature": "Import Creature (.json)",
     "ImportDialogTitle": "Import Creature File",
     "ImportDialogContent": "Select a .json file to import:",
     "ImportConfirmTitle": "Confirm Import",
     "ImportSuccess": "Creature imported successfully!",
     "ImportError": "Error importing creature: {error}",
-
     "Import": {
       "Features": "Features",
       "Weapons": "Weapons",
@@ -22,17 +20,14 @@
       "Training": "Training",
       "AssignNow": "Assign Now"
     },
-
     "TabGeneral": "General",
     "TabRefinements": "Refinements",
     "TabTraining": "Training",
     "TabCombat": "Combat",
     "TabBiography": "Biography",
-
     "Attributes": "Attributes",
     "Skills": "Skills",
     "DerivedAttributes": "Derived Attributes",
-
     "Size": "Size",
     "Speed": "Speed",
     "Initiative": "Initiative",
@@ -42,7 +37,6 @@
     "BodyResist": "Body Resistance",
     "MindResist": "Mind Resistance",
     "DamageReduction": "Damage Reduction",
-
     "CreatureData": "Creature Data",
     "Basis": "Basis",
     "BasisAgil": "Agile",
@@ -50,13 +44,11 @@
     "BasisAusgewogen": "Balanced",
     "Rolle": "Role",
     "Typus": "Type",
-
     "PotentialModifiers": "Potential Modifiers",
     "Tiervertrauter": "Animal Companion",
     "Tierspezialist": "Animal Specialist",
     "MeisterDerBestien": "Master of Beasts",
     "Meisterbaendiger": "Master Tamer",
-
     "RefinementCategories": {
       "groesse": "Size",
       "größe": "Size",
@@ -86,7 +78,6 @@
       "anfälligkeiten": "Susceptibilities",
       "anfaelligkeiten": "Susceptibilities"
     },
-
     "TrainingCategories": {
       "grundausbildung": "Basic Training",
       "kampf": "Combat",
@@ -95,7 +86,6 @@
       "allgemein": "General",
       "helfer": "Helper"
     },
-
     "TotalCost": "Total Cost",
     "PotentialCost": "Potential Cost",
     "SelectedOption": "Selected Option",
@@ -106,11 +96,9 @@
     "MasteryThreshold": "Threshold",
     "MasterySkill": "Skill",
     "GreatTricksChoice": "Great Tricks Choice",
-
     "RollSkillCheck": "Roll Skill Check",
     "RollAttack": "Roll Attack",
     "SkillTotalWithModifiers": "Value including modifiers",
-
     "Health": "Health Points",
     "HealthConsumed": "Consumed",
     "HealthExhausted": "Exhausted",
@@ -119,22 +107,17 @@
     "FocusConsumed": "Consumed",
     "FocusExhausted": "Exhausted",
     "FocusChanneled": "Channeled",
-
     "Biography": "Biography",
-
     "NoRefinements": "No refinements available",
     "NoTraining": "No training available",
     "NoAttacks": "No attacks available",
-
     "DeleteItem": "Delete Item",
     "DeleteItemConfirm": "Really delete {name}?",
-
     "Features": "Features",
     "TabSkills": "Skills",
     "CreatureInfo": "Creature Information",
     "Verfeinerungen": "Refinements",
     "Abrichtungen": "Training",
-
     "AbrichtungCategory": {
       "allgemein": "General",
       "grundausbildung": "Basic Training",
@@ -144,10 +127,8 @@
       "vertraute": "Familiar",
       "schwarm": "Swarm"
     },
-
     "UnassignedSpells": "Unassigned Spells",
     "UnassignedMasteries": "Unassigned",
-
     "MasteryAssignment": {
       "Title": "Assign Mastery",
       "SelectSkill": "Select Skill",
@@ -169,7 +150,6 @@
       "UnassignedRemaining": "{count} masteries could not be auto-assigned",
       "AssignNow": "Assign Now"
     },
-
     "SpellAssignment": {
       "Title": "Assign Spell",
       "AssignSpell": "Assign Spell",
@@ -189,6 +169,9 @@
       "SequenceComplete": "Spell assignment completed",
       "SequenceAborted": "Spell assignment cancelled",
       "UnassignedRemaining": "{count} spells could not be auto-assigned"
-    }
+    },
+    "TabCreature": "Creature",
+    "MigrationDone": "Converted {count} creature(s) to the new data format.",
+    "NoCreatureInfo": "No creature data yet. Use “Import creature” in the title bar to load basis, role, refinements and trainings from the Creature Editor."
   }
 }

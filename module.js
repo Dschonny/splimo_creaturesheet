@@ -3,101 +3,73 @@
  * Main entry point
  */
 
-import CreatureActor from "./module/actor/creature-actor.js";
-import { CreatureSheet } from "./module/actor/sheets/creature-sheet.js";
-import { RefinementItem } from "./module/item/refinement.js";
-import { TrainingItem } from "./module/item/training.js";
+import { createCreatureSheetClass } from "./module/actor/sheets/creature-sheet.js";
 import { CreatureImporter } from "./module/apps/creature-importer.js";
+import { installMigrations, MODULE_ID, persistMigratedActors } from "./module/compat.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once("init", async function() {
+Hooks.once("init", function () {
   console.log("Splimo Creaturesheet | Initializing module");
 
-  // Preload template partials
-  await loadTemplates([
-    "modules/splimo_creaturesheet/templates/sheets/parts/mastery-list.hbs",
-    "modules/splimo_creaturesheet/templates/apps/spell-assignment-dialog.hbs",
-    "modules/splimo_creaturesheet/templates/apps/mastery-assignment-dialog.hbs"
-  ]);
+  // Alte Kreaturen (system.creatureInfo, feste Fertigkeitswerte) beim Laden umschreiben,
+  // bevor Splittermond unbekannte Felder verwirft
+  installMigrations();
 
-  // Register creature actor sheet for npc type
-  Actors.registerSheet("splimo_creaturesheet", CreatureSheet, {
+  game.splimoCreaturesheet = {
+    CreatureImporter,
+    importCreature: CreatureImporter.import.bind(CreatureImporter)
+  };
+});
+
+/* -------------------------------------------- */
+/*  Bogen registrieren                          */
+/* -------------------------------------------- */
+
+// Foundry sammelt Bogen-Registrierungen bis zum ready-Zeitpunkt und legt CONFIG.Actor.sheetClasses erst
+// dann an; vorher ist Splittermonds NSC-Bogen nicht erreichbar. Nach game.ready wirkt registerSheet sofort.
+function registerCreatureSheet() {
+  const npcSheets = Object.values(CONFIG.Actor.sheetClasses?.npc ?? {});
+  const npcSheet = (npcSheets.find(entry => entry.id === "splittermond.SplittermondNPCSheet")
+    ?? npcSheets.find(entry => entry.id.startsWith("splittermond.")))?.cls;
+  if (!npcSheet) {
+    console.error("Splimo Creaturesheet | Splittermond NPC sheet not found, creature sheet not registered");
+    return;
+  }
+  const CreatureSheet = createCreatureSheetClass(npcSheet);
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Actor, MODULE_ID, CreatureSheet, {
     types: ["npc"],
     makeDefault: false,
     label: "Creature Sheet"
   });
-
-  // Register item document classes
-  CONFIG.Item.documentClasses = CONFIG.Item.documentClasses || {};
-  CONFIG.Item.documentClasses.refinement = RefinementItem;
-  CONFIG.Item.documentClasses.training = TrainingItem;
-
-  // Add to global namespace
-  game.splimoCreaturesheet = {
-    CreatureActor,
-    CreatureSheet,
-    RefinementItem,
-    TrainingItem,
-    CreatureImporter,
-    importCreature: CreatureImporter.import.bind(CreatureImporter)
-  };
-
-  console.log("Splimo Creaturesheet | Module initialized");
-});
+  game.splimoCreaturesheet.CreatureSheet = CreatureSheet;
+}
 
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
-Hooks.once("ready", function() {
-  console.log("Splimo Creaturesheet | Module ready");
+Hooks.once("ready", async function () {
+  registerCreatureSheet();
+  await persistMigratedActors();
 });
 
 /* -------------------------------------------- */
 /*  Actor Directory Hook                        */
 /* -------------------------------------------- */
 
-Hooks.on("renderActorDirectory", (app, html, data) => {
-  // Add import button to actor directory
-  const importButton = $(`<button class="import-creature-directory">
-    <i class="fas fa-file-import"></i> ${game.i18n.localize("CREATURE.ImportCreature")}
-  </button>`);
+Hooks.on("renderActorDirectory", (app, html) => {
+  if (!game.user.can("ACTOR_CREATE")) return;
+  const root = html instanceof HTMLElement ? html : html[0];
+  const container = root?.querySelector(".directory-header .header-actions, .directory-header .action-buttons");
+  if (!container || container.querySelector(".import-creature-directory")) return;
 
-  importButton.css({
-    "margin": "5px",
-    "padding": "5px 10px",
-    "background": "#4a7ba7",
-    "color": "white",
-    "border": "none",
-    "border-radius": "4px",
-    "cursor": "pointer"
-  });
-
-  importButton.on("mouseenter", function() {
-    $(this).css("background", "#3a6b97");
-  });
-
-  importButton.on("mouseleave", function() {
-    $(this).css("background", "#4a7ba7");
-  });
-
-  importButton.on("click", () => {
-    game.splimoCreaturesheet.importCreature();
-  });
-
-  html.find(".directory-header .action-buttons").append(importButton);
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "import-creature-directory";
+  button.innerHTML = `<i class="fas fa-file-import"></i> ${game.i18n.localize("CREATURE.ImportCreature")}`;
+  button.addEventListener("click", () => game.splimoCreaturesheet?.importCreature());
+  container.append(button);
 });
-
-/* -------------------------------------------- */
-/*  Console Message                             */
-/* -------------------------------------------- */
-
-console.log(`
-╔═══════════════════════════════════════╗
-║  Splittermond Creature Sheet v1.0.0  ║
-║  Module loaded successfully          ║
-╚═══════════════════════════════════════╝
-`);

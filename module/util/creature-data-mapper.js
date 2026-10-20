@@ -1,3 +1,5 @@
+import { fixedSkillValuesToPoints, MODULE_ID, SHEET_ID } from "../compat.js";
+
 /**
  * Converts VTT Import JSON format to FoundryVTT actor and item data structures
  */
@@ -64,47 +66,39 @@ export class CreatureDataMapper {
     // Add magic schools as skills
     this._addMagicSchoolsToSkills(skills, jsonData.magicSchools);
 
-    // Prepare actor data
+    // Prepare actor data (Splittermond-13-NSC-Modell; Kreatur-Daten liegen in den Modul-Flags)
+    const { damageReduction, ...npcDerivedAttributes } = derivedAttributes;
+    const system = {
+      type: "Kreatur",
+      level: "",
+      sex: "",
+      attributes: attributes,
+      derivedAttributes: npcDerivedAttributes,
+      damageReduction: {
+        value: damageReduction?.value || 0
+      },
+      biography: ""
+    };
+    // Die Kreaturwerte sind Endwerte; Splittermond braucht Punkte (Endwert - Attribut1 - Attribut2).
+    fixedSkillValuesToPoints(system, Object.fromEntries(
+      Object.entries(skills).map(([id, skill]) => [id, skill.value || 0])
+    ));
+
     const actorData = {
       name: jsonData.name || "Unbenannte Kreatur",
       type: "npc",
       img: "icons/svg/mystery-man.svg",
-      system: {
-        type: "Kreatur",
-        level: "",
-        sex: "",
-        attributes: attributes,
-        skills: skills,
-        derivedAttributes: derivedAttributes,
-        health: {
-          max: derivedAttributes.healthpoints?.value || 0,
-          value: derivedAttributes.healthpoints?.value || 0,
-          consumed: 0,
-          exhausted: 0,
-          channeled: { entries: [] }
-        },
-        focus: {
-          max: derivedAttributes.focuspoints?.value || 0,
-          value: derivedAttributes.focuspoints?.value || 0,
-          consumed: 0,
-          exhausted: 0,
-          channeled: { entries: [] }
-        },
-        damageReduction: {
-          value: derivedAttributes.damageReduction?.value || 0
-        },
-        biography: "",
-        biographyHTML: "",
-        creatureInfo: {
-          basis: jsonData.basis || null,
-          rolle: jsonData.rolle || null,
-          verfeinerungen: jsonData.verfeinerungen || [],
-          abrichtungen: jsonData.abrichtungen || []
-        },
-        currency: {
-          lunar: 0,
-          solar: 0,
-          ternar: 0
+      system,
+      flags: {
+        core: { sheetClass: SHEET_ID },
+        [MODULE_ID]: {
+          version: 2,
+          creatureInfo: {
+            basis: jsonData.basis || null,
+            rolle: jsonData.rolle || null,
+            verfeinerungen: jsonData.verfeinerungen || [],
+            abrichtungen: jsonData.abrichtungen || []
+          }
         }
       }
     };
@@ -164,7 +158,7 @@ export class CreatureDataMapper {
       "AGILITY": "agility",
       "INTUITION": "intuition",
       "CONSTITUTION": "constitution",
-      "MYSTIC": "mysticism",
+      "MYSTIC": "mystic",
       "STRENGTH": "strength",
       "MIND": "mind",
       "WILLPOWER": "willpower"
@@ -174,8 +168,7 @@ export class CreatureDataMapper {
       const splittermondId = primaryAttrMap[attr.id];
       if (splittermondId) {
         attributes[splittermondId] = {
-          value: attr.value || 0,
-          points: 0
+          value: attr.value || 0
         };
       }
     }
@@ -299,8 +292,12 @@ export class CreatureDataMapper {
     // Build features string
     let featuresStr = "";
     if (weapon.features && Array.isArray(weapon.features)) {
+      // Splittermond erwartet "Name Stufe" (z.B. "Kritisch 1"); der Editor kodiert die Stufe als "Kritisch +1"
       featuresStr = weapon.features
-        .map(f => f.name)
+        .map(f => {
+          const name = (f.name || "").replace(/\s*\+?\d+$/, "").trim();
+          return name && f.level ? `${name} ${f.level}` : name;
+        })
         .filter(n => n)
         .join(", ");
     }

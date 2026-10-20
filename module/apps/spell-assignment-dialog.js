@@ -1,3 +1,4 @@
+import { getSpellGrade, getSpellSchool } from "../compat.js";
 import { CreatureDataMapper } from "../util/creature-data-mapper.js";
 
 /**
@@ -229,8 +230,8 @@ export class SpellAssignmentDialog extends Application {
     }
 
     // Pre-select school based on unassigned spell's spellSchool field
-    if (!this.selectedSkillId && this.unassignedSpell.system.spellSchool) {
-      const preselectedSkill = this._mapSchoolToSkill(this.unassignedSpell.system.spellSchool);
+    if (!this.selectedSkillId && getSpellSchool(this.unassignedSpell)) {
+      const preselectedSkill = this._mapSchoolToSkill(getSpellSchool(this.unassignedSpell));
       if (preselectedSkill && availableSchools.find(s => s.id === preselectedSkill)) {
         this.selectedSkillId = preselectedSkill;
       }
@@ -243,7 +244,7 @@ export class SpellAssignmentDialog extends Application {
 
     // If using fuzzy preselect but no preselectedUuid yet, find best match in current skill
     if (this.useFuzzyPreselect && this.spells.length > 0 && !this.preselectedUuid) {
-      const rawGrade = this.unassignedSpell.system.spellGrade;
+      const rawGrade = getSpellGrade(this.unassignedSpell);
       const maxGrade = (rawGrade !== undefined && rawGrade !== null && rawGrade !== "") ? parseInt(rawGrade) : 5;
       const fuzzyMatches = await findFuzzySpellMatches(
         this.unassignedSpell.name,
@@ -270,8 +271,8 @@ export class SpellAssignmentDialog extends Application {
     return {
       unassignedSpell: this.unassignedSpell,
       spellName: this.unassignedSpell.name,
-      spellGrade: this.unassignedSpell.system.spellGrade || 0,
-      spellSchool: this.unassignedSpell.system.spellSchool || "",
+      spellGrade: getSpellGrade(this.unassignedSpell) || 0,
+      spellSchool: getSpellSchool(this.unassignedSpell) || "",
       availableSchools,
       selectedSkillId: this.selectedSkillId,
       spells: this.spells,
@@ -287,7 +288,7 @@ export class SpellAssignmentDialog extends Application {
    * Find the best matching skill for a spell name by searching all compendiums
    */
   async _findBestMatchingSkill(name) {
-    const rawGrade = this.unassignedSpell.system.spellGrade;
+    const rawGrade = getSpellGrade(this.unassignedSpell);
     const maxGrade = (rawGrade !== undefined && rawGrade !== null && rawGrade !== "") ? parseInt(rawGrade) : 5;
     const packs = game.packs.filter(p => p.documentName === "Item");
     const matches = [];
@@ -371,9 +372,11 @@ export class SpellAssignmentDialog extends Application {
     const magicSkills = CONFIG.splittermond.skillGroups.magic || [];
 
     for (const skillId of magicSkills) {
-      const skill = this.actor.system.skills?.[skillId];
-      const value = skill?.value || 0;
-      if (value > 0) {
+      // Nur Schulen, die die Kreatur wirklich beherrscht (Punkte gesetzt); der Endwert ergibt sich bei
+      // Splittermond-NSC aus Attributen + Punkten und waere sonst fuer jede Schule > 0
+      const points = Number(this.actor.system.skills?.[skillId]?.points) || 0;
+      const value = this.actor.skills?.[skillId]?.value || 0;
+      if (points !== 0 && value > 0) {
         schools.push({
           id: skillId,
           label: game.i18n.localize(`splittermond.skillLabel.${skillId}`),
@@ -398,7 +401,7 @@ export class SpellAssignmentDialog extends Application {
    * Load spells from compendiums that match the selected skill and max grade
    */
   async _loadSpellsForSkill(skillId) {
-    const rawGrade = this.unassignedSpell.system.spellGrade;
+    const rawGrade = getSpellGrade(this.unassignedSpell);
     const maxGrade = (rawGrade !== undefined && rawGrade !== null && rawGrade !== "")
       ? parseInt(rawGrade)
       : 5;
