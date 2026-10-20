@@ -4,6 +4,7 @@
  */
 
 import { createCreatureSheetClass } from "./module/actor/sheets/creature-sheet.js";
+import { installFixedDerivedValues } from "./module/actor/fixed-derived-values.js";
 import { CreatureImporter } from "./module/apps/creature-importer.js";
 import { installMigrations, MODULE_ID, persistMigratedActors } from "./module/compat.js";
 
@@ -17,6 +18,9 @@ Hooks.once("init", function () {
   // Alte Kreaturen (system.creatureInfo, feste Fertigkeitswerte) beim Laden umschreiben,
   // bevor Splittermond unbekannte Felder verwirft
   installMigrations();
+
+  // Kreaturen: abgeleitete Werte fest, ohne Modifikatoren (wie im Creature-Editor)
+  installFixedDerivedValues();
 
   game.splimoCreaturesheet = {
     CreatureImporter,
